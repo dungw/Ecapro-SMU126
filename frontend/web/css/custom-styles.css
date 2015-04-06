@@ -1,0 +1,81 @@
+body {
+    font-size: 12px !important;
+}
+
+.container {
+    width: 100% !important;
+}
+
+/* PARTS OF FORM */
+.error-color { color: #a94442 }
+.form-control { font-size: 12px !important; padding: 3px 10px !important; height: 25px !important; }
+textarea.form-control {
+    height: auto !important;
+}
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 6px !important;
+}
+.glyphicon {
+    margin-right: 7px;
+}
+h1, .h1, h2, .h2, h3, .h3 {
+    margin-top: 10px !important;
+}
+.login-block {
+    width: 500px;
+    border: 1px solid #C0C0C0;
+    padding: 15px;
+}
+.logo-list {
+    max-width: 100px;
+    max-height: 70px;
+}
+
+.slice-box { overflow: hidden }
+.form-listbox, .form-select, .form-file { width: 30%; }
+.form-file { padding: 3px; border: 1px solid #A9A9A9 !important; }
+.form-select { padding: 3px; }
+.form-listbox option, .form-select option { padding: 3px; }
+.show-img { border: 1px solid #C0C0C0; max-width: 200px; margin-bottom: 15px; padding: 5px; }
+.show-small-img { border: 1px solid #C0C0C0; max-width: 100px; margin-bottom: 15px; margin-right: 5px; padding: 5px; }
+.mce-tinymce { padding: 1px !important; }
+.remove-img { top: -50px !important; cursor: pointer }
+.float-l { float: left; }
+.width-auto { width: auto }
+/* PARTS OF FORM END */
+
+/* LOGIN PAGE BEGIN */
+.login-block { background: #ffffff; }
+.login-body { background: #F8F8F8; }
+.field-loginform-password { width: 49% !important; float: left; }
+.field-loginform-username { width: 49% !important; margin-right: 2%; float: left; }
+.field-loginform-rememberme { width: 49%; float: left; margin-right: 2%; }
+.field-loginform-rememberme .checkbox { margin-top: 0px; }
+.field-loginform-submit { width: 49%; float: left; text-align: right; }
+.radio label, .checkbox label { line-height: 20px; }
+.login-footer p { text-align: center; border-top: 1px solid #E2E2E2; padding-top: 10px; margin-bottom: 0px; color: #A1A1A1; }
+/* LOGIN PAGE END */
+
+/*  Change width by screen  */
+@media screen and (max-width: 600px) {
+    .form-listbox, .form-select, .form-file { width: 100%; }
+
+    .form-control {
+        width: 100% !important;
+    }
+    .login-block {
+        width: 80% !important;
+    }
+    .field-loginform-username {
+        width: 100% !important;
+        margin-right: 0;
+        float: none;
+    }
+    .field-loginform-password {
+        width: 100% !important;
+        float: none;
+    }
+    .field-loginform-rememberme { width: 100%; float: left; margin-right: 1%; }
+    .field-loginform-submit { width: 100%; float: left; }
+}
+

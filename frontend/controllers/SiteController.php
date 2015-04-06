@@ -13,11 +13,18 @@ use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
+// use Base controller
+use common\controllers\BaseController;
+
+
 /**
  * Site controller
  */
-class SiteController extends Controller
+class SiteController extends BaseController
 {
+
+    public $layout = '//main';
+
     /**
      * @inheritdoc
      */
