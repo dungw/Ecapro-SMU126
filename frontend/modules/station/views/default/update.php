@@ -2,20 +2,23 @@
 
 use yii\helpers\Html;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Station */
-
-$this->title = 'Update Station: ' . ' ' . $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Stations', 'url' => ['index']];
+$this->title = 'Cập nhật trạm: ' . ' ' . $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'DS trạm', 'url' => ['index']];
 $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id' => $model->id]];
-$this->params['breadcrumbs'][] = 'Update';
+$this->params['breadcrumbs'][] = 'Cập nhật';
 ?>
 <div class="station-update">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h4><?= Html::encode($this->title) ?></h4>
 
     <?= $this->render('_form', [
         'model' => $model,
+        'areas' => $areas,
+        'centers' => $centers,
+        'types' => $types,
+        'equipments' => $equipments,
+        'equipmentIds' => $equipmentIds,
+        'errors' => isset($errors) ? $errors : [],
     ]) ?>
 
 </div>

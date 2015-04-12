@@ -4,6 +4,7 @@ namespace app\modules\area\controllers;
 
 use Yii;
 use common\models\Area;
+use common\controllers\BaseController;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * DefaultController implements the CRUD actions for Area model.
  */
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
     public function behaviors()
     {
@@ -63,7 +64,7 @@ class DefaultController extends Controller
         $model = new Area();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -82,7 +83,7 @@ class DefaultController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,

@@ -24,17 +24,32 @@ class Show extends BaseHtml {
         return $html;
     }
 
-    public static function multiSelect($data, $key, $value, $options = []) {
-        $needOption = ['class' => 'form-listbox', 'multiple' => true];
-        if (!empty($options)) $needOption = array_merge($needOption, $options);
-        $sortedData = array();
-        if (!empty($data)) {
-            foreach ($data as $item) {
-                if (isset($item[$key]) && $item[$value]) {
-                    $sortedData[$item[$key]] = $item[$value];
+    public static function multiSelect($attribute, $needle, $haystack, $key, $value, $labels, $options = []) {
+        if (empty($options)) $options = ['class' => 'form-listbox', 'multiple' => true];
+        $sorted = array();
+        if (!empty($haystack)) {
+            foreach ($haystack as $object) {
+                if (isset($object->$key) && $object->$value) {
+                    $sorted[$object->$key] = $object->$value;
                 }
             }
         }
-        return BaseHtml::listBox('list-feature', '', $sortedData, $needOption);
+        $html = '<div class="form-group">';
+        $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
+        $html .= BaseHtml::listBox($attribute, $needle, $sorted, $options);
+        $html .= '</div>';
+        return $html;
+    }
+
+    public static function input($type = '', $model, $attribute, $labels, $options = [], $errors = []) {
+        if ($type) $type = 'text';
+        if (empty($options)) $options = ['class' => 'form-control'];
+        $value = (is_object($model) && isset($model->$attribute)) ? $model->attribute : '';
+        $html = '<div class="form-group">';
+        $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
+        $html .= parent::input($type, $attribute, $value, $options);
+        $html .= self::errorBlock(isset($errors[$attribute]) ? $errors[$attribute] : []);
+        $html .= '</div>';
+        return $html;
     }
 }

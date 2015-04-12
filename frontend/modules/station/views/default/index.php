@@ -1,21 +1,16 @@
 <?php
+use common\models\Area;
+use common\models\Center;
 
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Stations';
+$this->title = 'Danh sách trạm';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="station-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Station', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <h4><?= Html::encode($this->title) ?></h4>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -25,25 +20,22 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'code',
             'name',
-            'center_id',
-            'area_id',
-            // 'type',
-            // 'firmware',
-            // 'staff_id',
-            // 'power_type',
-            // 'pbx_type',
-            // 'transmission_type',
-            // 'accu_type',
-            // 'accu_capacity',
-            // 'generator_type',
-            // 'generator_capacity',
-            // 'addition:ntext',
-            // 'picture_ip',
-            // 'video_ip',
-            // 'latitude',
-            // 'longtitude',
-            // 'phone',
-            // 'email:email',
+            [
+                'attribute' => 'center_id',
+                'format' => 'text',
+                'value' => function($model) {
+                        $center = Center::findOne($model->center_id);
+                        return $center->name;
+                    },
+            ],
+            [
+                'attribute' => 'area_id',
+                'format' => 'text',
+                'value' => function($model) {
+                        $area = Area::findOne($model->area_id);
+                        return $area->name;
+                    },
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

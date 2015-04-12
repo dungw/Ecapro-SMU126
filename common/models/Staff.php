@@ -3,29 +3,19 @@
 namespace common\models;
 
 use Yii;
+use common\models\Base;
 
-/**
- * This is the model class for table "staff".
- *
- * @property integer $id
- * @property string $fullname
- * @property string $mobile
- * @property string $email
- * @property integer $user_id
- */
-class Staff extends \yii\db\ActiveRecord
+class Staff extends Base
 {
-    /**
-     * @inheritdoc
-     */
+    public $user;
+
+    // get table name
     public static function tableName()
     {
         return 'staff';
     }
 
-    /**
-     * @inheritdoc
-     */
+    // get rule table
     public function rules()
     {
         return [
@@ -37,17 +27,15 @@ class Staff extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    // get attribute label
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'fullname' => 'Fullname',
-            'mobile' => 'Mobile',
+            'fullname' => 'Họ tên',
+            'mobile' => 'Số điện thoại',
             'email' => 'Email',
-            'user_id' => 'User ID',
+            'user_id' => 'ID đăng nhập',
         ];
     }
 }

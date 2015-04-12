@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use common\models\Base;
 
 /**
  * This is the model class for table "center".
@@ -12,7 +13,7 @@ use Yii;
  *
  * @property Station[] $stations
  */
-class Center extends \yii\db\ActiveRecord
+class Center extends Base
 {
     /**
      * @inheritdoc
@@ -40,7 +41,7 @@ class Center extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Tên trung tâm',
         ];
     }
 
@@ -50,5 +51,10 @@ class Center extends \yii\db\ActiveRecord
     public function getStations()
     {
         return $this->hasMany(Station::className(), ['center_id' => 'id']);
+    }
+
+    public static function _prepareDataSelect($collections, $key, $value) {
+        $data[0] = 'Chọn trung tâm';
+        return parent::_prepareDataSelect($collections, $key, $value, $data);
     }
 }

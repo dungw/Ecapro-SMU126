@@ -6,13 +6,13 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Center */
 
-$this->title = 'Create Center';
-$this->params['breadcrumbs'][] = ['label' => 'Centers', 'url' => ['index']];
+$this->title = 'Thêm mới trung tâm';
+$this->params['breadcrumbs'][] = ['label' => 'DS Trung tâm', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="center-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h4><?= Html::encode($this->title) ?></h4>
 
     <?= $this->render('_form', [
         'model' => $model,

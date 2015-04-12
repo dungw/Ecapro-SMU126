@@ -14,13 +14,13 @@ use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 // use Base controller
-use common\controllers\BaseController;
+use common\controllers\FrontendController;
 
 
 /**
  * Site controller
  */
-class SiteController extends BaseController
+class SiteController extends FrontendController
 {
 
     public $layout = '//main';
@@ -74,12 +74,17 @@ class SiteController extends BaseController
 
     public function actionIndex()
     {
+
+        if (Yii::$app->user->isGuest) {
+            $this->doLogin();
+        }
         return $this->render('index');
     }
 
     public function actionLogin()
     {
-        if (!\Yii::$app->user->isGuest) {
+
+        if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
 
@@ -87,6 +92,8 @@ class SiteController extends BaseController
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
         } else {
+
+            $this->layout = '//login';
             return $this->render('login', [
                 'model' => $model,
             ]);

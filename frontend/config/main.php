@@ -12,10 +12,25 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'modules' => [
+        'station' => [
+            'class' => 'frontend\modules\station\Station',
+        ],
+        'area' => [
+            'class' => 'frontend\modules\area\Area',
+        ],
+        'center' => [
+            'class' => 'frontend\modules\center\Center',
+        ],
+        'staff' => [
+            'class' => 'frontend\modules\staff\Staff',
+        ],
+    ],
     'components' => [
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
+            'authTimeout' => 5,
         ],
         'log' => [
             'traceLevel' => YII_DEBUG ? 3 : 0,

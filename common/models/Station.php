@@ -3,57 +3,36 @@
 namespace common\models;
 
 use Yii;
+use common\models\Base;
 
-/**
- * This is the model class for table "station".
- *
- * @property integer $id
- * @property string $code
- * @property string $name
- * @property integer $center_id
- * @property integer $area_id
- * @property integer $type
- * @property string $firmware
- * @property integer $staff_id
- * @property string $power_type
- * @property string $pbx_type
- * @property string $transmission_type
- * @property string $accu_type
- * @property string $accu_capacity
- * @property string $generator_type
- * @property string $generator_capacity
- * @property string $addition
- * @property string $picture_ip
- * @property string $video_ip
- * @property string $latitude
- * @property string $longtitude
- * @property string $phone
- * @property string $email
- *
- * @property EquipmentStatus[] $equipmentStatuses
- * @property Area $area
- * @property Center $center
- */
-class Station extends \yii\db\ActiveRecord
+class Station extends Base
 {
-    /**
-     * @inheritdoc
-     */
+    public static $types = [
+        ['type' => 1, 'name' => 'BTS có ATS'],
+        ['type' => 2, 'name' => 'BTS không có ATS'],
+    ];
+
+    // object area
+    public $area;
+
+    // object center
+    public $center;
+
+    // array equipment id
+    public $equipment = [];
+
     public static function tableName()
     {
         return 'station';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
             [['code', 'name'], 'required'],
             [['center_id', 'area_id', 'type', 'staff_id'], 'integer'],
             [['addition'], 'string'],
-            [['code', 'power_type', 'pbx_type', 'transmission_type', 'accu_type', 'accu_capacity', 'generator_type', 'generator_capacity', 'phone'], 'string', 'max' => 100],
+            [['code', 'phone'], 'string', 'max' => 100],
             [['name', 'firmware'], 'string', 'max' => 255],
             [['picture_ip', 'video_ip', 'latitude', 'longtitude'], 'string', 'max' => 20],
             [['email'], 'string', 'max' => 50],
@@ -61,58 +40,69 @@ class Station extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
+    // get labels
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'code' => 'Code',
-            'name' => 'Name',
-            'center_id' => 'Center ID',
-            'area_id' => 'Area ID',
-            'type' => 'Type',
+            'code' => 'Mã trạm',
+            'name' => 'Tên trạm',
+            'center_id' => 'Trung tâm',
+            'area_id' => 'Khu vực',
+            'type' => 'Loại trạm',
             'firmware' => 'Firmware',
-            'staff_id' => 'Staff ID',
-            'power_type' => 'Power Type',
-            'pbx_type' => 'Pbx Type',
-            'transmission_type' => 'Transmission Type',
-            'accu_type' => 'Accu Type',
-            'accu_capacity' => 'Accu Capacity',
-            'generator_type' => 'Generator Type',
-            'generator_capacity' => 'Generator Capacity',
-            'addition' => 'Addition',
-            'picture_ip' => 'Picture Ip',
-            'video_ip' => 'Video Ip',
-            'latitude' => 'Latitude',
-            'longtitude' => 'Longtitude',
-            'phone' => 'Phone',
+            'staff_id' => 'Nhân viên trực',
+            'equipments' => 'Thiết bị',
+            'addition' => 'Thông tin thêm',
+            'picture_ip' => 'IP chụp ảnh',
+            'video_ip' => 'IP Video',
+            'latitude' => 'Vĩ độ',
+            'longtitude' => 'Kinh độ',
+            'phone' => 'Số điện thoại',
             'email' => 'Email',
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getEquipmentStatuses()
     {
         return $this->hasMany(EquipmentStatus::className(), ['station_code' => 'code']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getArea()
     {
         return $this->hasOne(Area::className(), ['id' => 'area_id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getCenter()
     {
         return $this->hasOne(Center::className(), ['id' => 'center_id']);
+    }
+
+    // prepare data for select box
+    public static function _prepareDataSelect($collections, $key, $value) {
+        $data[0] = 'Chọn loại trạm';
+        return parent::_prepareDataSelect($collections, $key, $value, $data);
+    }
+
+    // get type of station
+    public function getType($type) {
+        foreach (self::$types as $t) {
+            if ($t['type'] == $type) return $t['name'];
+        }
+
+        return null;
+    }
+
+    // get equipment
+    public function getEquipment($stationId, $equipments) {
+        if ($stationId > 0 && !empty($equipments)) {
+            $sql = 'SELECT s.*, e.name
+                FROM equipment_status s
+                LEFT JOIN equipment e ON(e.id = s.equipment_id)
+                WHERE s.equipment_id IN('. implode(',', $equipments) .') AND s.station_id = '. $stationId;
+
+            return Yii::$app->db->createCommand($sql)->queryAll();
+        }
+        return null;
     }
 }

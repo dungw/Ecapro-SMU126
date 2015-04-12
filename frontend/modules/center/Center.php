@@ -1,10 +1,15 @@
 <?php
 
-namespace app\modules\center;
+namespace frontend\modules\center;
 
-class Center extends \yii\base\Module
+use common\modules\Base;
+
+class Center extends Base
 {
     public $controllerNamespace = 'app\modules\center\controllers';
+    public $menus = [
+        ['label' => 'Thêm mới trung tâm', 'url' => '/center/default/create'],
+    ];
 
     public function init()
     {

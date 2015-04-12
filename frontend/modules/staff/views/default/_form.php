@@ -1,11 +1,11 @@
 <?php
-
+use common\components\helpers\Show;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 
-/* @var $this yii\web\View */
-/* @var $model common\models\Staff */
-/* @var $form yii\widgets\ActiveForm */
+$labels = $model->attributeLabels();
+$labels['username'] = 'Tên đăng nhập';
+$labels['password'] = 'Mật khẩu';
 ?>
 
 <div class="staff-form">
@@ -18,10 +18,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'email')->textInput(['maxlength' => 100]) ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
+    <?= Show::input('text', $model->user, 'username', $labels, [], isset($errors) ? $errors : []) ?>
+
+    <?= Show::input('password', $model->user, 'password', $labels, [], isset($errors) ? $errors : []) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Thêm mới' : 'Cập nhật', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

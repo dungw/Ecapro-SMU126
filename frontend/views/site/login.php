@@ -6,7 +6,7 @@ use yii\bootstrap\ActiveForm;
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $model \common\models\LoginForm */
 
-$this->title = 'Đăng nhập hệ quản trị';
+$this->title = 'Đăng nhập hệ quản trị '. Yii::$app->params['projectName'];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="site-login">

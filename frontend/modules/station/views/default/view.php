@@ -1,56 +1,217 @@
 <?php
-
-use yii\helpers\Html;
-use yii\widgets\DetailView;
-
-/* @var $this yii\web\View */
-/* @var $model common\models\Station */
+use common\models\EquipmentStatus;
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Stations', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'DS Trạm', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="station-view">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
-
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'code',
-            'name',
-            'center_id',
-            'area_id',
-            'type',
-            'firmware',
-            'staff_id',
-            'power_type',
-            'pbx_type',
-            'transmission_type',
-            'accu_type',
-            'accu_capacity',
-            'generator_type',
-            'generator_capacity',
-            'addition:ntext',
-            'picture_ip',
-            'video_ip',
-            'latitude',
-            'longtitude',
-            'phone',
-            'email:email',
-        ],
-    ]) ?>
-
+<div class="panel panel-primary">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <i class="glyphicon glyphicon-book"></i><?php echo $model->name ?> (<?php echo $model->code ?>)
+        </h4>
+    </div>
 </div>
+<table class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">
+    <tr class="info">
+        <th colspan="4">Giám sát thiết bị</th>
+    </tr>
+    <tr>
+        <th width="5%">#</th>
+        <th width="40%">Tên thiết bị</th>
+        <th width="15%">Tình trạng</th>
+        <th>Thiết lập</th>
+    </tr>
+
+    <?php
+
+    if (isset($equipments) && !empty($equipments)) {
+        $no = 1;
+        foreach ($equipments as $equipment) {
+            ?>
+            <tr>
+                <th style="text-align: center"><?=$no?></th>
+                <td>
+                    <div class="kv-attribute"><?=$equipment['name']?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?=EquipmentStatus::getStatus($equipment['status'])?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute">
+                        <?php
+                        $underAuto = 0;
+                        $underOn = 0;
+                        $underOff = 0;
+                        if ($equipment['configure'] == EquipmentStatus::CONFIGURE_AUTO) $underAuto = 1;
+                        if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_ON) $underOn = 1;
+                        if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_OFF) $underOff = 1;
+                        ?>
+                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="">Bật</a>  /
+                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="">Tắt</a>  /
+                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="">Tự động</a>
+                    </div>
+                </td>
+            </tr>
+            <?php
+            $no++;
+        }
+    }
+    ?>
+
+
+
+</table>
+
+<table class="detail-view table table-hover table-bordered">
+    <tr>
+        <th width="5%">#</th>
+        <th>Điện áp</th>
+        <th width="40%">Thiết bị</th>
+        <th>Dòng điện</th>
+        <th>Điện áp nửa tố</th>
+        <th>Nhiệt độ</th>
+        <th width="15%">Tình trạng</th>
+    </tr>
+    <tr>
+        <td rowspan="2" style="vertical-align: middle; text-align: center">Tủ DC</td>
+        <td rowspan="2" style="vertical-align: middle; text-align: center">
+            <div class="kv-attribute">53.5 V</div>
+        </td>
+        <td>
+            <div class="kv-attribute">Tủ ắc quy 1</div>
+        </td>
+        <td>
+            <div class="kv-attribute">5.4 A</div>
+        </td>
+        <td>
+            <div class="kv-attribute">28.4 V</div>
+        </td>
+        <td>
+            <div class="kv-attribute">54 C</div>
+        </td>
+        <td>
+            <div class="kv-attribute">Bình thường</div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <div class="kv-attribute">Tủ ắc quy 2</div>
+        </td>
+        <td>
+            <div class="kv-attribute">5.4 A</div>
+        </td>
+        <td>
+            <div class="kv-attribute">28.4 V</div>
+        </td>
+        <td>
+            <div class="kv-attribute">54 C</div>
+        </td>
+        <td>
+            <div class="kv-attribute">Bình thường</div>
+        </td>
+    </tr>
+</table>
+
+<table class="detail-view table table-hover table-bordered">
+    <tr class="info">
+        <th colspan="3">Giám sát cảm biến</th>
+    </tr>
+    <tr>
+        <th width="5%">#</th>
+        <th width="40%">Cảm biến</th>
+        <th width="45%">Tình trạng</th>
+    </tr>
+    <tr>
+        <th style="text-align: center">1</th>
+        <td>
+            <div class="kv-attribute">Nhiệt độ (C)</div>
+        </td>
+        <td>
+            <div class="kv-attribute">27.1</div>
+        </td>
+    </tr>
+    <tr>
+        <th style="text-align: center">2</th>
+        <td>
+            <div class="kv-attribute">Độ ẩm (%)</div>
+        </td>
+        <td>
+            <div class="kv-attribute">50</div>
+        </td>
+    </tr>
+</table>
+
+<table class="detail-view table table-hover table-bordered">
+    <tr class="info">
+        <th colspan="3">Giám sát hệ thống nguồn điện</th>
+    </tr>
+    <tr>
+        <th width="5%">#</th>
+        <th width="40%">Hạng mục</th>
+        <th width="45%">Tình trạng</th>
+    </tr>
+    <tr>
+        <th style="text-align: center">1</th>
+        <td>
+            <div class="kv-attribute">Nguồn điện</div>
+        </td>
+        <td>
+            <div class="kv-attribute">Cấp điện lưới cho tải</div>
+        </td>
+    </tr>
+    <tr>
+        <th style="text-align: center">2</th>
+        <td>
+            <div class="kv-attribute">Máy phát</div>
+        </td>
+        <td>
+            <div class="kv-attribute">OFF</div>
+        </td>
+    </tr>
+</table>
+
+<table class="detail-view table table-hover table-bordered">
+    <tr class="info">
+        <th colspan="2">Thông tin trạm</th>
+    </tr>
+    <tr>
+        <td width="50%">
+            <div class="kv-attribute">
+                <b>Trung tâm: </b><span><?php echo $model->center->name ?></span>
+            </div>
+        </td>
+        <td width="50%">
+            <div class="kv-attribute">
+                <b>Khu vực: </b><span><?php echo $model->area->name ?></span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td width="50%">
+            <div class="kv-attribute">
+                <b>Người trực: </b><span><?php echo $model->staff_id ?></span>
+            </div>
+        </td>
+        <td width="50%">
+            <div class="kv-attribute">
+                <b>Điện thoại: </b><span><?php echo $model->phone ?></span>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td width="50%">
+            <div class="kv-attribute">
+                <b>Email: </b><span><?php echo $model->email ?></span>
+            </div>
+        </td>
+        <td></td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <div class="kv-attribute">
+                <b>Thông tin thêm: </b><span><?php echo $model->addition ?></span>
+            </div>
+        </td>
+    </tr>
+</table>

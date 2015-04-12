@@ -1,16 +1,14 @@
 <?php
 use yii\helpers\Html;
 
-/* @var $this \yii\web\View */
-/* @var $content string */
 $controller = $this->context;
 $menus = $controller->module->menus;
 $route = $controller->route;
 
 foreach ($menus as $i => $menu) {
-    $menus[$i]['active'] = strpos(trim($menu['url'], '/'), $route) ? 1 : 0;
+    $temp = explode('?', $menu['url']);
+    $menus[$i]['active'] = strpos(trim($temp[0]), $route) ? 1 : 0;
 }
-
 $this->params['nav-items'] = $menus;
 ?>
 <div id="manager-menu" class="list-group">

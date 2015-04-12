@@ -1,10 +1,15 @@
 <?php
 
-namespace app\modules\staff;
+namespace frontend\modules\staff;
 
-class Staff extends \yii\base\Module
+use common\modules\Base;
+
+class Staff extends Base
 {
     public $controllerNamespace = 'app\modules\staff\controllers';
+    public $menus = [
+        ['label' => 'Thêm mới nhân viên', 'url' => '/staff/default/create']
+    ];
 
     public function init()
     {

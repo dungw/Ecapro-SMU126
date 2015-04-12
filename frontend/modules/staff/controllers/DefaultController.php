@@ -5,14 +5,14 @@ namespace app\modules\staff\controllers;
 use Yii;
 use common\models\Staff;
 use common\models\StaffSearch;
+use common\models\User;
+use common\controllers\BaseController;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-/**
- * DefaultController implements the CRUD actions for Staff model.
- */
-class DefaultController extends Controller
+
+class DefaultController extends BaseController
 {
     public function behaviors()
     {
@@ -26,10 +26,7 @@ class DefaultController extends Controller
         ];
     }
 
-    /**
-     * Lists all Staff models.
-     * @return mixed
-     */
+    // index action
     public function actionIndex()
     {
         $searchModel = new StaffSearch();
@@ -41,11 +38,7 @@ class DefaultController extends Controller
         ]);
     }
 
-    /**
-     * Displays a single Staff model.
-     * @param integer $id
-     * @return mixed
-     */
+    // view action
     public function actionView($id)
     {
         return $this->render('view', [
@@ -53,36 +46,47 @@ class DefaultController extends Controller
         ]);
     }
 
-    /**
-     * Creates a new Staff model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
+    // create action
     public function actionCreate()
     {
         $model = new Staff();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+        // parse data to view
+        $parseData['model'] = $model;
+
+        if (Yii::$app->request->isPost) {
+            $model->load(Yii::$app->request->post());
+            unset($model->username);
+
+            // validate data
+            if ($model->validate()) {
+
+                // validate username
+                $username = Yii::$app->request->post('username');
+
+                // check duplicate user
+                if (User::findByUsername($username)) {
+                    $parseData['errors']['username'] = 'Username này đã tồn tại';
+                }
+
+                // save
+                $model->save();
+
+                // redirect
+                $this->redirect(['index']);
+            }
         }
+
+        return $this->render('create', $parseData);
     }
 
-    /**
-     * Updates an existing Staff model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     */
+    // update action
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,
@@ -90,12 +94,7 @@ class DefaultController extends Controller
         }
     }
 
-    /**
-     * Deletes an existing Staff model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
+    // delete action
     public function actionDelete($id)
     {
         $this->findModel($id)->delete();
@@ -103,16 +102,13 @@ class DefaultController extends Controller
         return $this->redirect(['index']);
     }
 
-    /**
-     * Finds the Staff model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Staff the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
+    // find model function
     protected function findModel($id)
     {
         if (($model = Staff::findOne($id)) !== null) {
+
+            $model->user = User::findOne($model->user_id);
+
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

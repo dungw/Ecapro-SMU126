@@ -1,7 +1,7 @@
 <?php
 use yii\widgets\Menu;
 
-$this->beginContent('@backend/views/layouts/main.php');
+$this->beginContent('@frontend/views/layouts/main.php');
 ?>
 
     <div class="container">

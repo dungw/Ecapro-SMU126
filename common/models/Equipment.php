@@ -13,6 +13,8 @@ use Yii;
  */
 class Equipment extends \yii\db\ActiveRecord
 {
+    const STATUS_ACTIVE = 1;
+
     /**
      * @inheritdoc
      */
@@ -40,7 +42,7 @@ class Equipment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Tên thiết bị',
             'active' => 'Active',
         ];
     }

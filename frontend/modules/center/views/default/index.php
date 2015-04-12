@@ -6,16 +6,12 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Centers';
+$this->title = 'Danh sách trung tâm';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="center-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Create Center', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <h4><?= Html::encode($this->title) ?></h4>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

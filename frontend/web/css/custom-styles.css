@@ -6,6 +6,9 @@ body {
     width: 100% !important;
 }
 
+/* COMMON */
+.text-underline { text-decoration: underline }
+
 /* PARTS OF FORM */
 .error-color { color: #a94442 }
 .form-control { font-size: 12px !important; padding: 3px 10px !important; height: 25px !important; }
@@ -79,3 +82,12 @@ h1, .h1, h2, .h2, h3, .h3 {
     .field-loginform-submit { width: 100%; float: left; }
 }
 
+/* PANEL STYLE */
+.panel { color: #fff; background-color: #337ab7; margin-bottom: 0px !important; border-bottom-left-radius: 0px !important; border-bottom-right-radius: 0px !important;  }
+.panel-heading { padding: 6px 15px !important; }
+.panel-title { margin-top: 0px !important; }
+
+/* MENU STYLE */
+.dropdown-menu { font-size: 12px !important; }
+.dropdown-menu li { border-bottom: 1px dotted #A9A9A9; }
+.dropdown-menu li:last-child { border-bottom: none; }

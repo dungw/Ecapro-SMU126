@@ -1,10 +1,15 @@
 <?php
 
-namespace app\modules\area;
+namespace frontend\modules\area;
 
-class Area extends \yii\base\Module
+use common\modules\Base;
+
+class Area extends Base
 {
     public $controllerNamespace = 'app\modules\area\controllers';
+    public $menus = [
+        ['label' => 'Thêm mới khu vực', 'url' => '/area/default/create'],
+    ];
 
     public function init()
     {

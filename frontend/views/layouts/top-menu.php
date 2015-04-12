@@ -8,7 +8,7 @@ $module = $this->context->module->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
-        'brandLabel' => 'Dashboard',
+        'brandLabel' => 'Ecapro',
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -17,10 +17,15 @@ if (!Yii::$app->user->isGuest) {
 
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'Danh mục', 'url' => ['/category/default/index'], 'active' => ($module == 'category')],
-        ['label' => 'Phần mềm', 'url' => ['/software/default/index'], 'active' => ($module == 'software')],
-        ['label' => 'Nhà sản xuất', 'url' => ['/manufacturer/default/index'], 'active' => ($module == 'manufacturer')],
-        ['label' => 'Tính năng', 'url' => ['/feature/default/index'], 'active' => ($module == 'feature')],
+        ['label' => 'Quản lý trạm', 'url' => ['/station/default/index'], 'active' => ($module == 'station')],
+        [
+            'label' => 'Cài đặt',
+            'items' => [
+                ['label' => 'Trung tâm', 'url' => ['/center/default/index'], 'active' => ($module == 'center')],
+                ['label' => 'Khu vực', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
+                ['label' => 'Nhân viên trực', 'url' => ['/staff/default/index'], 'active' => ($module == 'staff')],
+            ]
+        ],
     ];
 
     if (Yii::$app->user->isGuest) {

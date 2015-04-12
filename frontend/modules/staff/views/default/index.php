@@ -3,29 +3,30 @@
 use yii\helpers\Html;
 use yii\grid\GridView;
 
-/* @var $this yii\web\View */
-/* @var $searchModel common\models\StaffSearch */
-/* @var $dataProvider yii\data\ActiveDataProvider */
-
-$this->title = 'Staff';
+$this->title = 'Danh sách nhân viên trực';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="staff-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h4><?= Html::encode($this->title) ?></h4>
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('Create Staff', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+//        'filterModel' => $searchModel,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'options' => [
+                    'width' => '5%',
+                ]
+            ],
+            [
+                'attribute' => 'id',
+                'options' => [
+                    'width' => '7%',
+                ]
+            ],
             'fullname',
             'mobile',
             'email:email',
