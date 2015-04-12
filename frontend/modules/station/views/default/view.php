@@ -18,8 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
     </tr>
     <tr>
         <th width="5%">#</th>
-        <th width="40%">Tên thiết bị</th>
-        <th width="15%">Tình trạng</th>
+        <th width="50%">Tên thiết bị</th>
+        <th width="10%">Tình trạng</th>
         <th>Thiết lập</th>
     </tr>
 
@@ -66,9 +66,9 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="detail-view table table-hover table-bordered">
     <tr>
         <th width="5%">#</th>
-        <th>Điện áp</th>
+        <th width="10%">Điện áp</th>
         <th width="40%">Thiết bị</th>
-        <th>Dòng điện</th>
+        <th width="10%">Dòng điện</th>
         <th>Điện áp nửa tố</th>
         <th>Nhiệt độ</th>
         <th width="15%">Tình trạng</th>
