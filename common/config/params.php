@@ -9,4 +9,5 @@ return [
     'unit_amperage' => 'A',
     'unit_voltage' => 'V',
     'unit_temperature' => 'C',
+    'unit_humidity' => '%',
 ];

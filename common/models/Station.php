@@ -21,6 +21,15 @@ class Station extends Base
     // array equipment id
     public $equipment = [];
 
+    // object dc status
+    public $dc_status;
+
+    // array dc equipment status
+    public $dc_equip_status;
+
+    // array sensor status
+    public $sensor_status;
+
     public static function tableName()
     {
         return 'station';

@@ -3,28 +3,16 @@
 namespace common\models;
 
 use Yii;
+use common\models\Base;
 
-/**
- * This is the model class for table "sensor".
- *
- * @property integer $id
- * @property string $name
- *
- * @property SensorStatus[] $sensorStatuses
- */
-class Sensor extends \yii\db\ActiveRecord
+class Sensor extends Base
 {
-    /**
-     * @inheritdoc
-     */
+
     public static function tableName()
     {
         return 'sensor';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
@@ -33,9 +21,6 @@ class Sensor extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
@@ -44,9 +29,6 @@ class Sensor extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getSensorStatuses()
     {
         return $this->hasMany(SensorStatus::className(), ['sensor_id' => 'id']);

@@ -8,6 +8,11 @@ use common\models\Area;
 use common\models\Center;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
+use common\models\DcStatus;
+use common\models\DcEquipment;
+use common\models\DcEquipmentStatus;
+use common\models\Sensor;
+use common\models\SensorStatus;
 use common\controllers\FrontendController;
 
 use yii\data\ActiveDataProvider;
@@ -31,6 +36,7 @@ class DefaultController extends FrontendController
     // index action
     public function actionIndex()
     {
+        $this->writeStationLocator();
         $dataProvider = new ActiveDataProvider([
             'query' => Station::find(),
         ]);
@@ -55,11 +61,17 @@ class DefaultController extends FrontendController
                 // get station id
                 $stationId = Yii::$app->db->lastInsertID;
 
-                // insert equipments for station
-                $this->setEquipment($post['equipments'], $stationId, $post['code']);
+                // initial dc
+                $this->initDc($stationId);
 
-                return $this->redirect(['index']);
+                // insert equipments for station
+                $this->setEquipment($post['equipments'], $stationId, $model->code);
+
+                // initial sensors
+                $this->initSensor($stationId);
             }
+
+            return $this->redirect(['index']);
         } else {
 
             // parse data
@@ -178,6 +190,40 @@ class DefaultController extends FrontendController
                 }
             }
 
+            // get dc
+            $model->dc_status = DcStatus::findOne(['station_id' => $id]);
+            $dcEquips = DcEquipmentStatus::findAll(['station_id' => $id]);
+            if (!empty($dcEquips)) {
+                foreach ($dcEquips as $dcEquip) {
+                    $equip = DcEquipment::findOne(['id' => $dcEquip->equipment_id]);
+
+                    $model->dc_equip_status[] = [
+                        'equipment_id' => $dcEquip->equipment_id,
+                        'name' => $equip->name,
+                        'amperage' => $dcEquip->amperage,
+                        'voltage' => $dcEquip->voltage,
+                        'temperature' => $dcEquip->temperature,
+                        'status' => $dcEquip->status,
+                    ];
+                }
+            }
+
+            // get sensor status
+            $sensorStatus = SensorStatus::findAll(['station_id' => $id]);
+            if (!empty($sensorStatus)) {
+                foreach ($sensorStatus as $sensorStatus) {
+                    $sensor = Sensor::findOne(['id' => $sensorStatus->sensor_id]);
+
+                    $model->sensor_status[] = [
+                        'sensor_id' => $sensorStatus->sensor_id,
+                        'name' => $sensor->name,
+                        'unit' => $sensor->unit_type,
+                        'value' => $sensorStatus->value,
+                        'status' => $sensorStatus->status,
+                    ];
+                }
+            }
+
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -222,6 +268,72 @@ class DefaultController extends FrontendController
                     ->batchInsert('equipment_status', ['equipment_id', 'station_id', 'station_code'], $data)
                     ->execute();
             }
+        }
+    }
+
+    // initial dc
+    public function initDc($stationId) {
+        if ($stationId > 0) {
+
+            // insert dc status
+            $dcModel = new DcStatus();
+            $dcModel->station_id = $stationId;
+            $dcModel->voltage = 0;
+            $dcModel->save();
+
+            // insert dc equipment status
+            $dcEquips = DcEquipment::find()->all();
+
+            if (!empty($dcEquips)) {
+                foreach ($dcEquips as $dcEquip) {
+                    $dataEquipStatus[] = [$stationId, $dcEquip->id];
+                }
+
+                Yii::$app->db->createCommand()
+                    ->batchInsert('dc_equipment_status', ['station_id', 'equipment_id'], $dataEquipStatus)
+                    ->execute();
+            }
+        }
+    }
+
+    // initial sensor status
+    public function initSensor($stationId) {
+        if ($stationId > 0) {
+            $sensors = Sensor::find()->all();
+            if (!empty($sensors)) {
+                foreach ($sensors as $sensor) {
+                    $data[] = [$sensor->id, $stationId];
+                }
+
+                Yii::$app->db->createCommand()
+                    ->batchInsert('sensor_status', ['sensor_id', 'station_id'], $data)
+                    ->execute();
+            }
+        }
+    }
+
+    // put station locator to locators file in json type
+    public function writeStationLocator() {
+        $stations = Station::find()->all();
+        if (!empty($stations)) {
+            foreach ($stations as $station) {
+                $center = Center::findOne($station->center_id);
+                $area = Area::findOne($station->area_id);
+                $data[] = [
+                    'id' => $station->id,
+                    'locname' => $station->name,
+                    'lat' => $station->latitude,
+                    'lng' => $station->longtitude,
+                    'city' => $center->name,
+                    'state' => $area->name,
+                    'postal' => 10000,
+                    'phone' => $station->phone,
+                ];
+            }
+            $json = json_encode($data);
+            $handle = fopen('locations.json', 'w');
+            fwrite($handle, $json);
+            fclose($handle);
         }
     }
 

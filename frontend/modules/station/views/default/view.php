@@ -1,5 +1,7 @@
 <?php
 use common\models\EquipmentStatus;
+use common\models\DcEquipmentStatus;
+use common\models\SensorStatus;
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'DS Trạm', 'url' => ['index']];
@@ -76,41 +78,33 @@ $this->params['breadcrumbs'][] = $this->title;
     <tr>
         <td rowspan="2" style="vertical-align: middle; text-align: center">Tủ DC</td>
         <td rowspan="2" style="vertical-align: middle; text-align: center">
-            <div class="kv-attribute">53.5 V</div>
+            <div class="kv-attribute"><?= $model->dc_status->voltage . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
         </td>
-        <td>
-            <div class="kv-attribute">Tủ ắc quy 1</div>
-        </td>
-        <td>
-            <div class="kv-attribute">5.4 A</div>
-        </td>
-        <td>
-            <div class="kv-attribute">28.4 V</div>
-        </td>
-        <td>
-            <div class="kv-attribute">54 C</div>
-        </td>
-        <td>
-            <div class="kv-attribute">Bình thường</div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div class="kv-attribute">Tủ ắc quy 2</div>
-        </td>
-        <td>
-            <div class="kv-attribute">5.4 A</div>
-        </td>
-        <td>
-            <div class="kv-attribute">28.4 V</div>
-        </td>
-        <td>
-            <div class="kv-attribute">54 C</div>
-        </td>
-        <td>
-            <div class="kv-attribute">Bình thường</div>
-        </td>
-    </tr>
+
+        <?php
+        if (!empty($model->dc_equip_status)) {
+            foreach ($model->dc_equip_status as $equipStatus) {
+                ?>
+                <td>
+                    <div class="kv-attribute"><?=$equipStatus['name']?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?= $equipStatus['amperage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?= $equipStatus['temperature'] . '&nbsp;' . Yii::$app->params['unit_temperature'] ?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?=DcEquipmentStatus::getStatus($equipStatus['status'])?></div>
+                </td>
+                </tr>
+                <?php
+            }
+        }
+        ?>
 </table>
 
 <table class="detail-view table table-hover table-bordered">
@@ -122,24 +116,26 @@ $this->params['breadcrumbs'][] = $this->title;
         <th width="40%">Cảm biến</th>
         <th width="45%">Tình trạng</th>
     </tr>
-    <tr>
-        <th style="text-align: center">1</th>
-        <td>
-            <div class="kv-attribute">Nhiệt độ (C)</div>
-        </td>
-        <td>
-            <div class="kv-attribute">27.1</div>
-        </td>
-    </tr>
-    <tr>
-        <th style="text-align: center">2</th>
-        <td>
-            <div class="kv-attribute">Độ ẩm (%)</div>
-        </td>
-        <td>
-            <div class="kv-attribute">50</div>
-        </td>
-    </tr>
+
+    <?php
+    if (!empty($model->sensor_status)) {
+        $no = 1;
+        foreach ($model->sensor_status as $status) {
+            ?>
+            <tr>
+                <th style="text-align: center"><?=$no?></th>
+                <td>
+                    <div class="kv-attribute"><?= $status['name'] . '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' ?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?=$status['value']?></div>
+                </td>
+            </tr>
+            <?php
+            $no++;
+        }
+    }
+    ?>
 </table>
 
 <table class="detail-view table table-hover table-bordered">
