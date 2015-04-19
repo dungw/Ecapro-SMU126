@@ -25,6 +25,12 @@ return [
         'staff' => [
             'class' => 'frontend\modules\staff\Staff',
         ],
+        'equipment' => [
+            'class' => 'frontend\modules\equipment\Equipment',
+        ],
+        'message' => [
+            'class' => 'frontend\modules\message\Message',
+        ],
     ],
     'components' => [
         'user' => [

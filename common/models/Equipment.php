@@ -3,46 +3,33 @@
 namespace common\models;
 
 use Yii;
+use common\models\Base;
 
-/**
- * This is the model class for table "equipment".
- *
- * @property integer $id
- * @property string $name
- * @property integer $active
- */
-class Equipment extends \yii\db\ActiveRecord
+class Equipment extends Base
 {
     const STATUS_ACTIVE = 1;
 
-    /**
-     * @inheritdoc
-     */
     public static function tableName()
     {
         return 'equipment';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
             [['name'], 'required'],
             [['active'], 'integer'],
-            [['name'], 'string', 'max' => 255]
+            [['name'], 'string', 'max' => 255],
+            [['sort'], 'string', 'max' => 10]
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
             'name' => 'Tên thiết bị',
+            'sort' => 'Thứ tự',
             'active' => 'Active',
         ];
     }

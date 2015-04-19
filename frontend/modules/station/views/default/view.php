@@ -78,7 +78,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <tr>
         <td rowspan="2" style="vertical-align: middle; text-align: center">Tủ DC</td>
         <td rowspan="2" style="vertical-align: middle; text-align: center">
-            <div class="kv-attribute"><?= $model->dc_status->voltage . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
+            <div class="kv-attribute"><?= isset($model->dc_status->voltage) ? $model->dc_status->voltage : '' . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
         </td>
 
         <?php

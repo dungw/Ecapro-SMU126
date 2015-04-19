@@ -6,9 +6,6 @@ use yii\bootstrap\NavBar;
 use yii\widgets\Breadcrumbs;
 use yii\helpers\Url;
 
-/* @var $this \yii\web\View */
-/* @var $content string */
-
 AppAsset::register($this);
 ?>
 <?php $this->beginPage() ?>
@@ -24,7 +21,7 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <?php $this->registerCssFile(Yii::$app->homeUrl . 'css/custom-styles.css') ?>
-    <script type="text/javascript" src="<?php echo Yii::$app->homeUrl . '/js/jquery.js' ?>"></script>
+    <script src="<?php echo Yii::$app->homeUrl . 'js/jquery-1.10.1.min.js' ?>"></script>
 
 </head>
 <body>
@@ -47,7 +44,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; JogCom <?= date('Y') ?></p>
+        <p class="pull-left">&copy; Ecapro <?= date('Y') ?></p>
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>

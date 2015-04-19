@@ -91,3 +91,4 @@ h1, .h1, h2, .h2, h3, .h3 {
 .dropdown-menu { font-size: 12px !important; }
 .dropdown-menu li { border-bottom: 1px dotted #A9A9A9; }
 .dropdown-menu li:last-child { border-bottom: none; }
+.dropdown-menu li a { padding: 5px 20px !important; }

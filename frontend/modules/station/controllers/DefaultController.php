@@ -13,6 +13,7 @@ use common\models\DcEquipment;
 use common\models\DcEquipmentStatus;
 use common\models\Sensor;
 use common\models\SensorStatus;
+use common\models\StationStatus;
 use common\controllers\FrontendController;
 
 use yii\data\ActiveDataProvider;
@@ -36,7 +37,6 @@ class DefaultController extends FrontendController
     // index action
     public function actionIndex()
     {
-        $this->writeStationLocator();
         $dataProvider = new ActiveDataProvider([
             'query' => Station::find(),
         ]);
@@ -173,6 +173,18 @@ class DefaultController extends FrontendController
         return $this->render('view', $parseData);
     }
 
+    // statistic status action
+    public function actionStatus($id) {
+
+        $parseData['model'] = $this->findModel($id);
+
+        $parseData['status'] = StationStatus::findAll(['station_id' => $id]);
+
+        $this->setDetailLeftMenu($id);
+
+        return $this->render('status', $parseData);
+    }
+
     // find model
     protected function findModel($id)
     {
@@ -236,9 +248,7 @@ class DefaultController extends FrontendController
             ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'],
             ['label' => 'Thông tin chi tiết', 'url' => '/station/default/view?id='. $id],
             ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id],
-            ['label' => 'Tham số', 'url' => '/station/default/configure?id='. $id],
-            ['label' => 'Tình trạng điện', 'url' => '/station/default/electric?id='. $id],
-            ['label' => 'Cảnh báo', 'url' => '/station/default/warning?id='. $id],
+            ['label' => 'Thống kê trạng thái', 'url' => '/station/default/status?id='. $id],
         ];
         $this->module->menus = $menu;
     }
@@ -312,43 +322,4 @@ class DefaultController extends FrontendController
         }
     }
 
-    // put station locator to locators file in json type
-    public function writeStationLocator() {
-        $stations = Station::find()->all();
-        if (!empty($stations)) {
-            foreach ($stations as $station) {
-                $center = Center::findOne($station->center_id);
-                $area = Area::findOne($station->area_id);
-                $data[] = [
-                    'id' => $station->id,
-                    'locname' => $station->name,
-                    'lat' => $station->latitude,
-                    'lng' => $station->longtitude,
-                    'city' => $center->name,
-                    'state' => $area->name,
-                    'postal' => 10000,
-                    'phone' => $station->phone,
-                ];
-            }
-            $json = json_encode($data);
-            $handle = fopen('locations.json', 'w');
-            fwrite($handle, $json);
-            fclose($handle);
-        }
-    }
-
-    // statistic electric status
-    public function actionElectric($id) {
-
-    }
-
-    // statistic configure status
-    public function actionConfigure($id) {
-
-    }
-
-    // statistic warning
-    public function actionWarning($id) {
-
-    }
 }

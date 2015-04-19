@@ -7,9 +7,17 @@ use common\models\Base;
 
 class Station extends Base
 {
+    const STATUS_CONNECTED = 1;
+    const STATUS_LOST = 0;
+
     public static $types = [
         ['type' => 1, 'name' => 'BTS có ATS'],
         ['type' => 2, 'name' => 'BTS không có ATS'],
+    ];
+
+    public $_statusData = [
+        self::STATUS_LOST => 'Mất kết nối',
+        self::STATUS_CONNECTED => 'Đang kết nối',
     ];
 
     // object area
@@ -39,7 +47,7 @@ class Station extends Base
     {
         return [
             [['code', 'name'], 'required'],
-            [['center_id', 'area_id', 'type', 'staff_id'], 'integer'],
+            [['center_id', 'area_id', 'type', 'staff_id', 'status'], 'integer'],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
             [['name', 'firmware'], 'string', 'max' => 255],
@@ -69,6 +77,7 @@ class Station extends Base
             'longtitude' => 'Kinh độ',
             'phone' => 'Số điện thoại',
             'email' => 'Email',
+            'status' => 'Trạng thái'
         ];
     }
 
@@ -99,6 +108,13 @@ class Station extends Base
             if ($t['type'] == $type) return $t['name'];
         }
 
+        return null;
+    }
+
+    // get status of station
+    public function getStatus($status) {
+        $allStatus = $this->_statusData;
+        if (isset($allStatus[$status])) return $allStatus[$status];
         return null;
     }
 

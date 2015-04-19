@@ -23,6 +23,8 @@ if (!Yii::$app->user->isGuest) {
             'items' => [
                 ['label' => 'Trung tâm', 'url' => ['/center/default/index'], 'active' => ($module == 'center')],
                 ['label' => 'Khu vực', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
+                ['label' => 'Thiết bị', 'url' => ['/equipment/default/index'], 'active' => ($module == 'equipment')],
+                ['label' => 'Thông báo', 'url' => ['/message/default/index'], 'active' => ($module == 'message')],
                 ['label' => 'Nhân viên trực', 'url' => ['/staff/default/index'], 'active' => ($module == 'staff')],
             ]
         ],

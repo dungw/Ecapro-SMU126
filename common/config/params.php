@@ -10,4 +10,5 @@ return [
     'unit_voltage' => 'V',
     'unit_temperature' => 'C',
     'unit_humidity' => '%',
+    'binary_length' => 10,
 ];

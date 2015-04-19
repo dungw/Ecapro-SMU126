@@ -3,6 +3,8 @@ namespace frontend\controllers;
 
 use Yii;
 use common\models\LoginForm;
+use common\models\Station;
+use common\models\Area;
 use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
@@ -74,11 +76,39 @@ class SiteController extends FrontendController
 
     public function actionIndex()
     {
-
         if (Yii::$app->user->isGuest) {
             $this->doLogin();
         }
+
+        $this->writeStationLocator();
+
         return $this->render('index');
+    }
+
+    // put station locator to locators file in json type
+    public function writeStationLocator() {
+        $stations = Station::find()->all();
+        if (!empty($stations)) {
+            foreach ($stations as $station) {
+                $area = Area::findOne($station->area_id);
+                $data[] = [
+                    'id' => $station->id,
+                    'name' => $station->name,
+                    'lat' => $station->latitude,
+                    'lng' => $station->longtitude,
+                    'area' => 'Khu vực '.$area->name,
+                    'phone' => $station->phone,
+                    'detail_url' => '/station/default/view?id='. $station->id,
+//                    'staff' =>
+                ];
+            }
+
+            $json = json_encode($data);
+            $handle = fopen('locations.json', 'r+');
+            fwrite($handle, $json);
+            fclose($handle);
+            file_put_contents('locations.json', $json);
+        }
     }
 
     public function actionLogin()

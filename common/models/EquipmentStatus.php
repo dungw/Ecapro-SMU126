@@ -4,6 +4,8 @@ namespace common\models;
 
 use Yii;
 use common\models\Base;
+use common\components\helpers\Convert;
+use yii\db\Query;
 
 class EquipmentStatus extends Base
 {
@@ -55,5 +57,30 @@ class EquipmentStatus extends Base
     public function getStationCode()
     {
         return $this->hasOne(Station::className(), ['code' => 'station_code']);
+    }
+
+    // update equipment status
+    public function updateStatus($stationId, $decimal) {
+        $binary = Convert::dec2Bin($decimal, 10);
+
+        // get equipments
+        $query = new Query;
+
+        $query->select('b1.*, b2.sort')
+            ->from('equipment_status b1')
+            ->leftJoin('equipment b2', 'b1.equipment_id = b2.id')
+            ->where(['station_id' => $stationId]);
+
+        $equipments = $query->createCommand()->queryAll();
+
+        if (!empty($equipments)) {
+            foreach ($equipments as $e) {
+                Yii::$app->db->createCommand()
+                    ->update('equipment_status', ['status' => $binary[$e['sort']]], [
+                        'station_id' => $stationId,
+                        'equipment_id' => $e['equipment_id']]
+                    )->execute();
+            }
+        }
     }
 }
