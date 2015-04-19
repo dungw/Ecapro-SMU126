@@ -4,13 +4,13 @@ namespace app\modules\equipment\controllers;
 
 use Yii;
 use common\models\Equipment;
-use common\controllers\BaseController;
+use common\controllers\FrontendController;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
-class DefaultController extends BaseController
+class DefaultController extends FrontendController
 {
     public $enableCsrfValidation = false;
 

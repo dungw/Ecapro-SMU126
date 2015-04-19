@@ -20,9 +20,9 @@ $this->params['breadcrumbs'][] = $this->title;
     </tr>
     <tr>
         <th width="5%">#</th>
-        <th width="50%">Tên thiết bị</th>
+        <th>Tên thiết bị</th>
         <th width="10%">Tình trạng</th>
-        <th>Thiết lập</th>
+        <th width="30%">Thiết lập</th>
     </tr>
 
     <?php
@@ -68,19 +68,12 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="detail-view table table-hover table-bordered">
     <tr>
         <th width="5%">#</th>
-        <th width="10%">Điện áp</th>
-        <th width="40%">Thiết bị</th>
-        <th width="10%">Dòng điện</th>
-        <th>Điện áp nửa tố</th>
-        <th>Nhiệt độ</th>
-        <th width="15%">Tình trạng</th>
+        <th>Thiết bị</th>
+        <th width="20%">Dòng điện</th>
+        <th width="20%">Điện áp</th>
     </tr>
     <tr>
         <td rowspan="2" style="vertical-align: middle; text-align: center">Tủ DC</td>
-        <td rowspan="2" style="vertical-align: middle; text-align: center">
-            <div class="kv-attribute"><?= isset($model->dc_status->voltage) ? $model->dc_status->voltage : '' . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
-        </td>
-
         <?php
         if (!empty($model->dc_equip_status)) {
             foreach ($model->dc_equip_status as $equipStatus) {
@@ -93,12 +86,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 </td>
                 <td>
                     <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
-                </td>
-                <td>
-                    <div class="kv-attribute"><?= $equipStatus['temperature'] . '&nbsp;' . Yii::$app->params['unit_temperature'] ?></div>
-                </td>
-                <td>
-                    <div class="kv-attribute"><?=DcEquipmentStatus::getStatus($equipStatus['status'])?></div>
                 </td>
                 </tr>
                 <?php
@@ -145,7 +132,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <tr>
         <th width="5%">#</th>
         <th width="40%">Hạng mục</th>
-        <th width="45%">Tình trạng</th>
+        <th width="45%">Thông số</th>
     </tr>
     <tr>
         <th style="text-align: center">1</th>
@@ -186,7 +173,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <tr>
         <td width="50%">
             <div class="kv-attribute">
-                <b>Người trực: </b><span><?php echo $model->staff_id ?></span>
+                <b>Người trực: </b><span><?php echo $model->staff ?></span>
             </div>
         </td>
         <td width="50%">

@@ -15,7 +15,8 @@ class Show extends BaseHtml {
         return implode('', $html);
     }
 
-    public static function activeDropDownList($model, $attribute, $labels, $items, $options = ['class' => 'form-select'], $errors = []) {
+    public static function activeDropDownList($model, $attribute, $labels, $items, $options = [], $errors = []) {
+        $options = empty($options) ? ['class' => 'form-select'] : $options;
         $html = '<div class="form-group">';
         $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
         $html .= parent::activeDropDownList($model, $attribute, $items, $options);
@@ -42,7 +43,8 @@ class Show extends BaseHtml {
     }
 
     public static function input($type = '', $model, $attribute, $labels, $options = [], $errors = []) {
-        if ($type) $type = 'text';
+        $type = ($type == '') ? 'text' : $type;
+
         if (empty($options)) $options = ['class' => 'form-control'];
         $value = (is_object($model) && isset($model->$attribute)) ? $model->attribute : '';
         $html = '<div class="form-group">';

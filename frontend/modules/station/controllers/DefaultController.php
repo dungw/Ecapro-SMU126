@@ -14,6 +14,8 @@ use common\models\DcEquipmentStatus;
 use common\models\Sensor;
 use common\models\SensorStatus;
 use common\models\StationStatus;
+use common\models\Role;
+use common\models\User;
 use common\controllers\FrontendController;
 
 use yii\data\ActiveDataProvider;
@@ -37,8 +39,10 @@ class DefaultController extends FrontendController
     // index action
     public function actionIndex()
     {
+        $condition = isset(Yii::$app->session['station_ids']) ? ['id' => Yii::$app->session['station_ids']] : [];
+
         $dataProvider = new ActiveDataProvider([
-            'query' => Station::find(),
+            'query' => Station::find()->where($condition),
         ]);
 
         return $this->render('index', [
@@ -56,6 +60,9 @@ class DefaultController extends FrontendController
             $model->load($post);
 
             if ($model->validate()) {
+
+                // created by logged in user
+                $model->user_id = Yii::$app->user->id;
                 $model->save();
 
                 // get station id
@@ -103,6 +110,7 @@ class DefaultController extends FrontendController
     // update action
     public function actionUpdate($id)
     {
+
         $model = $this->findModel($id);
 
         $post = Yii::$app->request->post();
@@ -151,8 +159,6 @@ class DefaultController extends FrontendController
     // delete action
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
-
         return $this->redirect(['index']);
     }
 
@@ -188,6 +194,11 @@ class DefaultController extends FrontendController
     // find model
     protected function findModel($id)
     {
+        // check belong ids
+        if (isset(Yii::$app->session['station_ids']) && !in_array($id, Yii::$app->session['station_ids'])) {
+            $this->permissionDeny();
+        }
+
         if (($model = Station::findOne($id)) !== null) {
 
             // find area & center
@@ -244,12 +255,14 @@ class DefaultController extends FrontendController
 
     // change left menu function
     protected function setDetailLeftMenu($id) {
-        $menu = [
-            ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'],
-            ['label' => 'Thông tin chi tiết', 'url' => '/station/default/view?id='. $id],
-            ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id],
-            ['label' => 'Thống kê trạng thái', 'url' => '/station/default/status?id='. $id],
-        ];
+        $menu = [];
+        if (Yii::$app->session['user_position'] == Role::POSITION_ADMINISTRATOR || Yii::$app->session['user_position'] == Role::POSITION_ADMIN) {
+            $menu[] = ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'];
+            $menu[] = ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id];
+        }
+        $menu[] = ['label' => 'Thông tin chi tiết', 'url' => '/station/default/view?id='. $id];
+        $menu[] = ['label' => 'Thống kê trạng thái', 'url' => '/station/default/status?id='. $id];
+
         $this->module->menus = $menu;
     }
 

@@ -4,6 +4,7 @@ namespace app\modules\warning\controllers;
 
 use Yii;
 use common\models\Warning;
+use common\controllers\FrontendController;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -12,7 +13,7 @@ use yii\filters\VerbFilter;
 /**
  * DefaultController implements the CRUD actions for Warning model.
  */
-class DefaultController extends Controller
+class DefaultController extends FrontendController
 {
     public function behaviors()
     {

@@ -2,6 +2,7 @@
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
 use yii\base\Module;
+use common\models\Role;
 
 // get current controller
 $module = $this->context->module->id;
@@ -18,17 +19,30 @@ if (!Yii::$app->user->isGuest) {
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
         ['label' => 'Quản lý trạm', 'url' => ['/station/default/index'], 'active' => ($module == 'station')],
-        [
+
+    ];
+
+    // add by position
+    if (Yii::$app->session['user_position'] == Role::POSITION_ADMINISTRATOR) {
+        $menuItems[] = [
             'label' => 'Cài đặt',
             'items' => [
                 ['label' => 'Trung tâm', 'url' => ['/center/default/index'], 'active' => ($module == 'center')],
                 ['label' => 'Khu vực', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
                 ['label' => 'Thiết bị', 'url' => ['/equipment/default/index'], 'active' => ($module == 'equipment')],
                 ['label' => 'Thông báo', 'url' => ['/message/default/index'], 'active' => ($module == 'message')],
-                ['label' => 'Nhân viên trực', 'url' => ['/staff/default/index'], 'active' => ($module == 'staff')],
+                ['label' => 'Người dùng', 'url' => ['/user/default/index'], 'active' => ($module == 'user')],
             ]
-        ],
-    ];
+        ];
+    }
+    else if (Yii::$app->session['user_position'] == Role::POSITION_ADMIN) {
+        $menuItems[] = [
+            'label' => 'Cài đặt',
+            'items' => [
+                ['label' => 'Người dùng', 'url' => ['/user/default/index'], 'active' => ($module == 'user')],
+            ]
+        ];
+    }
 
     if (Yii::$app->user->isGuest) {
         $menuItems[] = ['label' => 'Login', 'url' => ['/site/login']];

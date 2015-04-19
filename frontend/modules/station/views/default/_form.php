@@ -23,7 +23,7 @@ $attributeLabels = $model->attributeLabels();
 
     <?= Show::multiSelect('equipments', $equipmentIds, $equipments, 'id', 'name', $attributeLabels) ?>
 
-    <?= $form->field($model, 'staff_id')->textInput() ?>
+    <?= $form->field($model, 'staff')->textInput() ?>
 
     <?= $form->field($model, 'firmware')->textInput(['maxlength' => 255]) ?>
 

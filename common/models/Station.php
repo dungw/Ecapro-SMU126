@@ -47,12 +47,12 @@ class Station extends Base
     {
         return [
             [['code', 'name'], 'required'],
-            [['center_id', 'area_id', 'type', 'staff_id', 'status'], 'integer'],
+            [['center_id', 'area_id', 'type', 'status', 'user_id'], 'integer'],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
             [['name', 'firmware'], 'string', 'max' => 255],
             [['picture_ip', 'video_ip', 'latitude', 'longtitude'], 'string', 'max' => 20],
-            [['email'], 'string', 'max' => 50],
+            [['email', 'staff'], 'string', 'max' => 50],
             [['code'], 'unique']
         ];
     }
@@ -68,7 +68,7 @@ class Station extends Base
             'area_id' => 'Khu vực',
             'type' => 'Loại trạm',
             'firmware' => 'Firmware',
-            'staff_id' => 'Nhân viên trực',
+            'staff' => 'Nhân viên trực',
             'equipments' => 'Thiết bị',
             'addition' => 'Thông tin thêm',
             'picture_ip' => 'IP chụp ảnh',

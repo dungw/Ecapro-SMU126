@@ -11,6 +11,7 @@ return [
     'homeUrl' => '/',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'timeZone' => 'Asia/Ho_Chi_Minh',
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
         'station' => [
@@ -30,6 +31,9 @@ return [
         ],
         'message' => [
             'class' => 'frontend\modules\message\Message',
+        ],
+        'user' => [
+            'class' => 'frontend\modules\user\User',
         ],
     ],
     'components' => [
@@ -59,6 +63,10 @@ return [
             'rules' => [
 
             ],
+        ],
+        'response' => [
+            'format' => yii\web\Response::FORMAT_HTML,
+            'charset' => 'UTF-8',
         ],
     ],
     'params' => $params,

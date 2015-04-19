@@ -1,6 +1,8 @@
 <?php
 namespace common\modules;
 
+use \Yii;
+use frontend\models\SignupForm;
 use yii\base\Module;
 
 class Base extends Module {
@@ -16,6 +18,7 @@ class Base extends Module {
         parent::init();
 
         // custom initialization code goes here
+
     }
 
 }

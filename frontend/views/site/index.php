@@ -1,6 +1,6 @@
 <?php
 
-$this->title = 'My Yii Application';
+$this->title = Yii::$app->params['brandName'] . ' ' . Yii::$app->params['projectName'];
 ?>
 <?php $this->registerCssFile(Yii::$app->homeUrl . 'css/storelocator/map.css') ?>
 <script src="http://maps.google.com/maps/api/js?sensor=false"></script>
@@ -11,7 +11,6 @@ $this->title = 'My Yii Application';
 
     <div class="body-content">
         <div class="row">
-<!--            <div class="col-sm-2"></div>-->
 
             <div class="col-sm-12">
 <!--                <div id="form-container">-->

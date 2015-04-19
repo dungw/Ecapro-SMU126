@@ -3,6 +3,7 @@ namespace common\models;
 
 use Yii;
 use yii\base\Model;
+use frontend\models\SignupForm;
 
 /**
  * Login form
@@ -60,7 +61,9 @@ class LoginForm extends Model
         if ($this->validate()) {
             $duration = $this->rememberMe ? $this->rememberDuration : 300;
 
-            return Yii::$app->user->login($this->getUser(), $duration);
+            $user = Yii::$app->user->login($this->getUser(), $duration);
+
+            return $user;
         } else {
             return false;
         }
