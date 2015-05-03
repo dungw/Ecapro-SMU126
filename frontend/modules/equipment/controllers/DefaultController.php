@@ -28,28 +28,13 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
-        $parseData['ids'] = '';
-        $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
-        if (!empty($parseData['equipments'])) {
-            foreach ($parseData['equipments'] as $e) {
-                $parseData['ids'] .= ',' . $e->id;
-            }
-        }
+        $dataProvider = new ActiveDataProvider([
+            'query' => Equipment::find(),
+        ]);
 
-        $post = Yii::$app->request->post();
-
-        if ($post && $post['ids'] != '') {
-            $sort = $post['sort'];
-            $ids = explode(',', trim($post['ids'], ','));
-            foreach ($ids as $id) {
-                $sql = 'UPDATE equipment SET sort = '. $sort[$id] .' WHERE id = '. $id;
-                Yii::$app->db->createCommand($sql)->execute();
-            }
-
-            $this->redirect(['index']);
-        }
-
-        return $this->render('index', $parseData);
+        return $this->render('index', [
+            'dataProvider' => $dataProvider,
+        ]);
     }
 
     public function actionView($id)
@@ -63,8 +48,14 @@ class DefaultController extends FrontendController
     {
         $model = new Equipment();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($model->load(Yii::$app->request->post())) {
+
+            $count = Equipment::find()->count();
+            $model->binary_pos = ++$count;
+
+            $model->save();
+
+            return $this->redirect(['index']);
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -77,7 +68,7 @@ class DefaultController extends FrontendController
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['index']);
         } else {
             return $this->render('update', [
                 'model' => $model,

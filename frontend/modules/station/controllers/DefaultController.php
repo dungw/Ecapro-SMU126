@@ -15,9 +15,9 @@ use common\models\Sensor;
 use common\models\SensorStatus;
 use common\models\StationStatus;
 use common\models\Role;
-use common\models\User;
+use common\models\PowerEquipment;
+use common\models\PowerStatus;
 use common\controllers\FrontendController;
-
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -39,7 +39,10 @@ class DefaultController extends FrontendController
     // index action
     public function actionIndex()
     {
-        $condition = isset(Yii::$app->session['station_ids']) ? ['id' => Yii::$app->session['station_ids']] : [];
+        // session
+        $session = Yii::$app->session;
+
+        $condition = isset($session['station_ids']) ? ['id' => $session['station_ids']] : [];
 
         $dataProvider = new ActiveDataProvider([
             'query' => Station::find()->where($condition),
@@ -48,6 +51,57 @@ class DefaultController extends FrontendController
         return $this->render('index', [
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    // statistic status action
+    public function actionStatus($id) {
+        $model = $this->findModel($id);
+        $parseData['model'] = $model;
+
+        $parseData['dataProvider'] = new ActiveDataProvider([
+            'query' => StationStatus::find()
+                    ->where(['station_id' => $id])
+                    ->orderBy('time_update DESC'),
+
+        ]);
+
+        $this->setDetailLeftMenu($id);
+
+        return $this->render('status', $parseData);
+    }
+
+//    public function actionFind() {
+//        $pathFile = Yii::getAlias('@webroot') . '/' . Yii::$app->params['json_station_file'];
+//        $data = json_decode( file_get_contents($pathFile), true);
+//
+//        $fdata = array_filter($data, function($text) {
+//            $reg = "/^".$_GET['q']."/i";	//initial case insensitive searching
+//            return (bool)@preg_match($reg, $text['name']);
+//        });
+//        $fdata = array_values($fdata);	//reset $fdata indexs
+//        $JSON = json_encode($fdata,true);
+//        @header("Content-type: application/json; charset=utf-8");
+//        echo $JSON;	//AJAX request
+//    }
+
+    public function actionFind() {
+        $station = Station::find()->select('id,name')->all();
+        $data = [];
+        if (!empty($station)) {
+            foreach ($station as $s) {
+                $data[] = ['id' => $s->id, 'name' => $s->name];
+            }
+        }
+
+        $result = array_filter($data, function($item) {
+            $reg = "/^".$_GET['q']."/i";
+            return (bool)@preg_match($reg, $item['name']);
+        });
+        $result = array_values($result);
+
+        $JSON = json_encode($result,true);
+        @header("Content-type: application/json; charset=utf-8");
+        echo $JSON;
     }
 
     // create action
@@ -74,6 +128,9 @@ class DefaultController extends FrontendController
                 // insert equipments for station
                 $this->setEquipment($post['equipments'], $stationId, $model->code);
 
+                // insert power equipments for station
+                $this->setPowerEquipment($post['power_equipments'], $stationId);
+
                 // initial sensors
                 $this->initSensor($stationId);
             }
@@ -92,6 +149,14 @@ class DefaultController extends FrontendController
                 }
             }
 
+            // get all power equipment
+            $parseData['powerEquipments'] = PowerEquipment::find()->all();
+            if (!empty($parseData['powerEquipments'])) {
+                foreach ($parseData['powerEquipments'] as $equipment) {
+                    $parseData['powerEquipmentIds'][] = $equipment->id;
+                }
+            }
+
             // get area
             $areaCollections = Area::find()->all();
             $parseData['areas'] = Area::_prepareDataSelect($areaCollections, 'id', 'name');
@@ -107,10 +172,33 @@ class DefaultController extends FrontendController
         }
     }
 
+    // update status action
+    public function actionUpdateStatus() {
+        $this->enableCsrfValidation = false;
+
+        $post = Yii::$app->request->post();
+        if (!empty($post)) {
+            $data = [];
+            $ids = $post['ids'];
+            $idArr = explode(',', $ids);
+            if (!empty($idArr)) {
+                foreach ($idArr as $id) {
+                    $station = Station::find()
+                        ->select('status')
+                        ->where(['id' => $id])
+                        ->one();
+
+                    $data['content'][$id] = $station['status'];
+                }
+            }
+
+            print json_encode($data);
+        }
+    }
+
     // update action
     public function actionUpdate($id)
     {
-
         $model = $this->findModel($id);
 
         $post = Yii::$app->request->post();
@@ -124,6 +212,9 @@ class DefaultController extends FrontendController
 
                 // update equipment
                 $this->setEquipment($post['equipments'], $id, $model->code);
+
+                // update power equipment
+                $this->setPowerEquipment($post['power_equipments'], $id);
             }
 
             return $this->redirect(['view', 'id' => $model->id]);
@@ -132,11 +223,21 @@ class DefaultController extends FrontendController
             // parse data
             $parseData = ['model' => $model];
 
+            // check if not has dc status and sensor status, then create them
+            if (!$model->dc_equip_status) $this->initDc($id);
+            if (!$model->sensor_status) $this->initSensor($id);
+
             // get all equipment
             $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
 
             // get equipment of station
             $parseData['equipmentIds'] = $model->equipment;
+
+            // get all power equipment
+            $parseData['powerEquipments'] = PowerEquipment::find()->all();
+
+            // get equipment of station
+            $parseData['powerEquipmentIds'] = $model->power_equipment;
 
             // get area
             $areaCollections = Area::find()->all();
@@ -165,6 +266,7 @@ class DefaultController extends FrontendController
     // detail action
     public function actionView($id)
     {
+
         $model = $this->findModel($id);
 
         // parse data
@@ -176,26 +278,20 @@ class DefaultController extends FrontendController
         // get equipment
         $parseData['equipments'] = $model->getEquipment($model->id, $model->equipment);
 
+        // get power equipment
+        $parseData['powerEquipments'] = $model->getPowerEquipment($model->id, $model->power_equipment);
+
         return $this->render('view', $parseData);
-    }
-
-    // statistic status action
-    public function actionStatus($id) {
-
-        $parseData['model'] = $this->findModel($id);
-
-        $parseData['status'] = StationStatus::findAll(['station_id' => $id]);
-
-        $this->setDetailLeftMenu($id);
-
-        return $this->render('status', $parseData);
     }
 
     // find model
     protected function findModel($id)
     {
+        // session
+        $session = Yii::$app->session;
+
         // check belong ids
-        if (isset(Yii::$app->session['station_ids']) && !in_array($id, Yii::$app->session['station_ids'])) {
+        if (isset($session['station_ids']) && !in_array($id, $session['station_ids'])) {
             $this->permissionDeny();
         }
 
@@ -210,6 +306,14 @@ class DefaultController extends FrontendController
             if (!empty($equipments)) {
                 foreach ($equipments as $equipment) {
                     $model->equipment[] = $equipment->equipment_id;
+                }
+            }
+
+            // get power equipment
+            $powerEquipments = PowerStatus::findAll(['station_id' => $id]);
+            if (!empty($powerEquipments)) {
+                foreach ($powerEquipments as $equipment) {
+                    $model->power_equipment[] = $equipment->item_id;
                 }
             }
 
@@ -238,6 +342,7 @@ class DefaultController extends FrontendController
                     $sensor = Sensor::findOne(['id' => $sensorStatus->sensor_id]);
 
                     $model->sensor_status[] = [
+                        'type' => $sensor->type,
                         'sensor_id' => $sensorStatus->sensor_id,
                         'name' => $sensor->name,
                         'unit' => $sensor->unit_type,
@@ -255,8 +360,12 @@ class DefaultController extends FrontendController
 
     // change left menu function
     protected function setDetailLeftMenu($id) {
+
+        // session
+        $session = Yii::$app->session;
+
         $menu = [];
-        if (Yii::$app->session['user_position'] == Role::POSITION_ADMINISTRATOR || Yii::$app->session['user_position'] == Role::POSITION_ADMIN) {
+        if ($session['user_position'] == Role::POSITION_ADMINISTRATOR || $session['user_position'] == Role::POSITION_ADMIN) {
             $menu[] = ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'];
             $menu[] = ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id];
         }
@@ -289,6 +398,33 @@ class DefaultController extends FrontendController
 
                 Yii::$app->db->createCommand()
                     ->batchInsert('equipment_status', ['equipment_id', 'station_id', 'station_code'], $data)
+                    ->execute();
+            }
+        }
+    }
+
+    // set power equipment
+    private function setPowerEquipment($ids, $stationId) {
+        if (!empty($ids) && $stationId > 0) {
+            $model = $this->findModel($stationId);
+
+            // delete excess equipment
+            $excessIds = array_diff($model->power_equipment, $ids);
+            if (!empty($excessIds)) {
+                foreach ($excessIds as $excessId) {
+                    PowerEquipment::deleteAll(['item_id' => $excessId, 'station_id' => $stationId]);
+                }
+            }
+
+            // add new equipment
+            $newIds = array_diff($ids, $model->power_equipment);
+            if (!empty($newIds)) {
+                foreach ($newIds as $newId) {
+                    $data[] = [$newId, $stationId];
+                }
+
+                Yii::$app->db->createCommand()
+                    ->batchInsert('power_status', ['item_id', 'station_id'], $data)
                     ->execute();
             }
         }
@@ -335,4 +471,30 @@ class DefaultController extends FrontendController
         }
     }
 
+    // send message to station
+    public function sendMessage() {
+        if (Yii::$app->request->isAjax) {
+            $post = Yii::$app->request->post();
+            if (isset($post['id']) && $post['id'] > 0) {
+                $station = Station::findOne($post['id']);
+                $ip = $station['ip'];
+                $port = $station['port'];
+                if ($ip != '' && $port != '') {
+                    $client = new Client();
+                    $init = $client->init($ip, $port);
+                    if ($init) {
+                        $send = $client->send($post['message']);
+                        if ($send) {
+                            print $client->returnMessage;
+                        } else {
+                            print $client->error;
+                        }
+                    } else {
+                        print $client->error;
+                    }
+                }
+            }
+        }
+        print 'failed';
+    }
 }

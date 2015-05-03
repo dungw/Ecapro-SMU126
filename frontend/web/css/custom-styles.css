@@ -33,6 +33,7 @@ h1, .h1, h2, .h2, h3, .h3 {
     max-width: 100px;
     max-height: 70px;
 }
+.detail-view td,th { vertical-align: middle !important; }
 
 .slice-box { overflow: hidden }
 .form-listbox, .form-select, .form-file { width: 30%; }
@@ -92,3 +93,10 @@ h1, .h1, h2, .h2, h3, .h3 {
 .dropdown-menu li { border-bottom: 1px dotted #A9A9A9; }
 .dropdown-menu li:last-child { border-bottom: none; }
 .dropdown-menu li a { padding: 5px 20px !important; }
+
+.gi-small { padding-top: 3px !important; padding-bottom: 3px !important; width: 100% }
+.delete-station { cursor: pointer; max-width: 12px; vertical-align: top !important; }
+.unread td { background-color: #FF796F !important; }
+.read td { background-color: white !important; }
+.loading { max-width: 15px; }
+.row { margin-bottom: 20px !important; }

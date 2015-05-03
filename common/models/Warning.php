@@ -3,60 +3,85 @@
 namespace common\models;
 
 use Yii;
+use yii\db\Query;
 
-/**
- * This is the model class for table "warning".
- *
- * @property integer $id
- * @property integer $warning_type
- * @property integer $station_id
- * @property string $message
- * @property string $picture
- * @property integer $warning_time
- *
- * @property WarningType $warningType
- */
 class Warning extends \yii\db\ActiveRecord
 {
-    /**
-     * @inheritdoc
-     */
+    const STATUS_READ = 1;
+    const STATUS_UNREAD = 0;
+
     public static function tableName()
     {
         return 'warning';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
-            [['warning_type', 'station_id', 'warning_time'], 'integer'],
-            [['message', 'picture'], 'string', 'max' => 255]
+            [['warning_type', 'station_id', 'warning_time', 'read'], 'integer'],
+            [['message'], 'string', 'max' => 255]
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'warning_type' => 'Warning Type',
-            'station_id' => 'Station ID',
-            'message' => 'Message',
-            'picture' => 'Picture',
-            'warning_time' => 'Warning Time',
+            'warning_type' => 'Loại cảnh báo',
+            'station_id' => 'Trạm',
+            'message' => 'Nội dung cảnh báo',
+            'warning_time' => 'Thời gian',
+            'read' => 'Xem cảnh báo',
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getWarningType()
     {
         return $this->hasOne(WarningType::className(), ['id' => 'warning_type']);
+    }
+
+    public static function findPicture($id) {
+        $query = new Query();
+        return $query->select('*')
+            ->from('warning_picture')
+            ->where(['warning_id' => $id])
+            ->all();
+    }
+
+    public static function getWarning($orderBy, $limit, $conditions = []) {
+        $query = new Query();
+        $query->select('w.*, s.name AS station_name, a.name AS area_name, c.name AS center_name')
+            ->from('warning w')
+            ->leftJoin('station s', 's.id = w.station_id')
+            ->innerJoin('area a', 's.area_id = a.id')
+            ->innerJoin('center c', 'c.id = s.center_id')
+            ->where([]);
+
+        if (!empty($conditions)) {
+            $oneCondition = 0;
+            foreach ($conditions as $con) {
+                if (is_array($con)) {
+                    $query->andWhere($con);
+                } else {
+                    break;
+                    $oneCondition = 1;
+                }
+            }
+            if ($oneCondition == 1) $query->where($conditions);
+        }
+
+        $query->orderBy($orderBy);
+
+        if ($limit > 0) $query->limit($limit);
+
+        $warnings = $query->all();
+
+        if (!empty($warnings)) {
+            foreach ($warnings as $k=>$w) {
+                $warnings[$k]['pics'] = self::findPicture($w['id']);
+            }
+        }
+
+        return $warnings;
     }
 }

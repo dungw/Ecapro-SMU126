@@ -1,8 +1,10 @@
 <?php
 
-namespace app\modules\warning;
+namespace frontend\modules\warning;
 
-class Warning extends \yii\base\Module
+use common\modules\Base;
+
+class Warning extends Base
 {
     public $controllerNamespace = 'app\modules\warning\controllers';
 

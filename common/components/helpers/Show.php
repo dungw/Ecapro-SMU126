@@ -1,32 +1,150 @@
 <?php
 namespace common\components\helpers;
 
+use \Yii;
 use yii\helpers\BaseHtml;
+use yii\jui\DatePicker;
+use common\models\Warning;
 
-class Show extends BaseHtml {
+class Show extends BaseHtml
+{
 
-    public static function errorBlock($errors) {
+    public static function jsWarningAction() {
+        $html = '<script stype="text/javascript">';
+        $html .= "jQuery(function ($) {
+            $('.do-read').click(function() {
+                var warning = $(this).parent().parent().parent().parent();
+                var id = warning.attr('id');
+                var stationHref = warning.attr('station-href');
+
+                $.ajax({
+                    'method' : 'post',
+                    'url' : '/warning/default/read',
+                    'data' : {
+                        'warning_id' : id,
+                        '". Yii::$app->request->csrfParam ."' : '". Yii::$app->request->csrfToken ."'
+                    },
+                    'beforeSend' : function() {
+                        warning.find('td').css('background-color', 'white !important');
+                    },
+                    'success' : function(data) {
+                        warning.removeClass('unread');
+                        warning.addClass('read');
+                    }
+                });
+            });
+
+            $('.gallery').each(function() {
+                $(this).magnificPopup({
+                    delegate: 'button',
+                    type: 'image',
+                    gallery: {
+                        enabled:true
+                    }
+                });
+            });
+        });";
+
+        $html .= '</script>';
+        return $html;
+    }
+
+    public static function warnings($warnings, $loadJs = true) {
+        $html = '';
+        if (isset($warnings) && !empty($warnings)) {
+            foreach ($warnings as $warning) {
+
+                // read or unread
+                $class = 'read';
+                $buttonClass = '';
+                if ($warning['read'] == Warning::STATUS_UNREAD) {
+                    $class = 'unread';
+                    $buttonClass = 'do-read';
+                }
+
+                // gallery
+                $gallery = '<div class="gallery">';
+                if (!empty($warning['pics'])) {
+                    $no = 1;
+                    foreach ($warning['pics'] as $pic) {
+                        $hide = 1;
+                        if ($no == 1) {
+                            $hide = 0;
+                        }
+                        $style = ($hide) ? 'display: none;' : '';
+                        $path = Yii::$app->params['baseUrl'] . 'uploads/' . $pic['picture'];
+                        $gallery .= '<button style="' . $style . '" class="btn btn-primary btn-xs '. $buttonClass .'" href="' . $path . '">Xem ảnh</button>';
+                        $no++;
+                    }
+                }
+
+                // station href
+                $stationHref = Yii::$app->homeUrl . 'station/default/view?id=' . $warning['station_id'];
+
+                // view station button
+                $gallery .= '<a href="'. $stationHref .'" target="_blank" style="float: right" class="btn btn-primary btn-xs '. $buttonClass .' view-picture">Chi tiết trạm</a>';
+                $gallery .= '</div>';
+
+                $html .= '<tr class="warning '. $class .'" id="'. $warning['id'] .'" station-href="'. $stationHref .'">';
+                $html .= '<td><div class="kv-attribute">'. $warning['station_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['area_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['center_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['message'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. date('d/m/Y H:i', $warning['warning_time']) .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $gallery .'</div></td>';
+                $html .= '</tr>';
+            }
+        }
+
+        return $html;
+    }
+
+    public static function datePicker($name, $value)
+    {
+        $html = DatePicker::widget([
+            'name' => $name,
+            'value' => $value,
+            'language' => 'vi',
+            'dateFormat' => 'dd/MM/yyyy',
+            'options' => [
+                'placeholder' => 'dd / mm / yyyy',
+            ],
+        ]);
+        return $html;
+    }
+
+    public static function decorateString($string, $emotion)
+    {
+        $color = Yii::$app->params['color_of_' . $emotion];
+        return '<span style="color: ' . $color . '">' . $string . '</span>';
+    }
+
+    public static function errorBlock($errors)
+    {
         $html = [];
         if (is_array($errors) && !empty($errors)) {
             foreach ($errors as $error) {
-                $html[] = '<div class="help-block"><span class="error-color">'. $error .'</span></div>';
+                $html[] = '<div class="help-block"><span class="error-color">' . $error . '</span></div>';
             }
         }
         return implode('', $html);
     }
 
-    public static function activeDropDownList($model, $attribute, $labels, $items, $options = [], $errors = []) {
+    public static function activeDropDownList($model, $attribute, $labels, $items, $options = [], $errors = [])
+    {
         $options = empty($options) ? ['class' => 'form-select'] : $options;
         $html = '<div class="form-group">';
-        $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
+        $html .= '<label class="control-label">' . (isset($labels[$attribute]) ? $labels[$attribute] : '') . '</label><br>';
         $html .= parent::activeDropDownList($model, $attribute, $items, $options);
         $html .= self::errorBlock(isset($errors[$attribute]) ? $errors[$attribute] : []);
         $html .= '</div>';
         return $html;
     }
 
-    public static function multiSelect($attribute, $needle, $haystack, $key, $value, $labels, $options = []) {
-        if (empty($options)) $options = ['class' => 'form-listbox', 'multiple' => true];
+    public static function multiSelect($attribute, $needle, $haystack, $key, $value, $labels, $options = [])
+    {
+        $newOptions = ['class' => 'form-listbox', 'multiple' => true];
+        if (!empty($options)) $newOptions = array_merge($newOptions, $options);
         $sorted = array();
         if (!empty($haystack)) {
             foreach ($haystack as $object) {
@@ -36,22 +154,31 @@ class Show extends BaseHtml {
             }
         }
         $html = '<div class="form-group">';
-        $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
-        $html .= BaseHtml::listBox($attribute, $needle, $sorted, $options);
+        $html .= '<label class="control-label">' . (isset($labels[$attribute]) ? $labels[$attribute] : '') . '</label><br>';
+        $html .= BaseHtml::listBox($attribute, $needle, $sorted, $newOptions);
         $html .= '</div>';
         return $html;
     }
 
-    public static function input($type = '', $model, $attribute, $labels, $options = [], $errors = []) {
+    public static function input($type = '', $model, $attribute, $labels, $options = [], $errors = [])
+    {
         $type = ($type == '') ? 'text' : $type;
 
         if (empty($options)) $options = ['class' => 'form-control'];
         $value = (is_object($model) && isset($model->$attribute)) ? $model->attribute : '';
         $html = '<div class="form-group">';
-        $html .= '<label class="control-label">'. (isset($labels[$attribute]) ? $labels[$attribute] : '') .'</label><br>';
+        $html .= '<label class="control-label">' . (isset($labels[$attribute]) ? $labels[$attribute] : '') . '</label><br>';
         $html .= parent::input($type, $attribute, $value, $options);
         $html .= self::errorBlock(isset($errors[$attribute]) ? $errors[$attribute] : []);
         $html .= '</div>';
+        return $html;
+    }
+
+    public static function cameraIp($url, $options = [])
+    {
+        $default = ['style="width: 100%"'];
+        $final = empty($options) ? $default : array_merge($options, $default);
+        $html = '<img src="' . $url . '" ' . implode(' ', $final) . '>';
         return $html;
     }
 }

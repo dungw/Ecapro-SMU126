@@ -20,7 +20,7 @@ class Equipment extends Base
             [['name'], 'required'],
             [['active'], 'integer'],
             [['name'], 'string', 'max' => 255],
-            [['sort'], 'string', 'max' => 10]
+            [['binary_pos'], 'integer']
         ];
     }
 
@@ -29,7 +29,7 @@ class Equipment extends Base
         return [
             'id' => 'ID',
             'name' => 'Tên thiết bị',
-            'sort' => 'Thứ tự',
+            'binary_pos' => 'Thứ tự nhị phân',
             'active' => 'Active',
         ];
     }

@@ -24,7 +24,7 @@ class Message extends Base
     {
         return [
             [['name'], 'required'],
-            [['sort', 'active'], 'integer'],
+            [['active', 'sensor_id'], 'integer'],
             [['name', 'message_0', 'message_1'], 'string', 'max' => 255]
         ];
     }
@@ -34,10 +34,19 @@ class Message extends Base
         return [
             'id' => 'ID',
             'name' => 'Thông báo',
-            'sort' => 'Thứ tự (D)',
             'message_0' => 'Nội dung - 0',
             'message_1' => 'Nội dung - 1',
+            'sensor_id' => 'Cảm biến',
             'active' => 'Active',
         ];
+    }
+
+    public static function getMessageBySensor($sensorId, $value) {
+        if ($sensorId > 0) {
+            $message = Message::findOne(['sensor_id' => $sensorId, 'active' => self::STATUS_ACTIVE]);
+            if ($value == 1) return $message['message_1'];
+            if ($value == 0) return $message['message_0'];
+        }
+        return 'null';
     }
 }

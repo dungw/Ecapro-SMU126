@@ -19,7 +19,7 @@ if (!Yii::$app->user->isGuest) {
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
         ['label' => 'Quản lý trạm', 'url' => ['/station/default/index'], 'active' => ($module == 'station')],
-
+        ['label' => 'Thống kê cảnh báo', 'url' => ['/warning/default/index'], 'active' => ($module == 'warning')],
     ];
 
     // add by position
@@ -30,6 +30,7 @@ if (!Yii::$app->user->isGuest) {
                 ['label' => 'Trung tâm', 'url' => ['/center/default/index'], 'active' => ($module == 'center')],
                 ['label' => 'Khu vực', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
                 ['label' => 'Thiết bị', 'url' => ['/equipment/default/index'], 'active' => ($module == 'equipment')],
+                ['label' => 'Thiết bị nguồn điện', 'url' => ['/power/default/index'], 'active' => ($module == 'power')],
                 ['label' => 'Thông báo', 'url' => ['/message/default/index'], 'active' => ($module == 'message')],
                 ['label' => 'Người dùng', 'url' => ['/user/default/index'], 'active' => ($module == 'user')],
             ]

@@ -18,6 +18,8 @@ $this->params['breadcrumbs'][] = 'Cập nhật';
         'types' => $types,
         'equipments' => $equipments,
         'equipmentIds' => $equipmentIds,
+        'powerEquipments' => $powerEquipments,
+        'powerEquipmentIds' => $powerEquipmentIds,
         'errors' => isset($errors) ? $errors : [],
     ]) ?>
 

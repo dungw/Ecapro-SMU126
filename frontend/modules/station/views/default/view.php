@@ -2,6 +2,9 @@
 use common\models\EquipmentStatus;
 use common\models\DcEquipmentStatus;
 use common\models\SensorStatus;
+use common\models\Sensor;
+use common\models\Message;
+use common\components\helpers\Show;
 
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'DS Trạm', 'url' => ['index']];
@@ -17,18 +20,20 @@ $this->params['breadcrumbs'][] = $this->title;
 <table class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">
     <tr class="info">
         <th colspan="4">Giám sát thiết bị</th>
+        <th></th>
     </tr>
     <tr>
-        <th width="5%">#</th>
-        <th>Tên thiết bị</th>
+        <th width="3%">#</th>
+        <th width="22%">Tên thiết bị</th>
         <th width="10%">Tình trạng</th>
-        <th width="30%">Thiết lập</th>
+        <th width="15%">Thiết lập</th>
+        <th width="55%">Camera</th>
     </tr>
 
     <?php
-
     if (isset($equipments) && !empty($equipments)) {
         $no = 1;
+        $equipNum = count($equipments);
         foreach ($equipments as $equipment) {
             ?>
             <tr>
@@ -54,23 +59,31 @@ $this->params['breadcrumbs'][] = $this->title;
                         <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="">Tự động</a>
                     </div>
                 </td>
+                <?php
+                if ($no == 1) {
+                    ?>
+                    <td rowspan="<?=$equipNum?>">
+                        <?=Show::cameraIp($model->video_url)?>
+                    </td>
+                    <?php
+                }
+                ?>
             </tr>
             <?php
+
             $no++;
         }
     }
     ?>
-
-
 
 </table>
 
 <table class="detail-view table table-hover table-bordered">
     <tr>
         <th width="5%">#</th>
-        <th>Thiết bị</th>
-        <th width="20%">Dòng điện</th>
-        <th width="20%">Điện áp</th>
+        <th width="45%">Thiết bị</th>
+        <th width="25%">Dòng điện</th>
+        <th>Điện áp</th>
     </tr>
     <tr>
         <td rowspan="2" style="vertical-align: middle; text-align: center">Tủ DC</td>
@@ -85,7 +98,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="kv-attribute"><?= $equipStatus['amperage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
                 </td>
                 <td>
-                    <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
+                    <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
                 </td>
                 </tr>
                 <?php
@@ -93,6 +106,43 @@ $this->params['breadcrumbs'][] = $this->title;
         }
         ?>
 </table>
+
+<table class="detail-view table table-hover table-bordered">
+    <tr class="info">
+        <th colspan="3">Trạng thái</th>
+    </tr>
+
+    <?php
+    if (!empty($model->sensor_status)) {
+        $no = 1;
+        foreach ($model->sensor_status as $status) {
+            $value = $status['value'];
+            $label = $value;
+            if ($status['type'] == Sensor::TYPE_VALUE) {
+                if ($status['sensor_id'] == Sensor::ID_SECURITY) {
+                    $label = Sensor::getSecurityStatus($value);
+                    if ($value == Sensor::SECURITY_ON) $label = Show::decorateString($label, 'good');
+                    if ($value == Sensor::SECURITY_OFF) $label = Show::decorateString($label, 'bad');
+                }
+            } else continue;
+            ?>
+            <tr>
+                <th width="5%" style="text-align: center"><?=$no?></th>
+                <td width="45%">
+                    <div class="kv-attribute"><?= $status['name'] . (($status['unit']) ? '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' : '') ?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?=$label?></div>
+                </td>
+            </tr>
+            <?php
+            $no++;
+        }
+    }
+    ?>
+</table>
+
+
 
 <table class="detail-view table table-hover table-bordered">
     <tr class="info">
@@ -108,14 +158,23 @@ $this->params['breadcrumbs'][] = $this->title;
     if (!empty($model->sensor_status)) {
         $no = 1;
         foreach ($model->sensor_status as $status) {
+            $value = $status['value'];
+            $label = $value;
+            if ($status['type'] == Sensor::TYPE_VALUE) {
+                continue;
+            } else if ($status['type'] == Sensor::TYPE_CONFIGURE) {
+                $message = Message::getMessageBySensor($status['sensor_id'], $value);
+                $label = ($value == 1) ? Show::decorateString($message, 'bad') : Show::decorateString($message, 'good');
+
+            }
             ?>
             <tr>
                 <th style="text-align: center"><?=$no?></th>
                 <td>
-                    <div class="kv-attribute"><?= $status['name'] . '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' ?></div>
+                    <div class="kv-attribute"><?= $status['name'] . (($status['unit']) ? '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' : '') ?></div>
                 </td>
                 <td>
-                    <div class="kv-attribute"><?=$status['value']?></div>
+                    <div class="kv-attribute"><?=$label?></div>
                 </td>
             </tr>
             <?php
@@ -134,24 +193,25 @@ $this->params['breadcrumbs'][] = $this->title;
         <th width="40%">Hạng mục</th>
         <th width="45%">Thông số</th>
     </tr>
-    <tr>
-        <th style="text-align: center">1</th>
-        <td>
-            <div class="kv-attribute">Nguồn điện</div>
-        </td>
-        <td>
-            <div class="kv-attribute">Cấp điện lưới cho tải</div>
-        </td>
-    </tr>
-    <tr>
-        <th style="text-align: center">2</th>
-        <td>
-            <div class="kv-attribute">Máy phát</div>
-        </td>
-        <td>
-            <div class="kv-attribute">OFF</div>
-        </td>
-    </tr>
+    <?php
+    if (isset($powerEquipments) && !empty($powerEquipments)) {
+        $no = 1;
+        foreach ($powerEquipments as $e) {
+            ?>
+            <tr>
+                <th style="text-align: center"><?=$no?></th>
+                <td>
+                    <div class="kv-attribute"><?=$e['name'] . '&nbsp;(' . SensorStatus::getUnit($e['unit_type']) . ')'?></div>
+                </td>
+                <td>
+                    <div class="kv-attribute"><?=$e['status']?></div>
+                </td>
+            </tr>
+            <?php
+            $no++;
+        }
+    }
+    ?>
 </table>
 
 <table class="detail-view table table-hover table-bordered">

@@ -54,8 +54,9 @@ class Area extends Base
         return $this->hasMany(Station::className(), ['area_id' => 'id']);
     }
 
-    public static function _prepareDataSelect($collections, $key, $value) {
-        $data[0] = 'Chọn khu vực';
+    public static function _prepareDataSelect($collections, $key, $value, $addFirst = true) {
+        $data = [];
+        if ($addFirst) $data[0] = 'Chọn khu vực';
         return parent::_prepareDataSelect($collections, $key, $value, $data);
     }
 }

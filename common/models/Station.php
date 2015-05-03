@@ -4,6 +4,7 @@ namespace common\models;
 
 use Yii;
 use common\models\Base;
+use yii\db\Query;
 
 class Station extends Base
 {
@@ -29,6 +30,9 @@ class Station extends Base
     // array equipment id
     public $equipment = [];
 
+    // array power equipment id
+    public $power_equipment = [];
+
     // object dc status
     public $dc_status;
 
@@ -47,12 +51,12 @@ class Station extends Base
     {
         return [
             [['code', 'name'], 'required'],
-            [['center_id', 'area_id', 'type', 'status', 'user_id'], 'integer'],
+            [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb'], 'integer'],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
-            [['name', 'firmware'], 'string', 'max' => 255],
-            [['picture_ip', 'video_ip', 'latitude', 'longtitude'], 'string', 'max' => 20],
-            [['email', 'staff'], 'string', 'max' => 50],
+            [['name', 'firmware', 'picture_url', 'video_url'], 'string', 'max' => 255],
+            [['latitude', 'longtitude', 'port'], 'string', 'max' => 20],
+            [['email', 'staff', 'ip'], 'string', 'max' => 50],
             [['code'], 'unique']
         ];
     }
@@ -71,13 +75,16 @@ class Station extends Base
             'staff' => 'Nhân viên trực',
             'equipments' => 'Thiết bị',
             'addition' => 'Thông tin thêm',
-            'picture_ip' => 'IP chụp ảnh',
-            'video_ip' => 'IP Video',
+            'picture_url' => 'Url chụp ảnh',
+            'video_url' => 'Url Video',
             'latitude' => 'Vĩ độ',
             'longtitude' => 'Kinh độ',
             'phone' => 'Số điện thoại',
             'email' => 'Email',
-            'status' => 'Trạng thái'
+            'status' => 'Trạng thái',
+            'picture_warning_numb' => 'Số ảnh cảnh báo',
+            'ip' => 'IP của trạm',
+            'port' => 'Port của trạm',
         ];
     }
 
@@ -121,12 +128,31 @@ class Station extends Base
     // get equipment
     public function getEquipment($stationId, $equipments) {
         if ($stationId > 0 && !empty($equipments)) {
-            $sql = 'SELECT s.*, e.name
-                FROM equipment_status s
-                LEFT JOIN equipment e ON(e.id = s.equipment_id)
-                WHERE s.equipment_id IN('. implode(',', $equipments) .') AND s.station_id = '. $stationId;
 
-            return Yii::$app->db->createCommand($sql)->queryAll();
+            // build query
+            $query = new Query;
+            $query->select('s.*, e.name')
+                ->from('equipment_status s')
+                ->leftJoin('equipment e', 'e.id = s.equipment_id')
+                ->where(['s.equipment_id' => $equipments, 's.station_id' => $stationId]);
+
+            return $query->all();
+        }
+        return null;
+    }
+
+    // get power equipment
+    public function getPowerEquipment($stationId, $ids) {
+        if ($stationId > 0 && !empty($ids)) {
+
+            // build query
+            $query = new Query;
+            $query->select('s.*, e.name, e.unit_type')
+                ->from('power_status s')
+                ->leftJoin('power_equipment e', 'e.id = s.item_id')
+                ->where(['s.item_id' => $ids, 's.station_id' => $stationId]);
+
+            return $query->all();
         }
         return null;
     }

@@ -35,6 +35,12 @@ return [
         'user' => [
             'class' => 'frontend\modules\user\User',
         ],
+        'power' => [
+            'class' => 'frontend\modules\power\Power',
+        ],
+        'warning' => [
+            'class' => 'frontend\modules\warning\Warning',
+        ],
     ],
     'components' => [
         'user' => [

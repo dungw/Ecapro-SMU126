@@ -28,6 +28,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'output_data',
             'last_update',
 
+
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

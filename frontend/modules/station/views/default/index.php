@@ -2,6 +2,7 @@
 use common\models\Area;
 use common\models\Center;
 use common\models\Station;
+use common\components\helpers\Show;
 
 use yii\helpers\Html;
 use yii\grid\GridView;
@@ -40,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'status',
                 'format' => 'html',
                 'value' => function($model) {
-                        if ($model->status == Station::STATUS_CONNECTED) $html = '<span style="color: #00BB00">' . $model->getStatus($model->status) . '</span>';
-                        if ($model->status == Station::STATUS_LOST) $html = '<span style="color: #FF0000">' . $model->getStatus($model->status) . '</span>';
+                        if ($model->status == Station::STATUS_CONNECTED) $html = Show::decorateString($model->getStatus($model->status), 'good');
+                        if ($model->status == Station::STATUS_LOST) $html = Show::decorateString($model->getStatus($model->status), 'bad');
                         return $html;
                     }
             ],

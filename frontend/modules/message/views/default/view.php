@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'name',
-            'sort',
             'message_0',
             'message_1',
             'active',

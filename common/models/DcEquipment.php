@@ -5,27 +5,16 @@ namespace common\models;
 use Yii;
 use common\models\Base;
 
-/**
- * This is the model class for table "dc_equipment".
- *
- * @property integer $id
- * @property string $name
- *
- * @property DcEquipmentStatus[] $dcEquipmentStatuses
- */
 class DcEquipment extends Base
 {
-    /**
-     * @inheritdoc
-     */
+    const ID_DC1 = 1;
+    const ID_DC2 = 2;
+
     public static function tableName()
     {
         return 'dc_equipment';
     }
 
-    /**
-     * @inheritdoc
-     */
     public function rules()
     {
         return [
@@ -34,9 +23,6 @@ class DcEquipment extends Base
         ];
     }
 
-    /**
-     * @inheritdoc
-     */
     public function attributeLabels()
     {
         return [
@@ -45,9 +31,6 @@ class DcEquipment extends Base
         ];
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getDcEquipmentStatuses()
     {
         return $this->hasMany(DcEquipmentStatus::className(), ['equipment_id' => 'id']);

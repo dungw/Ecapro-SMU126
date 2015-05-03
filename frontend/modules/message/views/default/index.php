@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Sensor;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -17,7 +18,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
             'id',
             'name',
-            'sort',
+            [
+                'attribute' => 'sensor_id',
+                'value' => function($model) {
+                        $sensor = Sensor::findOne($model->sensor_id);
+                        return $sensor['name'];
+                    },
+            ],
             'message_0',
             'message_1',
             // 'active',

@@ -1,18 +1,13 @@
 <?php
-
 use yii\helpers\Html;
 
-
-/* @var $this yii\web\View */
-/* @var $model common\models\Equipment */
-
-$this->title = 'Create Equipment';
-$this->params['breadcrumbs'][] = ['label' => 'Equipments', 'url' => ['index']];
+$this->title = 'Thêm mới thiết bị';
+$this->params['breadcrumbs'][] = ['label' => 'DS Thiết bị', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="equipment-create">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h4><?= Html::encode($this->title) ?></h4>
 
     <?= $this->render('_form', [
         'model' => $model,

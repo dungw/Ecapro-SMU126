@@ -13,7 +13,7 @@ $attributeLabels = $model->attributeLabels();
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
 
-    <?= $form->field($model, 'sort')->textInput() ?>
+    <?= Show::activeDropDownList($model, 'sensor_id', $attributeLabels, $sensors) ?>
 
     <?= $form->field($model, 'message_0')->textInput(['maxlength' => 255]) ?>
 

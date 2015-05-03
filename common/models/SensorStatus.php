@@ -53,5 +53,10 @@ class SensorStatus extends Base
     public static function getUnit($type) {
         if ($type == 'temperature') return Yii::$app->params['unit_temperature'];
         if ($type == 'humidity') return Yii::$app->params['unit_humidity'];
+        if ($type == 'voltage') return Yii::$app->params['unit_voltage'];
+        if ($type == 'amperage') return Yii::$app->params['unit_amperage'];
+        if ($type == 'consume') return Yii::$app->params['unit_consume'];
+        if ($type == 'frequency') return Yii::$app->params['unit_frequency'];
+        if ($type == 'capacity') return Yii::$app->params['unit_capacity'];
     }
 }

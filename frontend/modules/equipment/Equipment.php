@@ -7,6 +7,9 @@ use common\modules\Base;
 class Equipment extends Base
 {
     public $controllerNamespace = 'app\modules\equipment\controllers';
+    public $menus = [
+        ['label' => 'Thêm mới thiết bị', 'url' => '/equipment/default/create'],
+    ];
 
     public function init()
     {
