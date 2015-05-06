@@ -14,6 +14,7 @@ use common\models\DcEquipment;
 use common\models\StationStatus;
 use common\models\Snapshot;
 use common\models\Warning;
+use common\models\Client;
 
 class Observer {
 
@@ -40,7 +41,7 @@ class Observer {
     public $request;
 
     // Main function: handle all request from station
-    public function handleRequest($requestString) {
+    public function handleRequest($requestString, $peer = []) {
         if (!trim($requestString)) return 'Invalid request string';
 
         if (!$this->analyzeRequestString($requestString)) return 'Cannot handle request string';
@@ -53,6 +54,9 @@ class Observer {
 
         // update station status
         $this->updateStationStatus();
+
+        // update ip & port of station
+        $this->updateConnectAddress($peer);
 
         // after handle request
         return $this->afterHandle();
@@ -126,6 +130,15 @@ class Observer {
         $model->save();
     }
 
+    public function updateConnectAddress($peer) {
+        if (isset($peer['ip'])) {
+            Yii::$app->db->createCommand()
+                ->update('station', ['ip' => $peer['ip']], ['id' => $this->request['id']])
+                ->execute();
+        }
+        return true;
+    }
+
     public function updateDcStatus() {
 
         // get all dc equipment of this station
@@ -177,8 +190,8 @@ class Observer {
     }
 
     public function updateEquipmentStatus() {
-        $outputBin = Convert::dec2Bin($this->request['output_status'], self::BINARY_LENGTH);
-        $configureBin = Convert::dec2Bin($this->request['configure_status'], self::BINARY_LENGTH);
+        $outputBin = Convert::powOf2($this->request['output_status']);
+        $configureBin = Convert::powOf2($this->request['configure_status']);
 
         // get all equipment status of this station
         $query = new Query();
@@ -193,8 +206,8 @@ class Observer {
                 $eq['binary_pos'] = intval($eq['binary_pos']);
                 Yii::$app->db->createCommand()
                     ->update('equipment_status', [
-                        'status' => $outputBin[$eq['binary_pos']],
-                        'configure' => $configureBin[$eq['binary_pos']],
+                        'status' => in_array($eq['binary_pos'], $outputBin) ? 1 : 0,
+                        'configure' => in_array($eq['binary_pos'], $configureBin) ? 1 : 0,
                     ], ['id' => $eq['id']])->execute();
             }
         }
@@ -208,7 +221,7 @@ class Observer {
      * - update all sensor equipment
      */
     public function updateSensor() {
-        $inputBin = Convert::dec2Bin($this->request['input_status'], self::BINARY_LENGTH);
+        $inputBin = Convert::powOf2($this->request['input_status']);
 
         // get all sensor status of this station
         $query = new Query();
@@ -221,9 +234,10 @@ class Observer {
 
         if (!empty($sensors)) {
             foreach ($sensors as $sensor) {
+                $vs = in_array($sensor['binary_pos'], $inputBin) ? 1 : 0;
                 if ($sensor['type'] == Sensor::TYPE_CONFIGURE) {
                     Yii::$app->db->createCommand()
-                        ->update('sensor_status', ['value' => $inputBin[$sensor['binary_pos']]], ['id' => $sensor['id']])
+                        ->update('sensor_status', ['value' => $vs], ['id' => $sensor['id']])
                         ->execute();
                 } else if ($sensor['type'] == Sensor::TYPE_VALUE) {
                     $value = '';
@@ -254,12 +268,12 @@ class Observer {
 
     public function afterHandle() {
 
-        // return current time to control device
-        if ($this->request['message'] == self::MSG_BEGIN) {
+        // send back to client status of station was changed
+        $client = new Client();
+        $client->init($this->request['id']);
+        $client->sendStatus();
 
-        }
-
-        return 'OK';
+        print $client->returnMessage;
     }
 
     public function analyzeRequestString($requestString) {

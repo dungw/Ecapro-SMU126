@@ -51,7 +51,7 @@ class Station extends Base
     {
         return [
             [['code', 'name'], 'required'],
-            [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb'], 'integer'],
+            [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb', 'change_equipment_status', 'updated_at'], 'integer'],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
             [['name', 'firmware', 'picture_url', 'video_url'], 'string', 'max' => 255],
@@ -85,6 +85,8 @@ class Station extends Base
             'picture_warning_numb' => 'Số ảnh cảnh báo',
             'ip' => 'IP của trạm',
             'port' => 'Port của trạm',
+            'updated_at' => 'Cập nhật lúc',
+            'change_equipment_status' => 'Thay đổi trạng thái thiết bị',
         ];
     }
 

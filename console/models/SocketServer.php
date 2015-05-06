@@ -65,7 +65,10 @@ class SocketServer
 
         // handle request string
         $observer = new Observer();
-        $output = $observer->handleRequest($input);
+        $peer['ip'] = $client->peerIp;
+        $peer['port'] = $client->peerPort;
+
+        $output = $observer->handleRequest($input, $peer);
 
         if ($output != '') {
             SocketServer::socket_write_smart($client->socket, $output);
@@ -299,8 +302,11 @@ class SocketServerClient
         $this->server_clients_index = $i;
         $this->socket = socket_accept($socket) or die("Failed to Accept");
         SocketServer::debug("New Client Connected");
-        socket_getpeername($this->socket, $ip);
+        socket_getpeername($this->socket, $ip, $port);
+
         $this->ip = $ip;
+        $this->peerPort = $port;
+        $this->peerIp = $ip;
     }
 
     /*!	@function	lookup_hostname

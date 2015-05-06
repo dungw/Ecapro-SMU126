@@ -2,8 +2,13 @@
 namespace common\models;
 
 use \Yii;
+use yii\db\Query;
 use common\models\Station;
 use common\models\StationStatus;
+use common\models\Sensor;
+use common\models\SensorStatus;
+use common\models\Equipment;
+use common\models\EquipmentStatus;
 
 class Client {
 
@@ -34,7 +39,7 @@ class Client {
     public $returnMessage;
 
     public function init($id) {
-        $this->id = $id;
+        $this->info['id'] = $id;
         if ($this->getConnectInfo($id)) {
             return $this->connect();
         }
@@ -43,35 +48,21 @@ class Client {
 
     public static function commands() {
         return [
-            [
-                self::CMD_DISARM => [
-                    'label' => 'Tắt báo động',
-                    'data0' => 'DISARM',
-                ],
-                self::CMD_ARMING => [
-                    'label' => 'Bật báo động',
-                    'data0' => 'ARMING',
-                ],
-                self::CMD_GEN_ON => [
-                    'label' => 'Bật máy phát điện',
-                    'data0' => 'GEN ON'
-                ],
-                self::CMD_GEN_OFF => [
-                    'label' => 'Tắt máy phát điện',
-                    'data0' => 'GEN OFF'
-                ],
-                self::CMD_GEN_AUTO => [
-                    'label' => 'Chuyển máy phát điện sang chế độ tự động',
-                    'data0' => 'GEN AUTO'
-                ],
-                self::CMD_SMS => [
-                    'label' => 'Kiểm tra SMS',
-                    'data0' => 'SMS'
-                ],
-                self::CMD_REBOOT => [
-                    'label' => 'Khởi động lại thiết bị',
-                    'data0' => 'REBOOT'
-                ],
+            self::CMD_DISARM => [
+                'label' => 'T?t báo ??ng',
+                'data0' => 'DISARM',
+            ],
+            self::CMD_ARMING => [
+                'label' => 'B?t báo ??ng',
+                'data0' => 'ARMING',
+            ],
+            self::CMD_SMS => [
+                'label' => 'Ki?m tra SMS',
+                'data0' => 'SMS'
+            ],
+            self::CMD_REBOOT => [
+                'label' => 'Kh?i ??ng l?i thi?t b?',
+                'data0' => 'REBOOT'
             ],
         ];
     }
@@ -88,13 +79,16 @@ class Client {
 
         $command = self::getCommand($key);
 
-        // data 0
-        $cmd[] = $command['data0'];
+        if (isset($command['data0']) && $command['data0'] != '') {
 
-        // sms testing
-        if ($key == self::CMD_SMS) {
-            $cmd[] = $params['phone'];
-            $cmd[] = $params['message'];
+            // data 0
+            $cmd[] = $command['data0'];
+
+            // params
+            $cmd = array_merge($cmd, $params);
+
+        } else {
+            $this->error = 'Lệnh thực thi không tồn tại. Vui lòng thử lại';
         }
 
         return implode('&', $cmd);
@@ -130,10 +124,11 @@ class Client {
 
         // bind command by key
         $command = $this->bindCommand($commandKey, $params);
+        var_dump($command);
 
         // insert to station status table
         $data = [
-            'station_id' => $this->id,
+            'station_id' => $this->info['id'],
             'request_string' => $command,
             'received' => StationStatus::STATUS_SEND,
             'time_update' => time()
@@ -143,14 +138,19 @@ class Client {
             ->execute();
         $returnId = Yii::$app->db->lastInsertID;
 
-        // send command to server
-        socket_write($this->socket, $command, strlen($command));
+        if ($this->error) {
+            $this->returnMessage = $this->handleResponse(self::RES_STATUS_FAILED, $commandKey, $returnId);
+        } else {
 
-        // read the respon of server
-        $response = socket_read($this->socket, 2048);
+            // send command to server
+            socket_write($this->socket, $command, strlen($command));
 
-        // handle response
-        $this->returnMessage = $this->handleResponse($response, $commandKey, $returnId);
+            // read the respon of server
+            $response = socket_read($this->socket, 2048);
+
+            // handle response
+            $this->returnMessage = $this->handleResponse($response, $commandKey, $returnId);
+        }
 
         // close socket
         socket_close($this->socket);
@@ -184,5 +184,41 @@ class Client {
         $this->info['port'] = $station['port'];
 
         return $station;
+    }
+
+    public function sendStatus() {
+
+        // get security mode
+        $sen = SensorStatus::findOne(['station_id' => $this->info['id'], 'sensor_id' => Sensor::ID_SECURITY]);
+        $securityMode = $sen['value'];
+
+        // status & configure
+        $status = [];
+        $configure = [];
+        $query = new Query();
+        $equipStatus = $query->select('es.*, e.binary_pos')
+            ->from('equipment_status es')
+            ->leftJoin('equipment e', 'e.id = es.equipment_id')
+            ->where(['es.station_id' => $this->info['id']])
+            ->orderBy('e.binary_pos DESC')
+            ->all();
+
+        if (!empty($equipStatus)) {
+            foreach ($equipStatus as $e) {
+                $status[] = $e['status'];
+                $configure[] = $e['configure'];
+            }
+        }
+
+        // send
+        $statusDec = bindec(implode('', $status));
+        $configureDec = bindec(implode('', $configure));
+        $params = [$statusDec, $configureDec];
+
+        if ($securityMode == Sensor::SECURITY_ON) {
+            $this->send(self::CMD_ARMING, $params);
+        } else if ($securityMode == SenSor::SECURITY_OFF) {
+            $this->send(self::CMD_DISARM, $params);
+        }
     }
 }

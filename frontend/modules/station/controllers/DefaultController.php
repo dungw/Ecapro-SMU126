@@ -3,6 +3,7 @@
 namespace app\modules\station\controllers;
 
 use Yii;
+use common\models\Client;
 use common\models\Station;
 use common\models\Area;
 use common\models\Center;
@@ -102,6 +103,42 @@ class DefaultController extends FrontendController
         $JSON = json_encode($result,true);
         @header("Content-type: application/json; charset=utf-8");
         echo $JSON;
+    }
+
+    // change status parts of station
+    public function actionChangeStationPart() {
+        $get = Yii::$app->request->get();
+        if (isset($get['part'])) {
+
+            if ($get['part'] == 'equip') {
+
+//                // update station
+//                Yii::$app->db->createCommand()
+//                    ->update('station', ['change_equipment_status' => 1, 'updated_at' => time()], ['id' => $get['station_id']])
+//                    ->execute();
+
+                Yii::$app->db->createCommand()
+                    ->update('equipment_status', ['status' => $get['status']], ['id' => $get['id']])
+                    ->execute();
+
+
+
+            } else if ($get['part'] == 'security') {
+
+//                Yii::$app->db->createCommand()
+//                    ->update('sensor_status', ['status' => $get['status']], ['station_id' => $get['station_id'], 'sensor_id' => Sensor::ID_SECURITY])
+//                    ->execute();
+
+                Yii::$app->db->createCommand()
+                    ->update('sensor_status', ['value' => $get['status']], ['sensor_id' => Sensor::ID_SECURITY, 'station_id' => $get['station_id']])
+                    ->execute();
+
+            }
+
+            $client = new Client();
+            $client->init($get['station_id']);
+            $client->sendStatus();
+        }
     }
 
     // create action

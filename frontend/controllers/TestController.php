@@ -10,8 +10,7 @@ use common\components\helpers\Convert;
 class TestController extends Controller {
 
     public function actionIndex() {
-        var_dump(Convert::dec2Bin(8, 10));
-        var_dump(Convert::dec2Bin(5, 10));
+        var_dump(Convert::powOf2(34));
     }
 
     public function actionAlarm() {
@@ -29,12 +28,15 @@ class TestController extends Controller {
     public function actionSend() {
         $client = new Client();
         $res = $client->init(13);
-        if (!$res) {
-            print $client->error;
-        } else {
-            $client->send('sms', ['phone' => '0906600788', 'message' => 'how is the work?']);
-            print $client->returnMessage;
-        }
+
+        $client->sendStatus();
+
+//        if (!$res) {
+//            print $client->error;
+//        } else {
+//            $client->send('sms', ['phone' => '0906600788', 'message' => 'how is the work?']);
+//            print $client->returnMessage;
+//        }
     }
 
 }

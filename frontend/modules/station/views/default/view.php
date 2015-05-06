@@ -9,6 +9,9 @@ use common\components\helpers\Show;
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'DS Trạm', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
+
+// url change configure
+$changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
 ?>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -35,6 +38,9 @@ $this->params['breadcrumbs'][] = $this->title;
         $no = 1;
         $equipNum = count($equipments);
         foreach ($equipments as $equipment) {
+            $hrefOn = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status=1';
+            $hrefOff = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status=0';
+            $hrefAuto = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&configure=0';
             ?>
             <tr>
                 <th style="text-align: center"><?=$no?></th>
@@ -54,9 +60,9 @@ $this->params['breadcrumbs'][] = $this->title;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_ON) $underOn = 1;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_OFF) $underOff = 1;
                         ?>
-                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="">Bật</a>  /
-                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="">Tắt</a>  /
-                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="">Tự động</a>
+                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="<?=$hrefOn?>">Bật</a>  /
+                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="<?=$hrefOff?>">Tắt</a>  /
+                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="<?=$hrefAuto?>">Tự động</a>
                     </div>
                 </td>
                 <?php
@@ -109,20 +115,29 @@ $this->params['breadcrumbs'][] = $this->title;
 
 <table class="detail-view table table-hover table-bordered">
     <tr class="info">
-        <th colspan="3">Trạng thái</th>
+        <th colspan="4">Trạng thái</th>
     </tr>
 
     <?php
+
     if (!empty($model->sensor_status)) {
         $no = 1;
         foreach ($model->sensor_status as $status) {
             $value = $status['value'];
             $label = $value;
+            $labelButton = '';
             if ($status['type'] == Sensor::TYPE_VALUE) {
                 if ($status['sensor_id'] == Sensor::ID_SECURITY) {
+
                     $label = Sensor::getSecurityStatus($value);
-                    if ($value == Sensor::SECURITY_ON) $label = Show::decorateString($label, 'good');
-                    if ($value == Sensor::SECURITY_OFF) $label = Show::decorateString($label, 'bad');
+                    if ($value == Sensor::SECURITY_ON) {
+                        $label = Show::decorateString($label, 'good');
+                        $labelButton = '<a href="'. $changeUrl .'?part=security&station_id='. $model->id .'&status='. Sensor::SECURITY_OFF .'" type="button" class="btn btn-primary btn-xs">Tắt báo động</a>';
+                    }
+                    if ($value == Sensor::SECURITY_OFF) {
+                        $label = Show::decorateString($label, 'bad');
+                        $labelButton = '<a href="'. $changeUrl .'?part=security&station_id='. $model->id .'&status='. Sensor::SECURITY_ON .'" type="button" class="btn btn-primary btn-xs">Bật báo động</a>';
+                    }
                 }
             } else continue;
             ?>
@@ -133,6 +148,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 </td>
                 <td>
                     <div class="kv-attribute"><?=$label?></div>
+                </td>
+                <td>
+                    <?= isset($labelButton) ? $labelButton : '' ?>
                 </td>
             </tr>
             <?php

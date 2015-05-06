@@ -3,6 +3,17 @@ namespace common\components\helpers;
 
 class Convert {
 
+    public static function powOf2($number) {
+        $bits = array_reverse(str_split(decbin($number)));
+        $output = array();
+        foreach($bits as $key => $bit) {
+            if($bit == 1) {
+                $output[] = $key;
+            }
+        }
+        return $output;
+    }
+
     public static function date2Time($dateString, $format, $fromTime = 'begin') {
         $date = date_create_from_format($format, $dateString);
         $time = strtotime($date->format('m/d/Y'));
