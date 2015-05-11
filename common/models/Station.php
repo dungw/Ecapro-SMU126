@@ -54,7 +54,7 @@ class Station extends Base
             [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb', 'change_equipment_status', 'updated_at'], 'integer'],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
-            [['name', 'firmware', 'picture_url', 'video_url'], 'string', 'max' => 255],
+            [['name', 'firmware', 'picture_url', 'video_url', 'address'], 'string', 'max' => 255],
             [['latitude', 'longtitude', 'port'], 'string', 'max' => 20],
             [['email', 'staff', 'ip'], 'string', 'max' => 50],
             [['code'], 'unique']
@@ -87,6 +87,7 @@ class Station extends Base
             'port' => 'Port của trạm',
             'updated_at' => 'Cập nhật lúc',
             'change_equipment_status' => 'Thay đổi trạng thái thiết bị',
+            'address' => 'Địa chỉ',
         ];
     }
 

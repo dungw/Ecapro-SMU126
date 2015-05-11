@@ -9,15 +9,13 @@ use common\models\Sensor;
 use common\models\SensorStatus;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
+use common\models\StationStatusController;
 
 class Client {
 
     const TIMEOUT = 10;
     const CMD_DISARM = 'disarm';
     const CMD_ARMING = 'arming';
-    const CMD_GEN_ON = 'gen_on';
-    const CMD_GEN_OFF = 'gen_off';
-    const CMD_GEN_AUTO = 'gen_auto';
     const CMD_SMS = 'sms';
     const CMD_REBOOT = 'reboot';
     const RES_STATUS_OK = 'OK';
@@ -39,7 +37,6 @@ class Client {
     public $returnMessage;
 
     public function init($id) {
-        $this->info['id'] = $id;
         if ($this->getConnectInfo($id)) {
             return $this->connect();
         }
@@ -74,6 +71,7 @@ class Client {
     }
 
     public function bindCommand($key, $params = []) {
+
         $cmd[] = $this->info['code'];
         $cmd[] = $this->info['name'];
 
@@ -124,7 +122,6 @@ class Client {
 
         // bind command by key
         $command = $this->bindCommand($commandKey, $params);
-        var_dump($command);
 
         // insert to station status table
         $data = [
@@ -178,15 +175,19 @@ class Client {
         $station = Station::findOne($id);
         if (!$station) $this->error = 'Không tìm thấy thông tin trạm';
 
+        $this->info['id'] = $id;
         $this->info['code'] = $station['code'];
         $this->info['name'] = $station['name'];
         $this->info['host'] = $station['ip'];
         $this->info['port'] = $station['port'];
+        $this->info['change_status'] = $station['change_equipment_status'];
 
         return $station;
     }
 
-    public function sendStatus() {
+    public function bindStatus() {
+        // return data
+        $return = [];
 
         // get security mode
         $sen = SensorStatus::findOne(['station_id' => $this->info['id'], 'sensor_id' => Sensor::ID_SECURITY]);
@@ -211,14 +212,39 @@ class Client {
         }
 
         // send
-        $statusDec = bindec(implode('', $status));
-        $configureDec = bindec(implode('', $configure));
-        $params = [$statusDec, $configureDec];
+        $return['status'] = bindec(implode('', $status));
+        $return['configure'] = bindec(implode('', $configure));
+        $return['security_mode'] = $securityMode;
 
-        if ($securityMode == Sensor::SECURITY_ON) {
-            $this->send(self::CMD_ARMING, $params);
-        } else if ($securityMode == SenSor::SECURITY_OFF) {
-            $this->send(self::CMD_DISARM, $params);
+        return $return;
+    }
+
+    public function bindCommandStatus($id) {
+
+        // station
+        $this->getConnectInfo($id);
+
+        // get status
+        $statusBind = $this->bindStatus();
+
+        // update
+        Yii::$app->db->createCommand()
+            ->update('station', ['change_equipment_status' => 0, 'updated_at' => time()], ['id' => $id])
+            ->execute();
+
+        // delete handler status record
+        Yii::$app->db->createCommand()
+            ->delete('station_status_handler', ['station_id' => $id, 'updated' => 0])
+            ->execute();
+
+        // bind command
+        $params = [$statusBind['status'], $statusBind['configure']];
+        if ($statusBind['security_mode'] == Sensor::SECURITY_ON) {
+            $command = $this->bindCommand(self::CMD_ARMING, $params);
+        } else if ($statusBind['security_mode'] == SenSor::SECURITY_OFF) {
+            $command = $this->bindCommand(self::CMD_DISARM, $params);
         }
+
+        return $command;
     }
 }

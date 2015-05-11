@@ -37,6 +37,8 @@ $attributeLabels = $model->attributeLabels();
 
     <?= $form->field($model, 'longtitude')->textInput(['maxlength' => 20]) ?>
 
+    <?= $form->field($model, 'address')->textInput(['maxlength' => 255]) ?>
+
     <?= $form->field($model, 'ip')->textInput(['maxlength' => 50]) ?>
 
     <?= $form->field($model, 'port')->textInput(['maxlength' => 20]) ?>

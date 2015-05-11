@@ -68,11 +68,21 @@ class SocketServer
         $peer['ip'] = $client->peerIp;
         $peer['port'] = $client->peerPort;
 
-        $output = $observer->handleRequest($input, $peer);
+        // handle request
+        $observer->handleRequest($input, $peer);
 
-        if ($output != '') {
-            SocketServer::socket_write_smart($client->socket, $output);
+        // if there are some change, so send back to device new status
+        if ($observer->sendBack) {
+
+            // create command change status
+            $sendBackCommand = $observer->bindCommandSendBack();
+
+            // send the command which change status
+            SocketServer::socket_write_smart($client->socket, $sendBackCommand);
+
         }
+
+        $server->disconnect($client->server_clients_index);
     }
 
     /*!	@function	hook

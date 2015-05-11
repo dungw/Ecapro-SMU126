@@ -15,7 +15,7 @@
             'formID': 'user-location',
             'inputID': 'address',
             'zoomLevel': 12,
-            'pinColor': 'fe7569',
+            'pinColor': '34BA46',
             'pinTextColor': '000000',
             'lengthUnit': 'm',
             'storeLimit': 10000,
@@ -669,6 +669,7 @@
                                             position: originPoint,
                                             map: map,
                                             icon: 'http://maps.google.com/mapfiles/ms/icons/' + settings.originpinColor + '-dot.png',
+//                                            icon: gicons["yellow"],
                                             draggable: false
                                         });
                                     }

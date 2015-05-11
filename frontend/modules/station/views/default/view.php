@@ -25,6 +25,16 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
         <th colspan="4">Giám sát thiết bị</th>
         <th></th>
     </tr>
+    <?php
+    $sc = Yii::$app->session->getFlash('update_success');
+    if (isset($sc)) {
+        ?>
+        <tr>
+            <td colspan="5"><?=Show::decorateString(Yii::$app->session->getFlash('update_success'), 'good')?></td>
+        </tr>
+        <?php
+    }
+    ?>
     <tr>
         <th width="3%">#</th>
         <th width="22%">Tên thiết bị</th>
@@ -38,9 +48,9 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
         $no = 1;
         $equipNum = count($equipments);
         foreach ($equipments as $equipment) {
-            $hrefOn = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status=1';
-            $hrefOff = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status=0';
-            $hrefAuto = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&configure=0';
+            $hrefOn = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status='. EquipmentStatus::STATUS_ON .'&configure='. EquipmentStatus::CONFIGURE_MANUAL;
+            $hrefOff = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&status='. EquipmentStatus::STATUS_OFF .'&configure='. EquipmentStatus::CONFIGURE_MANUAL;
+            $hrefAuto = $changeUrl . '?part=equip&id='. $equipment['id'] .'&station_id='. $model->id .'&configure='. EquipmentStatus::CONFIGURE_AUTO .'&status='. $equipment['status'];
             ?>
             <tr>
                 <th style="text-align: center"><?=$no?></th>
@@ -60,9 +70,9 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_ON) $underOn = 1;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_OFF) $underOff = 1;
                         ?>
-                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="<?=$hrefOn?>">Bật</a>  /
-                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="<?=$hrefOff?>">Tắt</a>  /
-                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="<?=$hrefAuto?>">Tự động</a>
+                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOn) && $underOn == 1) ? '#' : $hrefOn?>">Bật</a>  /
+                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOff) && $underOff == 1) ? '#' : $hrefOff?>">Tắt</a>  /
+                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="<?=(isset($underAuto) && $underAuto == 1) ? '#' : $hrefAuto?>">Tự động</a>
                     </div>
                 </td>
                 <?php

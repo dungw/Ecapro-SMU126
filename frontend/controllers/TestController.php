@@ -28,8 +28,8 @@ class TestController extends Controller {
     public function actionSend() {
         $client = new Client();
         $res = $client->init(13);
-
-        $client->sendStatus();
+	
+        //$client->sendStatus();
 
 //        if (!$res) {
 //            print $client->error;
@@ -37,6 +37,12 @@ class TestController extends Controller {
 //            $client->send('sms', ['phone' => '0906600788', 'message' => 'how is the work?']);
 //            print $client->returnMessage;
 //        }
+
+	$data0 = Yii::$app->request->get('data0');
+	$data1 = Yii::$app->request->get('data1');
+	$data2 = Yii::$app->request->get('data2');
+	$client->send($data0, [$data1, $data2]);
+	print $client->returnMessage;
     }
 
 }

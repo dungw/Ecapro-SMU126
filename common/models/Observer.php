@@ -15,6 +15,7 @@ use common\models\StationStatus;
 use common\models\Snapshot;
 use common\models\Warning;
 use common\models\Client;
+use common\models\StationStatusHandler;
 
 class Observer {
 
@@ -40,6 +41,12 @@ class Observer {
     // request info
     public $request;
 
+    // send back to device flag
+    public $sendBack = false;
+
+    // station status handler
+    public $handler = [];
+
     // Main function: handle all request from station
     public function handleRequest($requestString, $peer = []) {
         if (!trim($requestString)) return 'Invalid request string';
@@ -60,6 +67,19 @@ class Observer {
 
         // after handle request
         return $this->afterHandle();
+    }
+
+    public function bindCommandSendBack() {
+
+        // send back to client status of station was changed
+        $client = new Client();
+        $command = $client->bindCommandStatus($this->request['id']);
+
+        return $command;
+    }
+
+    public function afterHandle() {
+        return true;
     }
 
     public function alarm() {
@@ -92,6 +112,9 @@ class Observer {
         $station = $this->findStation($this->request['id']);
         if (!$station) return 'Cannot find station';
 
+        // get station status handler before update
+        $this->getStationStatusHandler();
+
         // update sensor
         $this->updateSensor();
 
@@ -104,6 +127,91 @@ class Observer {
         // update dc status
         $this->updateDcStatus();
 
+    }
+
+    public function getStationStatusHandler() {
+
+        // set handler
+        $handles = StationStatusHandler::find()
+            ->where(['station_id' => $this->request['id'], 'updated' => StationStatusHandler::STATUS_NOT_UPDATE])
+            ->orderBy('created_at DESC')
+            ->all();
+
+        if (!empty($handles)) {
+            foreach ($handles as $hand) {
+                if ($hand['type'] == StationStatusHandler::TYPE_EQUIPMENT) {
+                    $this->handler['equip'][] = [
+                        'equip_id' => $hand['equip_id'],
+                        'status' => $hand['status'],
+                        'configure' => $hand['configure'],
+                        'station_id' => $hand['station_id']
+                    ];
+                }
+                if ($hand['type'] == StationStatusHandler::TYPE_SENSOR_SECURITY) {
+                    $this->handler['security'] = [
+                        'equip_id' => Sensor::ID_SECURITY,
+                        'status' => $hand['status'],
+                        'station_id' => $hand['station_id']
+                    ];
+                }
+            }
+        }
+    }
+
+    public function updateEquipmentStatus() {
+
+        $outputBin = Convert::powOf2($this->request['output_status']);
+        $configureBin = Convert::powOf2($this->request['configure_status']);
+
+        // get all equipment status of this station
+        $query = new Query();
+        $equips = $query->select('e.binary_pos, es.id, es.equipment_id')
+            ->from('equipment_status es')
+            ->leftJoin('equipment e', 'e.id = es.equipment_id')
+            ->where(['station_id' => $this->request['id']])
+            ->all();
+
+        if (!empty($equips)) {
+            foreach ($equips as $eq) {
+
+                // device status
+                $deviceStatus = in_array($eq['binary_pos'], $outputBin) ? 1 : 0;
+                $deviceConfigure = in_array($eq['binary_pos'], $configureBin) ? 1 : 0;
+
+                // value will be update
+                $updatedStatus = $deviceStatus;
+                $updatedConfigure = $deviceConfigure;
+
+                if (!empty($this->handler['equip'])) {
+                    foreach ($this->handler['equip'] as $handler) {
+
+                        if ($handler['equip_id'] == $eq['equipment_id']) {
+
+                            // handler status
+                            $handlerStatus = $handler['status'];
+                            $handlerConfigure = $handler['configure'];
+
+                            // if value of handler different with device
+                            if ($deviceStatus != $handlerStatus) {
+                                $updatedStatus = $handlerStatus;
+                                $this->sendBack = true;
+                            }
+                            if ($deviceConfigure != $handlerConfigure) {
+                                $updatedConfigure = $handlerConfigure;
+                                $this->sendBack = true;
+                            }
+                        }
+                    }
+                }
+
+                $eq['binary_pos'] = intval($eq['binary_pos']);
+                Yii::$app->db->createCommand()
+                    ->update('equipment_status', [
+                        'status' => $updatedStatus,
+                        'configure' => $updatedConfigure,
+                    ], ['id' => $eq['id']])->execute();
+            }
+        }
     }
 
     public function insertWarning() {
@@ -189,30 +297,6 @@ class Observer {
         }
     }
 
-    public function updateEquipmentStatus() {
-        $outputBin = Convert::powOf2($this->request['output_status']);
-        $configureBin = Convert::powOf2($this->request['configure_status']);
-
-        // get all equipment status of this station
-        $query = new Query();
-        $equips = $query->select('e.binary_pos, es.id')
-            ->from('equipment_status es')
-            ->leftJoin('equipment e', 'e.id = es.equipment_id')
-            ->where(['station_id' => $this->request['id']])
-            ->all();
-
-        if (!empty($equips)) {
-            foreach ($equips as $eq) {
-                $eq['binary_pos'] = intval($eq['binary_pos']);
-                Yii::$app->db->createCommand()
-                    ->update('equipment_status', [
-                        'status' => in_array($eq['binary_pos'], $outputBin) ? 1 : 0,
-                        'configure' => in_array($eq['binary_pos'], $configureBin) ? 1 : 0,
-                    ], ['id' => $eq['id']])->execute();
-            }
-        }
-    }
-
     /**
      * update sensor status with input status
      * - update temperature
@@ -244,8 +328,16 @@ class Observer {
 
                     // if this is security mode
                     if ($sensor['sensor_id'] == Sensor::ID_SECURITY) {
+
+                        // security mode handler
                         if ($this->request['message'] == self::MSG_ARMING) $value = 1;
                         if ($this->request['message'] == self::MSG_DISARM) $value = 0;
+
+                        // compare with handler status
+                        if (isset($this->handler['security']['status']) && $value != $this->handler['security']['status']) {
+                            $value = $this->handler['security']['status'];
+                            $this->sendBack = true;
+                        }
                     }
 
                     // if this is temperature
@@ -264,16 +356,6 @@ class Observer {
                 }
             }
         }
-    }
-
-    public function afterHandle() {
-
-        // send back to client status of station was changed
-        $client = new Client();
-        $client->init($this->request['id']);
-        $client->sendStatus();
-
-        print $client->returnMessage;
     }
 
     public function analyzeRequestString($requestString) {

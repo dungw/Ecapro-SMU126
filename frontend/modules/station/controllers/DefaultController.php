@@ -2,6 +2,7 @@
 
 namespace app\modules\station\controllers;
 
+use common\models\StationStatusController;
 use Yii;
 use common\models\Client;
 use common\models\Station;
@@ -19,6 +20,8 @@ use common\models\Role;
 use common\models\PowerEquipment;
 use common\models\PowerStatus;
 use common\controllers\FrontendController;
+use common\models\StationStatusHandler;
+use yii\db\Query;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -108,37 +111,62 @@ class DefaultController extends FrontendController
     // change status parts of station
     public function actionChangeStationPart() {
         $get = Yii::$app->request->get();
-        if (isset($get['part'])) {
 
+        if (isset($get['part']) && $get['station_id'] > 0) {
+
+            // find exist
             if ($get['part'] == 'equip') {
+                $handler = StationStatusHandler::find()
+                    ->where(['station_id' => $get['station_id'], 'updated' => StationStatusHandler::STATUS_NOT_UPDATE, 'equip_id' => $get['id'], 'type' => StationStatusHandler::TYPE_EQUIPMENT])
+                    ->orderBy('created_at DESC')
+                    ->one();
 
-//                // update station
-//                Yii::$app->db->createCommand()
-//                    ->update('station', ['change_equipment_status' => 1, 'updated_at' => time()], ['id' => $get['station_id']])
-//                    ->execute();
-
-                Yii::$app->db->createCommand()
-                    ->update('equipment_status', ['status' => $get['status']], ['id' => $get['id']])
-                    ->execute();
-
-
+                // get equipment status
+                $es = EquipmentStatus::findOne($get['id']);
 
             } else if ($get['part'] == 'security') {
-
-//                Yii::$app->db->createCommand()
-//                    ->update('sensor_status', ['status' => $get['status']], ['station_id' => $get['station_id'], 'sensor_id' => Sensor::ID_SECURITY])
-//                    ->execute();
-
-                Yii::$app->db->createCommand()
-                    ->update('sensor_status', ['value' => $get['status']], ['sensor_id' => Sensor::ID_SECURITY, 'station_id' => $get['station_id']])
-                    ->execute();
-
+                $handler = StationStatusHandler::find()
+                    ->where(['station_id' => $get['station_id'], 'updated' => StationStatusHandler::STATUS_NOT_UPDATE, 'type' => StationStatusHandler::TYPE_SENSOR_SECURITY])
+                    ->orderBy('created_at DESC')
+                    ->one();
             }
 
-            $client = new Client();
-            $client->init($get['station_id']);
-            $client->sendStatus();
+            // model
+            if (!$handler) {
+                $handler = new StationStatusHandler();
+            }
+
+            // if type is equipment
+            if ($get['part'] == 'equip') {
+                $handler->type = StationStatusHandler::TYPE_EQUIPMENT;
+                $handler->configure = $get['configure'];
+                $handler->equip_id = $es['equipment_id'];
+
+            } else if ($get['part'] == 'security') {
+                $handler->type = StationStatusHandler::TYPE_SENSOR_SECURITY;
+                $handler->equip_id = Sensor::ID_SECURITY;
+            }
+
+            $handler->status = $get['status'];
+            $handler->station_id = $get['station_id'];
+            $handler->created_at = time();
+            $handler->updated = StationStatusHandler::STATUS_NOT_UPDATE;
+
+            // validate
+            if ($handler->validate()) {
+                $handler->save();
+
+                // update station
+                Yii::$app->db->createCommand()
+                    ->update('station', ['change_equipment_status' => 1], ['id' => $get['station_id']])
+                    ->execute();
+
+                // create message
+                Yii::$app->session->setFlash('update_success', 'Đã lưu thay đổi');
+            }
         }
+
+        $this->redirect(Yii::$app->homeUrl . 'station/default/view?id='. $get['station_id']);
     }
 
     // create action

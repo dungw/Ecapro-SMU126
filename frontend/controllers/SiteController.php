@@ -163,6 +163,7 @@ class SiteController extends FrontendController
                     'lng' => $station->longtitude,
                     'status' => $status,
                     'color' => $color,
+                    'address' => $station->address,
                 ];
             }
         }
