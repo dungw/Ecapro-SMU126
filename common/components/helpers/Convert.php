@@ -3,6 +3,32 @@ namespace common\components\helpers;
 
 class Convert {
 
+    public static function currentTimePoints() {
+        $dtNow = new DateTime();
+        $timestamp = time();
+
+        // Set a non-default timezone if needed
+        $dtNow->setTimezone(new DateTimeZone('Pacific/Chatham'));
+        $dtNow->setTimestamp($timestamp);
+
+        $beginOfDay = clone $dtNow;
+
+        // Go to midnight.  ->modify('midnight') does not do this for some reason
+        $beginOfDay->setTime(0, 0, 0);
+
+        $endOfDay = clone $beginOfDay;
+        $endOfDay->modify('tomorrow');
+
+        // adjust from the next day to the end of the day, per original question
+        $endOfDay->modify('1 second ago');
+
+        return [
+            'time' => $dtNow->format('Y-m-d H:i:s e'),
+            'start' => $beginOfDay->format('Y-m-d H:i:s e'),
+            'end' => $endOfDay->format('Y-m-d H:i:s e'),
+        ];
+    }
+
     public static function powOf2($number) {
         $bits = array_reverse(str_split(decbin($number)));
         $output = array();
