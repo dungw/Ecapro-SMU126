@@ -41,6 +41,9 @@ return [
         'warning' => [
             'class' => 'frontend\modules\warning\Warning',
         ],
+        'statistic' => [
+            'class' => 'frontend\modules\statistic\Statistic',
+        ],
     ],
     'components' => [
         'user' => [

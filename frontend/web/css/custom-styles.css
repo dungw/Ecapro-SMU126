@@ -8,6 +8,10 @@ body {
 
 /* COMMON */
 .text-underline { text-decoration: underline }
+.th-center th { text-align: center !important; }
+.td-alarm { background-color: #FADED6; }
+.td-connect { background-color: #ccfde1; }
+.td-security { background-color: #EAEEED; }
 
 /* PARTS OF FORM */
 .error-color { color: #a94442 }

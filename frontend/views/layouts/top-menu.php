@@ -19,7 +19,15 @@ if (!Yii::$app->user->isGuest) {
     $menuItems = [
         ['label' => 'Home', 'url' => ['/site/index']],
         ['label' => 'Quản lý trạm', 'url' => ['/station/default/index'], 'active' => ($module == 'station')],
-        ['label' => 'Thống kê cảnh báo', 'url' => ['/warning/default/index'], 'active' => ($module == 'warning')],
+    ];
+
+    // statistic menus
+    $menuItems[] = [
+        'label' => 'Thống kê',
+        'items' => [
+            ['label' => 'Thống kê trạm', 'url' => ['/statistic/station/index'], 'active' => ($module == 'statistic')],
+            ['label' => 'Thống kê cảnh báo', 'url' => ['/statistic/warning/index'], 'active' => ($module == 'statistic')],
+        ]
     ];
 
     // add by position
