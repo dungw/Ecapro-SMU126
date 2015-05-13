@@ -4,11 +4,11 @@ namespace common\components\helpers;
 class Convert {
 
     public static function currentTimePoints() {
-        $dtNow = new DateTime();
+        $dtNow = new \DateTime();
         $timestamp = time();
 
         // Set a non-default timezone if needed
-        $dtNow->setTimezone(new DateTimeZone('Pacific/Chatham'));
+        $dtNow->setTimezone(new \DateTimeZone('Pacific/Chatham'));
         $dtNow->setTimestamp($timestamp);
 
         $beginOfDay = clone $dtNow;

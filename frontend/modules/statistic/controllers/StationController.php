@@ -28,11 +28,12 @@ class StationController extends BaseController {
 
         // get data
         $query = new Query();
-        $stations = $query->select('s.area_id, s.status AS station_status, sst.value AS sensor_value, count(w.id) AS total_warning, max(w.warning_time) AS last_warning_time, a.name AS area_name, a.id AS area_id')
+        $stations = $query->select('s.area_id, s.status AS station_status, sst.value AS sensor_value, count(w.id) AS total_warning, max(w.warning_time) AS last_warning_time')
             ->from('station s')
             ->leftJoin('sensor_status sst', 'sst.station_id = s.id')
             ->leftJoin('warning w', 'w.station_id = s.id')
             ->where($whereClause)
+            ->groupBy('s.id')
             ->all();
 
         // data
@@ -44,12 +45,21 @@ class StationController extends BaseController {
         $parseData['areas'] = $areas;
         if (!empty($areas) && !empty($stations)) {
             foreach ($areas as $area) {
+                $data[$area['id']]['has_warning'] = 0;
+                $data[$area['id']]['no_warning'] = 0;
+                $data[$area['id']]['security_on'] = 0;
+                $data[$area['id']]['security_off'] = 0;
+                $data[$area['id']]['connected'] = 0;
+                $data[$area['id']]['lost_connect'] = 0;
+                $data[$area['id']]['last_warning_time'] = 0;
+
                 foreach ($stations as $station) {
                     if ($station['area_id'] == $area['id']) {
 
                         // warnings
-                        if ($station['total_warning'] > 0 && $station['last_warning_time'] >= $timePoints['begin'] && $station['last_warning_time'] <= $timePoints['end']) {
+                        if ($station['total_warning'] > 0 && $station['last_warning_time'] >= $timePoints['start'] && $station['last_warning_time'] <= $timePoints['end']) {
                             $data[$area['id']]['has_warning']++;
+                            $data[$area['id']]['last_warning_time'] = ($station['last_warning_time'] > $data[$area['id']]['last_warning_time']) ? $station['last_warning_time'] : $data[$area['id']]['last_warning_time'];
                         } else {
                             $data[$area['id']]['no_warning']++;
                         }
@@ -75,7 +85,7 @@ class StationController extends BaseController {
 
         $parseData['data'] = $data;
 
-        $this->render('station', $parseData);
+        return $this->render('station', $parseData);
     }
 
 }
