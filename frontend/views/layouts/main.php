@@ -44,7 +44,7 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; Ecapro <?= date('Y') ?></p>
+        <p class="pull-left">&copy; <?= Yii::$app->params['brandName'] . date('Y') ?></p>
         <p class="pull-right"><?= Yii::powered() ?></p>
     </div>
 </footer>

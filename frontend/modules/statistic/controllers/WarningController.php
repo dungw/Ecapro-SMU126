@@ -14,9 +14,6 @@ class WarningController extends BaseController {
 
     public function actionIndex() {
 
-        // default time duration
-        $timePoints = Convert::currentTimePoints();
-
         // get station ids by role
         $whereClause = [];
         $session = Yii::$app->session;
@@ -25,6 +22,22 @@ class WarningController extends BaseController {
             $whereClause['s.id'] = $stationIds;
         }
 
+        // default time points
+        $timePoints = Convert::currentTimePoints();
+
+        // get post form data
+        $get = Yii::$app->request->get('get_by');
+        if ($get == 'today') {
+            $timePoints = Convert::currentTimePoints();
+        } else if ($get == 'week') {
+            $timePoints = Convert::currentWeekTimePoints();
+        } else if ($get == 'month') {
+            $timePoints = Convert::currentMonthTimePoints();
+        }
+
+        $andWhere = ['>=', 'w.warning_time', $timePoints['start']];
+        $andWhere1 = ['<=', 'w.warning_time', $timePoints['end']];
+
         // get data
         $query = new Query();
         $warnings = $query->select('min(w.warning_time) AS start, max(w.warning_time) AS end, count(w.id) AS number, a.id AS area_id')
@@ -32,6 +45,8 @@ class WarningController extends BaseController {
             ->leftJoin('station s', 'w.station_id = s.id')
             ->leftJoin('area a', 'a.id = s.area_id')
             ->where($whereClause)
+            ->andWhere($andWhere)
+            ->andWhere($andWhere1)
             ->groupBy('a.id')
             ->all();
 

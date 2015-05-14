@@ -1,9 +1,16 @@
+<?php
+$selectedToday = (isset($_GET['get_by']) && $_GET['get_by'] == 'today') ? 'selected="selected"' : '';
+$selectedWeek = (isset($_GET['get_by']) && $_GET['get_by'] == 'week') ? 'selected="selected"' : '';
+$selectedMonth = (isset($_GET['get_by']) && $_GET['get_by'] == 'month') ? 'selected="selected"' : '';
+?>
 <div style="margin-bottom: 10px;">
-    <select name="get_by" style="padding: 5px 20px; cursor: pointer; background-color: #E2EDE3;">
-        <option value="today">Hôm nay</option>
-        <option value="week">Tuần này</option>
-        <option value="month">Tháng này</option>
-    </select>
+    <form id="select-by" action="<?= Yii::$app->homeUrl . 'statistic/warning' ?>">
+        <select name="get_by" style="padding: 5px 20px; cursor: pointer; background-color: #E2EDE3;">
+            <option <?=$selectedToday?> value="today">Hôm nay</option>
+            <option <?=$selectedWeek?> value="week">Tuần này</option>
+            <option <?=$selectedMonth?> value="month">Tháng này</option>
+        </select>
+    </form>
 </div>
 <div class="panel panel-primary">
     <div class="panel-heading">
@@ -55,3 +62,11 @@
     ?>
 
 </table>
+<script type="text/javascript">
+    jQuery(function ($) {
+        $('#select-by select').change(function() {
+            $(this).parent().submit();
+        });
+    });
+</script>
+

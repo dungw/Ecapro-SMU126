@@ -162,7 +162,7 @@ class DefaultController extends FrontendController
                     ->execute();
 
                 // create message
-                Yii::$app->session->setFlash('update_success', 'Đã lưu thay đổi');
+                Yii::$app->session->setFlash('update_success', 'Đã lưu thay đổi, sau khi gửi được dữ liệu sẽ hiển thị đã gửi dữ liệu.');
             }
         }
 
@@ -235,6 +235,17 @@ class DefaultController extends FrontendController
 
             return $this->render('create', $parseData);
         }
+    }
+
+    public function actionCronEquipmentStatus() {
+        $this->enableCsrfValidation = false;
+        $data = [];
+        $id = Yii::$app->request->post('station_id');
+        if ($id) {
+            $model = $this->findModel($id);
+            $data['content'] = $model->getEquipment($model->id, $model->equipment);
+        }
+        print json_encode($data);
     }
 
     // update status action
