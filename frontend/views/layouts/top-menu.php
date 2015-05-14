@@ -9,7 +9,7 @@ $module = $this->context->module->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
-        'brandLabel' => 'Ecapro',
+        'brandLabel' => Yii::$app->params['brandName'],
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',

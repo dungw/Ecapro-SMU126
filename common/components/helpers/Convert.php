@@ -8,7 +8,6 @@ class Convert {
         $timestamp = time();
 
         // Set a non-default timezone if needed
-        $dtNow->setTimezone(new \DateTimeZone('Pacific/Chatham'));
         $dtNow->setTimestamp($timestamp);
 
         $beginOfDay = clone $dtNow;
@@ -26,6 +25,25 @@ class Convert {
             'time' => $dtNow->format('Y-m-d H:i:s e'),
             'start' => $beginOfDay->format('Y-m-d H:i:s e'),
             'end' => $endOfDay->format('Y-m-d H:i:s e'),
+        ];
+    }
+
+    public static function currentWeekTimePoints() {
+        $now = time();
+        $beginning = strtotime('last Monday', $now);
+        $end = strtotime('next Sunday', $now) + 86400;
+        return [
+            'start' => $beginning,
+            'end' => $end,
+        ];
+    }
+
+    public static function currentMonthTimePoints() {
+        $beginning = strtotime(date('m/01/Y'));
+        $end = strtotime(date('m/t/Y')) + 86400;
+        return [
+            'start' => $beginning,
+            'end' => $end,
         ];
     }
 

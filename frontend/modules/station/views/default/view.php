@@ -13,9 +13,13 @@ $this->params['breadcrumbs'][] = $this->title;
 // url change configure
 $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
 ?>
+<script src="<?=Yii::$app->homeUrl . 'js/jquery-crontab-equipment.js'?>"></script>
+
+<input type="hidden" id="station_id" value="<?=$model->id?>">
+
 <div class="panel panel-primary">
     <div class="panel-heading">
-        <h4 class="panel-title">
+        <h4 class="panel-title panel-equipment">
             <i class="glyphicon glyphicon-book"></i><?php echo $model->name ?> (<?php echo $model->code ?>)
         </h4>
     </div>
@@ -23,7 +27,9 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
 <table class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">
     <tr class="info">
         <th colspan="4">Giám sát thiết bị</th>
-        <th></th>
+        <th>
+            <a href="http://<?=$model->ip?>:<?=Yii::$app->params['device_port']?>" target="_blank" type="button" class="btn btn-primary btn-xs">Thiết bị điều khiển</a>
+        </th>
     </tr>
     <?php
     $sc = Yii::$app->session->getFlash('update_success');
@@ -61,25 +67,25 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                     <div class="kv-attribute"><?=EquipmentStatus::getStatus($equipment['status'])?></div>
                 </td>
                 <td>
-                    <div class="kv-attribute">
+                    <div id="equip-<?=$equipment['id']?>" class="kv-attribute">
                         <?php
-                        $underAuto = 0;
                         $underOn = 0;
                         $underOff = 0;
+                        $underAuto = 0;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_AUTO) $underAuto = 1;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_ON) $underOn = 1;
                         if ($equipment['configure'] == EquipmentStatus::CONFIGURE_MANUAL && $equipment['status'] == EquipmentStatus::STATUS_OFF) $underOff = 1;
                         ?>
-                        <a class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOn) && $underOn == 1) ? '#' : $hrefOn?>">Bật</a>  /
-                        <a class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOff) && $underOff == 1) ? '#' : $hrefOff?>">Tắt</a>  /
-                        <a class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="<?=(isset($underAuto) && $underAuto == 1) ? '#' : $hrefAuto?>">Tự động</a>
+                        <a id="equip-<?=$equipment['id']?>-on" class="<?=(isset($underOn) && $underOn == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOn) && $underOn == 1) ? '#' : $hrefOn?>">Bật</a>  /
+                        <a id="equip-<?=$equipment['id']?>-off" class="<?=(isset($underOff) && $underOff == 1) ? 'text-underline' : ''?>" href="<?=(isset($underOff) && $underOff == 1) ? '#' : $hrefOff?>">Tắt</a>  /
+                        <a id="equip-<?=$equipment['id']?>-auto" class="<?=(isset($underAuto) && $underAuto == 1) ? 'text-underline' : ''?>" href="<?=(isset($underAuto) && $underAuto == 1) ? '#' : $hrefAuto?>">Tự động</a>
                     </div>
                 </td>
                 <?php
                 if ($no == 1) {
                     ?>
                     <td rowspan="<?=$equipNum?>">
-                        <?=Show::cameraIp($model->video_url)?>
+<!--                        --><?//=Show::cameraIp($model->video_url)?>
                     </td>
                     <?php
                 }

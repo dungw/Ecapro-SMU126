@@ -136,7 +136,7 @@ class Station extends Base
             $query = new Query;
             $query->select('s.*, e.name')
                 ->from('equipment_status s')
-                ->leftJoin('equipment e', 'e.id = s.equipment_id')
+                ->innerJoin('equipment e', 'e.id = s.equipment_id')
                 ->where(['s.equipment_id' => $equipments, 's.station_id' => $stationId]);
 
             return $query->all();
