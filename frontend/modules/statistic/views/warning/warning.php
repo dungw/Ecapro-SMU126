@@ -31,8 +31,10 @@ $selectedMonth = (isset($_GET['get_by']) && $_GET['get_by'] == 'month') ? 'selec
         <th class="td-alarm">Kết thúc</th>
     </tr>
     <?php
+
     if (isset($areas) && !empty($areas)) {
         foreach ($areas as $area) {
+
             $begin = ($data[$area['id']]['start'] > 0) ? date('d/m/Y h:i A', $data[$area['id']]['start']) : '';
             $end = ($data[$area['id']]['end'] > 0) ? date('d/m/Y h:i A', $data[$area['id']]['end']) : '';
             $number = $data[$area['id']]['number'];

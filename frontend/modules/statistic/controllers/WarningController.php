@@ -57,20 +57,22 @@ class WarningController extends BaseController {
         // get areas
         $areas = Area::find()->all();
         $parseData['areas'] = $areas;
-        if (!empty($areas) && !empty($warnings)) {
+        if (!empty($areas)) {
             foreach ($areas as $area) {
 
                 $data[$area['id']]['number'] = 0;
                 $data[$area['id']]['start'] = 0;
                 $data[$area['id']]['end'] = 0;
 
-                foreach ($warnings as $w) {
-                    if ($w['area_id'] == $area['id']) {
+                if (!empty($warnings)) {
+                    foreach ($warnings as $w) {
+                        if ($w['area_id'] == $area['id']) {
 
-                        $data[$area['id']]['number'] = $w['number'];
-                        $data[$area['id']]['start'] = $w['start'];
-                        $data[$area['id']]['end'] = $w['end'];
+                            $data[$area['id']]['number'] = $w['number'];
+                            $data[$area['id']]['start'] = $w['start'];
+                            $data[$area['id']]['end'] = $w['end'];
 
+                        }
                     }
                 }
             }

@@ -43,7 +43,7 @@ class StationController extends BaseController {
         // get areas
         $areas = Area::find()->all();
         $parseData['areas'] = $areas;
-        if (!empty($areas) && !empty($stations)) {
+        if (!empty($areas)) {
             foreach ($areas as $area) {
                 $data[$area['id']]['has_warning'] = 0;
                 $data[$area['id']]['no_warning'] = 0;
@@ -53,33 +53,36 @@ class StationController extends BaseController {
                 $data[$area['id']]['lost_connect'] = 0;
                 $data[$area['id']]['last_warning_time'] = 0;
 
-                foreach ($stations as $station) {
-                    if ($station['area_id'] == $area['id']) {
+                if (!empty($stations)) {
+                    foreach ($stations as $station) {
+                        if ($station['area_id'] == $area['id']) {
 
-                        // warnings
-                        if ($station['total_warning'] > 0 && $station['last_warning_time'] >= $timePoints['start'] && $station['last_warning_time'] <= $timePoints['end']) {
-                            $data[$area['id']]['has_warning']++;
-                            $data[$area['id']]['last_warning_time'] = ($station['last_warning_time'] > $data[$area['id']]['last_warning_time']) ? $station['last_warning_time'] : $data[$area['id']]['last_warning_time'];
-                        } else {
-                            $data[$area['id']]['no_warning']++;
+                            // warnings
+                            if ($station['total_warning'] > 0 && $station['last_warning_time'] >= $timePoints['start'] && $station['last_warning_time'] <= $timePoints['end']) {
+                                $data[$area['id']]['has_warning']++;
+                                $data[$area['id']]['last_warning_time'] = ($station['last_warning_time'] > $data[$area['id']]['last_warning_time']) ? $station['last_warning_time'] : $data[$area['id']]['last_warning_time'];
+                            } else {
+                                $data[$area['id']]['no_warning']++;
+                            }
+
+                            // status
+                            if ($station['station_status'] == Station::STATUS_CONNECTED) {
+                                $data[$area['id']]['connected']++;
+                            } else if ($station['station_status'] == Station::STATUS_LOST) {
+                                $data[$area['id']]['lost_connect']++;
+                            }
+
+                            // security mode
+                            if ($station['sensor_value'] == Sensor::SECURITY_ON) {
+                                $data[$area['id']]['security_on']++;
+                            } else if ($station['sensor_value'] == Sensor::SECURITY_OFF) {
+                                $data[$area['id']]['security_off']++;
+                            }
+
                         }
-
-                        // status
-                        if ($station['station_status'] == Station::STATUS_CONNECTED) {
-                            $data[$area['id']]['connected']++;
-                        } else if ($station['station_status'] == Station::STATUS_LOST) {
-                            $data[$area['id']]['lost_connect']++;
-                        }
-
-                        // security mode
-                        if ($station['sensor_value'] == Sensor::SECURITY_ON) {
-                            $data[$area['id']]['security_on']++;
-                        } else if ($station['sensor_value'] == Sensor::SECURITY_OFF) {
-                            $data[$area['id']]['security_off']++;
-                        }
-
                     }
                 }
+
             }
         }
 
