@@ -4,6 +4,7 @@ use common\models\DcEquipmentStatus;
 use common\models\SensorStatus;
 use common\models\Sensor;
 use common\models\Message;
+use common\models\Station;
 use common\components\helpers\Show;
 
 $this->title = $model->name;
@@ -85,7 +86,7 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 if ($no == 1) {
                     ?>
                     <td rowspan="<?=$equipNum?>">
-<!--                        --><?//=Show::cameraIp($model->video_url)?>
+                        <?=Show::cameraIp($model->video_url)?>
                     </td>
                     <?php
                 }
@@ -135,16 +136,15 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
     </tr>
 
     <?php
-
+    $no = 1;
     if (!empty($model->sensor_status)) {
-        $no = 1;
+
         foreach ($model->sensor_status as $status) {
             $value = $status['value'];
             $label = $value;
             $labelButton = '';
             if ($status['type'] == Sensor::TYPE_VALUE) {
                 if ($status['sensor_id'] == Sensor::ID_SECURITY) {
-
                     $label = Sensor::getSecurityStatus($value);
                     if ($value == Sensor::SECURITY_ON) {
                         $label = Show::decorateString($label, 'good');
@@ -173,7 +173,24 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
             $no++;
         }
     }
+
+    $connectStatus = $model->getStatus($model->status);
+    if ($model->status == Station::STATUS_CONNECTED) {
+        $connectStatus = Show::decorateString($connectStatus, 'good');
+    } else if ($model->status == Station::STATUS_LOST) {
+        $connectStatus = Show::decorateString($connectStatus, 'bad');
+    }
     ?>
+    <tr>
+        <th width="5%" style="text-align: center"><?=$no?></th>
+        <td width="45%">
+            <div class="kv-attribute">Tình trạng kết nối</div>
+        </td>
+        <td>
+            <div class="kv-attribute"><?=$connectStatus?></div>
+        </td>
+        <td></td>
+    </tr>
 </table>
 
 

@@ -88,6 +88,7 @@ class Station extends Base
             'updated_at' => 'Cập nhật lúc',
             'change_equipment_status' => 'Thay đổi trạng thái thiết bị',
             'address' => 'Địa chỉ',
+            'power_equipments' => 'Thiết bị nguồn điện',
         ];
     }
 
