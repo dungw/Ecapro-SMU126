@@ -412,18 +412,23 @@ class DefaultController extends FrontendController
             }
 
             // get sensor status
-            $sensorStatus = SensorStatus::findAll(['station_id' => $id]);
-            if (!empty($sensorStatus)) {
-                foreach ($sensorStatus as $sensorStatus) {
-                    $sensor = Sensor::findOne(['id' => $sensorStatus->sensor_id]);
+            $query = new Query();
+            $sensorStatus = $query->select('sst.*, s.type, s.unit_type, s.name')
+                ->from('sensor_status sst')
+                ->leftJoin('sensor s', 's.id = sst.sensor_id')
+                ->where(['sst.station_id' => $id])
+                ->andWhere(['s.active' => Sensor::STATUS_ACTIVE])
+                ->all();
 
+            if (!empty($sensorStatus)) {
+                foreach ($sensorStatus as $sst) {
                     $model->sensor_status[] = [
-                        'type' => $sensor->type,
-                        'sensor_id' => $sensorStatus->sensor_id,
-                        'name' => $sensor->name,
-                        'unit' => $sensor->unit_type,
-                        'value' => $sensorStatus->value,
-                        'status' => $sensorStatus->status,
+                        'type' => $sst['type'],
+                        'sensor_id' => $sst['sensor_id'],
+                        'name' => $sst['name'],
+                        'unit' => $sst['unit_type'],
+                        'value' => $sst['value'],
+                        'status' => $sst['status'],
                     ];
                 }
             }

@@ -8,7 +8,7 @@ use common\models\StationStatus;
 
 class UpdateController extends Controller {
 
-    const LIMIT_DURATION = 10;
+    const LIMIT_DURATION = 90;
 
     public function actionIndex() {
 

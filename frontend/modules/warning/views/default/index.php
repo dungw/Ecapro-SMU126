@@ -103,6 +103,8 @@ $this->params['breadcrumbs'][] = $this->title;
                                     $html .= '<button '. $hideIt .' class="btn btn-primary btn-xs" href="'. $path .'">Xem ảnh</button>';
                                     $no++;
                                 }
+                            } else {
+                                $html .= Show::decorateString('Lỗi camera', 'bad');
                             }
                             $html .= '</div>';
                             return $html;

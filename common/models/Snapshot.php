@@ -15,7 +15,12 @@ class Snapshot {
         $data = [];
         if ($numb > 0) {
             for ($i=1; $i<=$numb; $i++) {
-                $data[] = $this->takeOne();
+                $pic = $this->takeOne();
+                if ($pic) {
+                    $data[] = $this->takeOne();
+                } else {
+                    break;
+                }
             }
         }
         return $data;
@@ -43,8 +48,12 @@ class Snapshot {
 
         // open new file
         $fh = fopen($path . $file, 'w') or die('Cannot create directories');
-
-        file_put_contents($path . $file, file_get_contents($this->url));
+        $content = file_get_contents($this->url);
+        if ($content) {
+            file_put_contents($path . $file, $content);
+        } else {
+            return false;
+        }
 
         $infoSave = date('Y/m/d/') . $file;
 

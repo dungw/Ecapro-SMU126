@@ -76,6 +76,8 @@ class Show extends BaseHtml
                         $gallery .= '<button style="' . $style . '" class="btn btn-primary btn-xs '. $buttonClass .'" href="' . $path . '">Xem ảnh</button>';
                         $no++;
                     }
+                } else {
+                    $gallery .= self::decorateString('<span>Lỗi camera</span>', 'bad');
                 }
 
                 // station href

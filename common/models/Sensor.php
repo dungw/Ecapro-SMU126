@@ -17,6 +17,9 @@ class Sensor extends Base
     const SECURITY_ON = 1;
     const SECURITY_OFF = 0;
 
+    const STATUS_ACTIVE = 1;
+    const STATUS_NOT_ACTIVE = 0;
+
     public static function getSecurityStatus($status) {
         if ($status == self::SECURITY_ON) return 'Đang bật';
         if ($status == self::SECURITY_OFF) return 'Đang tắt';
@@ -32,7 +35,7 @@ class Sensor extends Base
         return [
             [['name'], 'required'],
             [['name'], 'string', 'max' => 255],
-            ['binary_pos', 'integer'],
+            [['binary_pos', 'active'], 'integer'],
         ];
     }
 
