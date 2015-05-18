@@ -243,6 +243,35 @@ class DefaultController extends FrontendController
     public function actionCreate()
     {
         $model = new Station();
+// parse data
+        $parseData = ['model' => $model];
+
+        // get all equipment
+        $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
+        if (!empty($parseData['equipments'])) {
+            foreach ($parseData['equipments'] as $equipment) {
+                $parseData['equipmentIds'][] = $equipment->id;
+            }
+        }
+
+        // get all power equipment
+        $parseData['powerEquipments'] = PowerEquipment::find()->all();
+        if (!empty($parseData['powerEquipments'])) {
+            foreach ($parseData['powerEquipments'] as $equipment) {
+                $parseData['powerEquipmentIds'][] = $equipment->id;
+            }
+        }
+
+        // get area
+        $areaCollections = Area::find()->all();
+        $parseData['areas'] = Area::_prepareDataSelect($areaCollections, 'id', 'name');
+
+        // get center
+        $centerCollections = Center::find()->all();
+        $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
+
+        // get station types
+        $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
 
         $post = Yii::$app->request->post();
         if ($post) {
@@ -268,43 +297,14 @@ class DefaultController extends FrontendController
 
                 // initial sensors
                 $this->initSensor($stationId);
+
+                return $this->redirect(['index']);
             }
 
-            return $this->redirect(['index']);
-        } else {
 
-            // parse data
-            $parseData = ['model' => $model];
-
-            // get all equipment
-            $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
-            if (!empty($parseData['equipments'])) {
-                foreach ($parseData['equipments'] as $equipment) {
-                    $parseData['equipmentIds'][] = $equipment->id;
-                }
-            }
-
-            // get all power equipment
-            $parseData['powerEquipments'] = PowerEquipment::find()->all();
-            if (!empty($parseData['powerEquipments'])) {
-                foreach ($parseData['powerEquipments'] as $equipment) {
-                    $parseData['powerEquipmentIds'][] = $equipment->id;
-                }
-            }
-
-            // get area
-            $areaCollections = Area::find()->all();
-            $parseData['areas'] = Area::_prepareDataSelect($areaCollections, 'id', 'name');
-
-            // get center
-            $centerCollections = Center::find()->all();
-            $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
-
-            // get station types
-            $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
-
-            return $this->render('create', $parseData);
         }
+
+        return $this->render('create', $parseData);
     }
 
     public function actionCronEquipmentStatus() {
