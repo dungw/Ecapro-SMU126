@@ -4,6 +4,9 @@ namespace common\models;
 
 use Yii;
 use common\models\Base;
+use common\models\Role;
+use common\models\User;
+
 use yii\db\Query;
 
 class Station extends Base
@@ -160,4 +163,40 @@ class Station extends Base
         }
         return null;
     }
+
+    public static function getByRole($role, $userId) {
+        $ids = [];
+        if ($role != '' && $userId > 0) {
+            $query = new Query();
+            if ($role == Role::POSITION_ADMIN) {
+
+                $coll = $query->select('id')
+                    ->from('station')
+                    ->where(['user_id' => $userId])
+                    ->all();
+
+                if (!empty($coll)) {
+                    foreach ($coll as $co) {
+                        $ids[] = $co['id'];
+                    }
+                }
+            } else if ($role == Role::POSITION_OBSERVER) {
+                $user = User::findOne($userId);
+                $parent = $user['created_by'];
+
+                $coll = $query->select('id')
+                    ->from('station')
+                    ->where(['user_id' => $parent])
+                    ->all();
+                if (!empty($coll)) {
+                    foreach ($coll as $co) {
+                        $ids[] = $co['id'];
+                    }
+                }
+            }
+        }
+
+        return $ids;
+    }
+
 }

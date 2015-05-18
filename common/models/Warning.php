@@ -60,16 +60,9 @@ class Warning extends \yii\db\ActiveRecord
         if (!empty($conditions)) {
             $oneCondition = 0;
             foreach ($conditions as $con) {
-                if (is_array($con)) {
-                    $query->andWhere($con);
-                } else {
-                    break;
-                    $oneCondition = 1;
-                }
+                $query->andWhere($con);
             }
-            if ($oneCondition == 1) $query->where($conditions);
         }
-
         $query->orderBy($orderBy);
 
         if ($limit > 0) $query->limit($limit);
@@ -84,4 +77,5 @@ class Warning extends \yii\db\ActiveRecord
 
         return $warnings;
     }
+
 }

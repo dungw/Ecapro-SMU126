@@ -34,7 +34,8 @@ $selectedMonth = (isset($_GET['get_by']) && $_GET['get_by'] == 'month') ? 'selec
 
     if (isset($areas) && !empty($areas)) {
         foreach ($areas as $area) {
-
+            $getBy = isset($_GET['get_by']) ? $_GET['get_by'] : 'today';
+            $detailUrl = Yii::$app->homeUrl . 'warning/default/index?area_id='. $area['id'] .'&get_by='. $getBy;
             $begin = ($data[$area['id']]['start'] > 0) ? date('d/m/Y h:i A', $data[$area['id']]['start']) : '';
             $end = ($data[$area['id']]['end'] > 0) ? date('d/m/Y h:i A', $data[$area['id']]['end']) : '';
             $number = $data[$area['id']]['number'];
@@ -48,7 +49,7 @@ $selectedMonth = (isset($_GET['get_by']) && $_GET['get_by'] == 'month') ? 'selec
                 </td>
                 <td>
                     <div class="kv-attribute">
-                        <a href="" target="_blank" class="btn btn-primary btn-xs">Chi tiết</a>
+                        <a href="<?=$detailUrl?>" target="_blank" class="btn btn-primary btn-xs">Chi tiết</a>
                     </div>
                 </td>
                 <td>

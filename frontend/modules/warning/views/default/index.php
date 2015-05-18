@@ -60,7 +60,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 [
                     'class' => 'yii\grid\SerialColumn',
                     'options' => [
-                        'width' => '5%',
+                        'width' => '6%',
                     ],
                 ],
                 [

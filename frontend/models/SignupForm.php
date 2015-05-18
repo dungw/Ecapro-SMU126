@@ -60,6 +60,7 @@ class SignupForm extends Base
             $user->type = $this->type;
             $user->created_at = time();
             $user->created_by = Yii::$app->user->id;
+
             $user->setPassword($this->password);
             $user->generateAuthKey();
             if ($user->save()) {

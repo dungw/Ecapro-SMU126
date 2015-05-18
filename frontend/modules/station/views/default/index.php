@@ -17,8 +17,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-            'id',
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'options' => [
+                    'width' => '6%',
+                ],
+            ],
             'code',
             'name',
             [
@@ -26,6 +30,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
                 'value' => function($model) {
                         $center = Center::findOne($model->center_id);
+
                         return $center->name;
                     },
             ],
@@ -47,7 +52,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     }
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'options' => [
+                    'width' => '10%',
+                ],
+            ],
         ],
     ]); ?>
 

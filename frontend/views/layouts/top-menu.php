@@ -4,8 +4,12 @@ use yii\bootstrap\NavBar;
 use yii\base\Module;
 use common\models\Role;
 
+// get role
+$role = new Role();
+
 // get current controller
 $module = $this->context->module->id;
+$controller = $this->context->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
@@ -25,13 +29,13 @@ if (!Yii::$app->user->isGuest) {
     $menuItems[] = [
         'label' => 'Thống kê',
         'items' => [
-            ['label' => 'Thống kê trạm', 'url' => ['/statistic/station/index'], 'active' => ($module == 'statistic')],
-            ['label' => 'Thống kê cảnh báo', 'url' => ['/statistic/warning/index'], 'active' => ($module == 'statistic')],
+            ['label' => 'Thống kê trạm', 'url' => ['/statistic/station/index'], 'active' => ($module == 'statistic' && $controller == 'station')],
+            ['label' => 'Thống kê cảnh báo', 'url' => ['/statistic/warning/index'], 'active' => ($module == 'statistic' && $controller == 'warning')],
         ]
     ];
 
     // add by position
-    if (Yii::$app->session['user_position'] == Role::POSITION_ADMINISTRATOR) {
+    if ($role->isAdministrator) {
         $menuItems[] = [
             'label' => 'Cài đặt',
             'items' => [
@@ -44,7 +48,7 @@ if (!Yii::$app->user->isGuest) {
             ]
         ];
     }
-    else if (Yii::$app->session['user_position'] == Role::POSITION_ADMIN) {
+    else if ($role->isAdmin) {
         $menuItems[] = [
             'label' => 'Cài đặt',
             'items' => [

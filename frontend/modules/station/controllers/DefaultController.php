@@ -21,6 +21,8 @@ use common\models\PowerEquipment;
 use common\models\PowerStatus;
 use common\controllers\FrontendController;
 use common\models\StationStatusHandler;
+use common\models\Warning;
+use common\components\helpers\Convert;
 use yii\db\Query;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
@@ -43,13 +45,81 @@ class DefaultController extends FrontendController
     // index action
     public function actionIndex()
     {
+        $query = Station::find()->select('station.*');
+
         // session
-        $session = Yii::$app->session;
+        $role = new Role();
+        if (!$role->isAdministrator) {
+            $position = $role->getPosition();
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
+            $condition = ['in', 'station.id', $stationIds];
+            $query->where($condition);
+        }
 
-        $condition = isset($session['station_ids']) ? ['id' => $session['station_ids']] : [];
+        // conditions
+        $areaId = Yii::$app->request->get('area_id');
+        if ($areaId > 0) {
+            $query->andWhere(['area_id' => $areaId]);
+        }
 
+        // has_warning
+        $hasWarning = Yii::$app->request->get('has_warning');
+        if ($hasWarning) {
+
+            $getBy = Yii::$app->request->get('get_by');
+            if ($getBy == 'today') {
+                $timePoints = Convert::currentTimePoints();
+            } else if ($getBy == 'week') {
+                $timePoints = Convert::currentWeekTimePoints();
+            } else if ($getBy == 'month') {
+                $timePoints = Convert::currentMonthTimePoints();
+            }
+
+            if (isset($timePoints)) {
+
+                $subSql = new Query();
+                $subSql->select('count(w.id) AS total_warning')
+                    ->from('warning w')
+                    ->where(['w.station_id' => 's.id'])
+                    ->andWhere(['>=', 'w.warning_time', $timePoints['start']])
+                    ->andWhere(['<=', 'w.warning_time', $timePoints['end']]);
+
+                if ($hasWarning == 'yes') {
+
+                    $query->andWhere(($subSql->createCommand()->rawSql) . ' > 0 ');
+
+                } else if ($hasWarning == 'no') {
+
+                    $query->andWhere(($subSql->createCommand()->rawSql) . ' <= 0 ');
+
+                }
+            }
+        }
+
+        // connect
+        $connect = Yii::$app->request->get('connect');
+        if ($connect) {
+            if ($connect == 'yes') {
+                $query->andWhere(['status' => Station::STATUS_CONNECTED]);
+            } else if ($connect == 'no') {
+                $query->andWhere(['status' => Station::STATUS_LOST]);
+            }
+        }
+
+        // security
+        $security = Yii::$app->request->get('security');
+        if ($security) {
+            $query->leftJoin('sensor_status', 'sensor_status.station_id = station.id');
+            $query->andWhere(['sensor_id' => Sensor::ID_SECURITY]);
+            if ($security == 'on') {
+                $query->andWhere(['sensor_status.value' => Sensor::SECURITY_ON]);
+            } else if ($security == 'off') {
+                $query->andWhere(['sensor_status.value' => Sensor::SECURITY_OFF]);
+            }
+        }
+//print $query->createCommand()->rawSql;die;
         $dataProvider = new ActiveDataProvider([
-            'query' => Station::find()->where($condition),
+            'query' => $query->groupBy('station.id'),
         ]);
 
         return $this->render('index', [
@@ -277,6 +347,39 @@ class DefaultController extends FrontendController
     {
         $model = $this->findModel($id);
 
+        // parse data
+        $parseData = ['model' => $model];
+
+        // check if not has dc status and sensor status, then create them
+        if (!$model->dc_equip_status) $this->initDc($id);
+        if (!$model->sensor_status) $this->initSensor($id);
+
+        // get all equipment
+        $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
+
+        // get equipment of station
+        $parseData['equipmentIds'] = $model->equipment;
+
+        // get all power equipment
+        $parseData['powerEquipments'] = PowerEquipment::find()->all();
+
+        // get equipment of station
+        $parseData['powerEquipmentIds'] = $model->power_equipment;
+
+        // get area
+        $areaCollections = Area::find()->all();
+        $parseData['areas'] = Area::_prepareDataSelect($areaCollections, 'id', 'name');
+
+        // get center
+        $centerCollections = Center::find()->all();
+        $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
+
+        // get station types
+        $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
+
+        // change left menu
+        $this->setDetailLeftMenu($id);
+
         $post = Yii::$app->request->post();
 
         if ($post) {
@@ -291,51 +394,57 @@ class DefaultController extends FrontendController
 
                 // update power equipment
                 $this->setPowerEquipment($post['power_equipments'], $id);
+
+                return $this->redirect(['view', 'id' => $model->id]);
             }
-
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-
-            // parse data
-            $parseData = ['model' => $model];
-
-            // check if not has dc status and sensor status, then create them
-            if (!$model->dc_equip_status) $this->initDc($id);
-            if (!$model->sensor_status) $this->initSensor($id);
-
-            // get all equipment
-            $parseData['equipments'] = Equipment::findAll(['active' => Equipment::STATUS_ACTIVE]);
-
-            // get equipment of station
-            $parseData['equipmentIds'] = $model->equipment;
-
-            // get all power equipment
-            $parseData['powerEquipments'] = PowerEquipment::find()->all();
-
-            // get equipment of station
-            $parseData['powerEquipmentIds'] = $model->power_equipment;
-
-            // get area
-            $areaCollections = Area::find()->all();
-            $parseData['areas'] = Area::_prepareDataSelect($areaCollections, 'id', 'name');
-
-            // get center
-            $centerCollections = Center::find()->all();
-            $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
-
-            // get station types
-            $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
-
-            // change left menu
-            $this->setDetailLeftMenu($id);
-
-            return $this->render('update', $parseData);
         }
+
+        return $this->render('update', $parseData);
     }
 
     // delete action
     public function actionDelete($id)
     {
+        $id = Yii::$app->request->get('id');
+        if ($id > 0) {
+
+            // delete equipment status
+            DcEquipmentStatus::deleteAll(['station_id' => $id]);
+
+            // delete sensor status
+            SensorStatus::deleteAll(['station_id' => $id]);
+
+            // delete dc status
+            DcStatus::deleteAll(['station_id' => $id]);
+
+            // delete dc equipment status
+            DcEquipmentStatus::deleteAll(['station_id' => $id]);
+
+            // delete power status
+            PowerStatus::deleteAll(['station_id' => $id]);
+
+            // delete station status
+            StationStatus::deleteAll(['station_id' => $id]);
+
+            // delete station status controller
+            StationStatusController::deleteAll(['station_id' => $id]);
+
+            // delete warning
+            $warnings = Warning::findAll(['station_id' => $id]);
+            if (!empty($warnings)) {
+                foreach ($warnings as $w) {
+                    Yii::$app->db->createCommand()
+                        ->delete('warning_picture', ['warning_id' => $w['id']])
+                        ->execute();
+                }
+            }
+            Warning::deleteAll(['station_id' => $id]);
+
+            // delete station
+            Station::deleteAll(['id' => $id]);
+
+        }
+
         return $this->redirect(['index']);
     }
 
@@ -364,11 +473,13 @@ class DefaultController extends FrontendController
     protected function findModel($id)
     {
         // session
-        $session = Yii::$app->session;
-
-        // check belong ids
-        if (isset($session['station_ids']) && !in_array($id, $session['station_ids'])) {
-            $this->permissionDeny();
+        $role = new Role();
+        if (!$role->isAdministrator) {
+            $position = $role->getPosition();
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
+            if (!empty($stationIds) && !in_array($id, $stationIds)) {
+                $this->permissionDeny();
+            }
         }
 
         if (($model = Station::findOne($id)) !== null) {
@@ -443,10 +554,10 @@ class DefaultController extends FrontendController
     protected function setDetailLeftMenu($id) {
 
         // session
-        $session = Yii::$app->session;
+        $role = new Role();
 
         $menu = [];
-        if ($session['user_position'] == Role::POSITION_ADMINISTRATOR || $session['user_position'] == Role::POSITION_ADMIN) {
+        if ($role->isAdministrator || $role->isAdmin) {
             $menu[] = ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'];
             $menu[] = ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id];
         }

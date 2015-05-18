@@ -14,9 +14,13 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            [
+                'class' => 'yii\grid\SerialColumn',
+                'options' => [
+                    'width' => '6%',
+                ],
+            ],
 
-            'id',
             'name',
             [
                 'attribute' => 'sensor_id',
@@ -27,9 +31,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'message_0',
             'message_1',
-            // 'active',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {delete}',
+                'options' => [
+                    'width' => '10%',
+                ],
+            ],
         ],
     ]); ?>
 

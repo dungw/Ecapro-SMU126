@@ -6,6 +6,7 @@ use Yii;
 use frontend\models\SignupForm;
 use frontend\models\UpdateInfo;
 use common\models\User;
+use common\models\Role;
 use common\controllers\FrontendController;
 use yii\data\ActiveDataProvider;
 use yii\web\NotFoundHttpException;
@@ -27,10 +28,18 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
-        $condition = isset(Yii::$app->session['user_ids']) ? ['id' => Yii::$app->session['user_ids']] : [];
+        $role = new Role();
+        if ($role->isAdministrator || $role->isAdmin) {
+            $position = $role->getPosition();
+            $ids = User::getByRole($position, Yii::$app->user->id);
+        }
+        $condition = ['in', 'id', $ids];
 
         $dataProvider = new ActiveDataProvider([
-            'query' => User::find()->where(['!=', 'type', SignupForm::LEVEL_ADMINISTRATOR])->andWhere($condition),
+            'query' => User::find()->where($condition),
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
         ]);
 
         return $this->render('index', [
@@ -51,7 +60,16 @@ class DefaultController extends FrontendController
         $parseData['model'] = $model;
 
         // get user types
-        $parseData['types'] = $model->_prepareDataSelect($model->_types, 'value', 'label');
+        $types = $model->_types;
+
+        $role = new Role();
+        if ($role->isAdmin) {
+            foreach ($types as $key => $value) {
+                if ($value['value'] == User::TYPE_ADMIN) unset($types[$key]);
+            }
+        }
+
+        $parseData['types'] = $model->_prepareDataSelect($types, 'value', 'label');
 
         $post = Yii::$app->request->post();
         if ($post) {
@@ -95,7 +113,22 @@ class DefaultController extends FrontendController
 
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        // check belong ids
+        $role = new Role();
+        if ($role->isAdministrator || $role->isAdmin) {
+            $position = $role->getPosition();
+            $ids = User::getByRole($position, Yii::$app->user->id);
+
+            if (!in_array($id, $ids)) {
+                $this->permissionDeny();
+            }
+        }
+
+
+
+        Yii::$app->db->createCommand()
+            ->delete('user', ['id' => $id])
+            ->execute();
 
         return $this->redirect(['index']);
     }
@@ -103,8 +136,14 @@ class DefaultController extends FrontendController
     protected function findModel($id)
     {
         // check belong ids
-        if (isset(Yii::$app->session['user_ids']) && !in_array($id, Yii::$app->session['user_ids'])) {
-            $this->permissionDeny();
+        $role = new Role();
+        if ($role->isAdministrator || $role->isAdmin) {
+            $position = $role->getPosition();
+            $ids = User::getByRole($position, Yii::$app->user->id);
+
+            if (!in_array($id, $ids)) {
+                $this->permissionDeny();
+            }
         }
 
         if (($user = User::findOne($id)) !== null) {

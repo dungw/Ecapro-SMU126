@@ -18,12 +18,13 @@ $labels = $signupForm->attributeLabels();
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
-
             [
-                'attribute' => 'id',
-                'label' => 'ID',
+                'class' => 'yii\grid\SerialColumn',
+                'options' => [
+                    'width' => '6%',
+                ],
             ],
+
             [
                 'attribute' => 'username',
                 'label' => $labels['username'],
@@ -57,7 +58,13 @@ $labels = $signupForm->attributeLabels();
                     },
             ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            [
+                'class' => 'yii\grid\ActionColumn',
+                'template' => '{update} {delete}',
+                'options' => [
+                    'width' => '10%',
+                ],
+            ],
         ],
     ]); ?>
 

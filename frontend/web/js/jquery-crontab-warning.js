@@ -1,4 +1,4 @@
-const TIME_LOOP = 60;
+const TIME_LOOP = 20;
 const WARNING_PANEL = '#panel-warning';
 const WARNING_TABLE = '#warning-table';
 const WARNING_TABLE_HEADING = '.warning-heading';

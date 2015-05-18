@@ -8,6 +8,7 @@ use common\components\helpers\Convert;
 use common\models\Station;
 use common\models\Sensor;
 use common\models\Area;
+use common\models\Role;
 
 class StationController extends BaseController {
 
@@ -18,11 +19,13 @@ class StationController extends BaseController {
         // default time duration
         $timePoints = Convert::currentTimePoints();
 
-        // get station ids by role
-        $session = Yii::$app->session;
         $whereClause = ['sst.sensor_id' => Sensor::ID_SECURITY];
-        if (isset($session['station_ids'])) {
-            $stationIds = $session['station_ids'];
+
+        // get station ids by role
+        $role = new Role();
+        if (!$role->isAdministrator) {
+            $position = $role->getPosition();
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
             $whereClause['s.id'] = $stationIds;
         }
 

@@ -9,6 +9,7 @@ use common\controllers\FrontendController;
 use common\components\helpers\Convert;
 use common\components\helpers\Show;
 use common\models\Observer;
+use common\models\Role;
 
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
@@ -33,12 +34,37 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
-//        for ($i = 1; $i <= 3; $i++) {
-//            $string = '533db2&TR01&alarm&mat dien luoi';
-//            $observer = new Observer();
-//            $observer->handleRequest($string);
-//        }
-        $query = Warning::find()->where([]);
+        $query = Warning::find()
+            ->leftJoin('station', 'station.id = warning.station_id')
+            ->where([]);
+
+        // permission
+        $role = new Role();
+        if (!$role->isAdministrator) {
+            $position = $role->getPosition();
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
+            $condition = ['in', 'station_id', $stationIds];
+            $query->where($condition);
+        }
+
+        $areaId = Yii::$app->request->get('area_id');
+        if ($areaId > 0) {
+            $query->andWhere(['station.area_id' => $areaId]);
+        }
+
+        $getBy = Yii::$app->request->get('get_by');
+        if ($getBy) {
+            if ($getBy == 'today') {
+                $timePoints = Convert::currentTimePoints();
+            } else if ($getBy == 'week') {
+                $timePoints = Convert::currentWeekTimePoints();
+            } else if ($getBy == 'month') {
+                $timePoints = Convert::currentMonthTimePoints();
+            }
+            $query->andWhere(['>=', 'warning.warning_time', $timePoints['start']]);
+            $query->andWhere(['<=', 'warning.warning_time', $timePoints['end']]);
+
+        }
 
         $post = Yii::$app->request->post();
         if (!empty($post)) {
@@ -59,14 +85,8 @@ class DefaultController extends FrontendController
             }
         }
 
-        // permission
-        $condition = isset(Yii::$app->session['station_ids']) ? ['station_id' => Yii::$app->session['station_ids']] : [];
-
         $dataProvider = new ActiveDataProvider([
-            'query' => $query->where($condition)->orderBy('warning_time DESC'),
-            'pagination' => [
-                'pageSize' => Yii::$app->params['page_size'],
-            ],
+            'query' => $query->orderBy('warning_time DESC'),
         ]);
 
         $parseData['dataProvider'] = $dataProvider;
@@ -134,7 +154,13 @@ class DefaultController extends FrontendController
             $to = $post['current_time'];
 
             // permission
-            $condition = isset(Yii::$app->session['station_ids']) ? ['station_id' => Yii::$app->session['station_ids']] : [];
+            $role = new Role();
+            $condition = [];
+            if (!$role->isAdministrator) {
+                $position = $role->getPosition();
+                $stationIds = Station::getByRole($position, Yii::$app->user->id);
+                $condition[] = ['in', 'station_id', $stationIds];
+            }
             $condition[] = ['>=', 'warning_time', $from];
             $condition[] = ['<=', 'warning_time', $to];
 

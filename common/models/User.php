@@ -7,6 +7,8 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
 
+use common\models\Role;
+
 /**
  * User model
  *
@@ -25,6 +27,20 @@ class User extends ActiveRecord implements IdentityInterface
 {
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;
+
+    const TYPE_ROOT = 10;
+    const TYPE_ADMIN = 2;
+    const TYPE_OBSERVER = 1;
+
+    public $stationIds;
+
+    public $userRole;
+
+    public $isAdministrator;
+
+    public $isRoot;
+
+    public $isObserver;
 
     /**
      * @inheritdoc
@@ -184,5 +200,25 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public static function getByRole($role, $userId) {
+        $ids = [];
+        if ($role && $userId > 0) {
+            if ($role == Role::POSITION_ADMINISTRATOR || $role == Role::POSITION_ADMIN) {
+
+                $users = User::find()
+                    ->where(['created_by' => $userId])
+                    ->all();
+
+                if (!empty($users)) {
+                    foreach ($users as $u) {
+                        $ids[] = $u['id'];
+                    }
+                }
+
+            }
+        }
+        return $ids;
     }
 }

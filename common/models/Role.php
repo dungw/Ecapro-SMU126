@@ -31,9 +31,13 @@ class Role extends Model {
             self::POSITION_ADMIN => [
                 'station' => self::ALL_FUNCTION,
                 'user' => self::ALL_FUNCTION,
+                'warning' => self::ALL_FUNCTION,
+                'statistic' => self::ALL_FUNCTION,
             ],
             self::POSITION_OBSERVER => [
-                'station' => ['index', 'view'],
+                'station' => ['index', 'view', 'status'],
+                'warning' => self::ALL_FUNCTION,
+                'statistic' => self::ALL_FUNCTION,
             ],
             self::POSITION_GUEST => [],
         ];
@@ -53,22 +57,25 @@ class Role extends Model {
     }
 
     public function setPosition() {
-        $userType = Yii::$app->user->getIdentity()->type;
-        if ($userType == SignupForm::LEVEL_ADMINISTRATOR) {
-            $this->position = self::POSITION_ADMINISTRATOR;
-            $this->isAdministrator = true;
-        }
-        else if ($userType == SignupForm::LEVEL_ADMIN) {
-            $this->position = self::POSITION_ADMIN;
-            $this->isAdmin = true;
-        }
-        else if ($userType == SignupForm::LEVEL_OBSERVER) {
-            $this->position = self::POSITION_OBSERVER;
-            $this->isObserver = true;
-        }
-        else {
+        if (!Yii::$app->user->isGuest) {
+            $userType = Yii::$app->user->getIdentity()->type;
+            if ($userType == SignupForm::LEVEL_ADMINISTRATOR) {
+                $this->position = self::POSITION_ADMINISTRATOR;
+                $this->isAdministrator = true;
+            }
+            else if ($userType == SignupForm::LEVEL_ADMIN) {
+                $this->position = self::POSITION_ADMIN;
+                $this->isAdmin = true;
+            }
+            else if ($userType == SignupForm::LEVEL_OBSERVER) {
+                $this->position = self::POSITION_OBSERVER;
+                $this->isObserver = true;
+            }
+
+        } else {
             $this->position = self::POSITION_GUEST;
         }
+
     }
 
     public function hasRole($action) {

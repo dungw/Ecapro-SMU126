@@ -29,7 +29,7 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
     <tr class="info">
         <th colspan="4">Giám sát thiết bị</th>
         <th>
-            <a href="http://<?=$model->ip?>:<?=Yii::$app->params['device_port']?>" target="_blank" type="button" class="btn btn-primary btn-xs">Thiết bị điều khiển</a>
+            <a href="http://<?=$model->ip?>:<?=$model->port?>" target="_blank" type="button" class="btn btn-primary btn-xs">Link đến thiết bị</a>
         </th>
     </tr>
     <?php

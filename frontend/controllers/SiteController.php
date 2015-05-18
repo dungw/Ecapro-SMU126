@@ -60,6 +60,9 @@ class SiteController extends FrontendController
 
     public function actionIndex()
     {
+        $role = new Role();
+        $position = $role->getPosition();
+
         if (Yii::$app->user->isGuest) {
             $this->doLogin();
         }
@@ -69,14 +72,23 @@ class SiteController extends FrontendController
         $parseData['searchModel'] = $searchModel;
 
         // get latest warning
-        $condition = isset(Yii::$app->session['station_ids']) ? ['station_id' => Yii::$app->session['station_ids']] : [];
-        $parseData['warnings'] = Warning::getWarning('warning_time DESC', 5, $condition);
+        if ($position != Role::POSITION_ADMINISTRATOR) {
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
+            $condition = ['in', 'station_id', $stationIds];
+            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 5, [$condition]);
+        } else {
+            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 5, []);
+        }
 
         // get stations
-        $stationCondition = isset(Yii::$app->session['station_ids']) ? ['id' => Yii::$app->session['station_ids']] : [];
+        if ($position != Role::POSITION_ADMINISTRATOR) {
+            $sCondition = ['in', 'id', $stationIds];
+        } else {
+            $sCondition = [];
+        }
 
         // data provider
-        $data = $searchModel->search(Yii::$app->request->queryParams, $stationCondition);
+        $data = $searchModel->search(Yii::$app->request->queryParams, $sCondition);
         $parseData['stationProvider'] = $data['provider'];
 
         // write station locator for map
@@ -93,29 +105,6 @@ class SiteController extends FrontendController
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
 
-            // open session application
-            $session = Yii::$app->session;
-            $session->open();
-
-            // set session
-            $role = new Role();
-            $session['user_position'] = $role->getPosition();
-
-            // set station belong ids
-            if ($session['user_position'] == Role::POSITION_ADMIN) {
-                $collections = Station::findAll(['user_id' => Yii::$app->user->id]);
-                $session['station_ids'] = $this->getIds($collections);
-
-                // get user belong
-                $collections = User::findAll(['created_by' => Yii::$app->user->id]);
-                $session['user_ids'] = $this->getIds($collections);
-            }
-            else if ($session['user_position'] == Role::POSITION_OBSERVER) {
-                $owner = User::findOne(Yii::$app->user->id);
-                $collections = Station::findAll(['user_id' => $owner->getAttribute('created_by')]);
-                $session['station_ids'] = $this->getIds($collections);
-            }
-
             return $this->goBack();
         } else {
 
@@ -125,6 +114,7 @@ class SiteController extends FrontendController
             ]);
         }
     }
+
 
     public function getIds($collections) {
         $ids = [];
