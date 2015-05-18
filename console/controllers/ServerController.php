@@ -4,6 +4,8 @@ namespace console\controllers;
 use yii\console\Controller;
 use console\models\SocketServer;
 
+error_reporting(0);
+
 class ServerController extends Controller {
 
     public $ip = '192.168.1.88';

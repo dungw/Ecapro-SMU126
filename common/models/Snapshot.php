@@ -23,6 +23,7 @@ class Snapshot {
                 }
             }
         }
+
         return $data;
     }
 

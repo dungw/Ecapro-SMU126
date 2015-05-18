@@ -54,7 +54,8 @@ class Station extends Base
     {
         return [
             [['code', 'name'], 'required'],
-            [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb', 'change_equipment_status', 'updated_at'], 'integer'],
+            [['center_id', 'area_id', 'type', 'status', 'user_id', 'change_equipment_status', 'updated_at'], 'integer'],
+            ['picture_warning_numb', 'integer', 'min' => 1],
             [['addition'], 'string'],
             [['code', 'phone'], 'string', 'max' => 100],
             [['name', 'firmware', 'picture_url', 'video_url', 'address'], 'string', 'max' => 255],
