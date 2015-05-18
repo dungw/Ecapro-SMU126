@@ -48,7 +48,7 @@ class Snapshot {
 
         // open new file
         $fh = fopen($path . $file, 'w') or die('Cannot create directories');
-        $content = file_get_contents($this->url);
+        $content = @file_get_contents($this->url);
         if ($content) {
             file_put_contents($path . $file, $content);
         } else {

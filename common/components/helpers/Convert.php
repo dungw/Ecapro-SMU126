@@ -22,16 +22,16 @@ class Convert {
         $endOfDay->modify('1 second ago');
 
         return [
-            'time' => $dtNow->format('Y-m-d H:i:s e'),
-            'start' => $beginOfDay->format('Y-m-d H:i:s e'),
-            'end' => $endOfDay->format('Y-m-d H:i:s e'),
+            'time' => $timestamp,
+            'start' => strtotime($beginOfDay->format('m/d/Y H:i:s e')),
+            'end' => strtotime($endOfDay->format('m/d/Y H:i:s e')),
         ];
     }
 
     public static function currentWeekTimePoints() {
         $now = time();
-        $beginning = strtotime('last Monday', $now);
-        $end = strtotime('next Sunday', $now) + 86400;
+        $beginning = strtotime('this Monday', $now);
+        $end = strtotime('next Sunday', $now) + 86399;
         return [
             'start' => $beginning,
             'end' => $end,
@@ -40,7 +40,7 @@ class Convert {
 
     public static function currentMonthTimePoints() {
         $beginning = strtotime(date('m/01/Y'));
-        $end = strtotime(date('m/t/Y')) + 86400;
+        $end = strtotime(date('m/t/Y')) + 86399;
         return [
             'start' => $beginning,
             'end' => $end,

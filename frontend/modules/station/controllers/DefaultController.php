@@ -78,19 +78,19 @@ class DefaultController extends FrontendController
             if (isset($timePoints)) {
 
                 $subSql = new Query();
-                $subSql->select('count(w.id) AS total_warning')
-                    ->from('warning w')
-                    ->where(['w.station_id' => 's.id'])
+                $subSql->select('s.id')
+                    ->from('station s')
+                    ->innerJoin('warning w', 'w.station_id = s.id')
                     ->andWhere(['>=', 'w.warning_time', $timePoints['start']])
                     ->andWhere(['<=', 'w.warning_time', $timePoints['end']]);
 
                 if ($hasWarning == 'yes') {
 
-                    $query->andWhere(($subSql->createCommand()->rawSql) . ' > 0 ');
+                    $query->andWhere(['in', 'id', $subSql]);
 
                 } else if ($hasWarning == 'no') {
 
-                    $query->andWhere(($subSql->createCommand()->rawSql) . ' <= 0 ');
+                    $query->andWhere(['not in', 'id', $subSql]);
 
                 }
             }

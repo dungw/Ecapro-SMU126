@@ -5,15 +5,15 @@ $selectedMonth = (isset($_GET['get_by']) && $_GET['get_by'] == 'month') ? 'selec
 
 $getBy = isset($_GET['get_by']) ? $_GET['get_by'] : 'today';
 ?>
-<!--<div style="margin-bottom: 10px;">-->
-<!--    <form id="select-by" action="--><?//= Yii::$app->homeUrl . 'statistic/station' ?><!--">-->
-<!--        <select name="get_by" style="padding: 5px 20px; cursor: pointer; background-color: #E2EDE3;">-->
-<!--            <option --><?//=$selectedToday?><!-- value="today">Hôm nay</option>-->
-<!--            <option --><?//=$selectedWeek?><!-- value="week">Tuần này</option>-->
-<!--            <option --><?//=$selectedMonth?><!-- value="month">Tháng này</option>-->
-<!--        </select>-->
-<!--    </form>-->
-<!--</div>-->
+<div style="margin-bottom: 10px;">
+    <form id="select-by" action="<?= Yii::$app->homeUrl . 'statistic/station' ?>">
+        <select name="get_by" style="padding: 5px 20px; cursor: pointer; background-color: #E2EDE3;">
+            <option <?=$selectedToday?> value="today">Hôm nay</option>
+            <option <?=$selectedWeek?> value="week">Tuần này</option>
+            <option <?=$selectedMonth?> value="month">Tháng này</option>
+        </select>
+    </form>
+</div>
 <div class="panel panel-primary">
     <div class="panel-heading">
         <h4 class="panel-title">

@@ -14,7 +14,7 @@ class TestController extends Controller {
     }
 
     public function actionAlarm() {
-        $requestString = '533db2&Tram_so_1&alarm&mat dien luoi';
+        $requestString = 'e26c70&Tram_so_1&alarm&mat dien luoi';
         $observer = new Observer();
         $observer->handleRequest($requestString);
     }

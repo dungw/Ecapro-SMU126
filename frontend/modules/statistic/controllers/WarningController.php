@@ -7,6 +7,8 @@ use common\controllers\BaseController;
 use common\components\helpers\Convert;
 use common\models\Warning;
 use common\models\Area;
+use common\models\Role;
+use common\models\Station;
 
 class WarningController extends BaseController {
 
@@ -15,11 +17,11 @@ class WarningController extends BaseController {
     public function actionIndex() {
 
         // get station ids by role
-        $whereClause = [];
-        $session = Yii::$app->session;
-        if (isset($session['station_ids'])) {
-            $stationIds = $session['station_ids'];
-            $whereClause['s.id'] = $stationIds;
+        $permCondition = [];
+        $role = new Role();
+        if (!$role->isAdministrator) {
+            $stationIds = Station::getByRole($role->getPosition(), Yii::$app->user->id);
+            $permCondition['s.id'] = $stationIds;
         }
 
         // default time points
@@ -40,14 +42,12 @@ class WarningController extends BaseController {
 
         // get data
         $query = new Query();
-        $warnings = $query->select('min(w.warning_time) AS start, max(w.warning_time) AS end, count(w.id) AS number, a.id AS area_id')
+        $warnings = $query->select('w.warning_time, s.area_id')
             ->from('warning w')
-            ->leftJoin('station s', 'w.station_id = s.id')
-            ->leftJoin('area a', 'a.id = s.area_id')
-            ->where($whereClause)
+            ->innerJoin('station s', 'w.station_id = s.id')
+            ->where($permCondition)
             ->andWhere($andWhere)
             ->andWhere($andWhere1)
-            ->groupBy('a.id')
             ->all();
 
         // data
@@ -55,8 +55,16 @@ class WarningController extends BaseController {
         $data = [];
 
         // get areas
-        $areas = Area::find()->all();
+        $areaQuery = new Query();
+        $areas = $areaQuery->select('a.*')
+            ->from('area a')
+            ->innerJoin('station s', 's.area_id = a.id')
+            ->where($permCondition)
+            ->groupBy('a.id')
+            ->all();
+
         $parseData['areas'] = $areas;
+
         if (!empty($areas)) {
             foreach ($areas as $area) {
 
@@ -65,14 +73,27 @@ class WarningController extends BaseController {
                 $data[$area['id']]['end'] = 0;
 
                 if (!empty($warnings)) {
+                    $no = 1;
                     foreach ($warnings as $w) {
                         if ($w['area_id'] == $area['id']) {
 
-                            $data[$area['id']]['number'] = $w['number'];
-                            $data[$area['id']]['start'] = $w['start'];
-                            $data[$area['id']]['end'] = $w['end'];
+                            $data[$area['id']]['number']++;
 
+                            if ($no == 1) {
+                                $data[$area['id']]['start'] = $w['warning_time'];
+                                $data[$area['id']]['end'] = $w['warning_time'];
+                            } else {
+                                if ($w['warning_time'] < $data[$area['id']]['start']) {
+                                    $data[$area['id']]['start'] = $w['warning_time'];
+                                }
+                                if ($w['warning_time'] > $data[$area['id']]['end']) {
+                                    $data[$area['id']]['end'] = $w['warning_time'];
+                                }
+                            }
+
+                            $no++;
                         }
+
                     }
                 }
             }
