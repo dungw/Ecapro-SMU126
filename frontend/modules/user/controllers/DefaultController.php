@@ -29,11 +29,14 @@ class DefaultController extends FrontendController
     public function actionIndex()
     {
         $role = new Role();
-        if ($role->isAdministrator || $role->isAdmin) {
+        $condition = [];
+        if ($role->isAdmin) {
             $position = $role->getPosition();
             $ids = User::getByRole($position, Yii::$app->user->id);
+            $condition = ['in', 'id', $ids];
+        } else if ($role->isAdministrator) {
+            $condition = ['!=', 'id', Yii::$app->user->id];
         }
-        $condition = ['in', 'id', $ids];
 
         $dataProvider = new ActiveDataProvider([
             'query' => User::find()->where($condition),
