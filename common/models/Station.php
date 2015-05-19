@@ -53,6 +53,7 @@ class Station extends Base
     public function rules()
     {
         return [
+
             [['code', 'name', 'picture_warning_numb'], 'required'],
             [['center_id', 'area_id', 'type', 'status', 'user_id', 'picture_warning_numb', 'change_equipment_status', 'updated_at'], 'integer'],
             [['addition'], 'string'],
