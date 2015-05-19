@@ -10,7 +10,6 @@ use common\models\Area;
 use common\models\Center;
 use common\models\Equipment;
 use common\models\EquipmentStatus;
-use common\models\DcStatus;
 use common\models\DcEquipment;
 use common\models\DcEquipmentStatus;
 use common\models\Sensor;
@@ -414,9 +413,6 @@ class DefaultController extends FrontendController
             // delete sensor status
             SensorStatus::deleteAll(['station_id' => $id]);
 
-            // delete dc status
-            DcStatus::deleteAll(['station_id' => $id]);
-
             // delete dc equipment status
             DcEquipmentStatus::deleteAll(['station_id' => $id]);
 
@@ -505,7 +501,6 @@ class DefaultController extends FrontendController
             }
 
             // get dc
-            $model->dc_status = DcStatus::findOne(['station_id' => $id]);
             $dcEquips = DcEquipmentStatus::findAll(['station_id' => $id]);
             if (!empty($dcEquips)) {
                 foreach ($dcEquips as $dcEquip) {
@@ -625,12 +620,6 @@ class DefaultController extends FrontendController
     // initial dc
     public function initDc($stationId) {
         if ($stationId > 0) {
-
-            // insert dc status
-            $dcModel = new DcStatus();
-            $dcModel->station_id = $stationId;
-            $dcModel->voltage = 0;
-            $dcModel->save();
 
             // insert dc equipment status
             $dcEquips = DcEquipment::find()->all();

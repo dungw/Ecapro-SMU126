@@ -12,8 +12,6 @@ use yii\widgets\ActiveForm;
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'warning_type')->textInput() ?>
-
     <?= $form->field($model, 'station_id')->textInput() ?>
 
     <?= $form->field($model, 'message')->textInput(['maxlength' => 255]) ?>

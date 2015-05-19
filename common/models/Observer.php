@@ -221,7 +221,6 @@ class Observer {
 
         $warning->station_id = $this->request['id'];
         $warning->message = $this->request['message'];
-        $warning->warning_type = 1;
         $warning->warning_time = time();
         if ($warning->validate()) {
             $warning->save();

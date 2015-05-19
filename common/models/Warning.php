@@ -18,7 +18,7 @@ class Warning extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['warning_type', 'station_id', 'warning_time', 'read'], 'integer'],
+            [['station_id', 'warning_time', 'read'], 'integer'],
             [['message'], 'string', 'max' => 255]
         ];
     }
@@ -27,17 +27,11 @@ class Warning extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'warning_type' => 'Loại cảnh báo',
             'station_id' => 'Trạm',
             'message' => 'Nội dung cảnh báo',
             'warning_time' => 'Thời gian',
             'read' => 'Xem cảnh báo',
         ];
-    }
-
-    public function getWarningType()
-    {
-        return $this->hasOne(WarningType::className(), ['id' => 'warning_type']);
     }
 
     public static function findPicture($id) {
