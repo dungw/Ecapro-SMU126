@@ -17,6 +17,8 @@ use common\models\Warning;
 use common\models\Client;
 use common\models\StationStatusHandler;
 
+error_reporting(0);
+
 class Observer {
 
     const FUNCTION_STATUS = 'status';
