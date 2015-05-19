@@ -18,6 +18,12 @@ class StationController extends BaseController {
 
         // default time duration
         $timePoints = Convert::currentTimePoints();
+        $getBy = Yii::$app->request->get('get_by');
+        if ($getBy == 'week') {
+            $timePoints = Convert::currentWeekTimePoints();
+        } else if ($getBy == 'month') {
+            $timePoints = Convert::currentMonthTimePoints();
+        }
 
         $whereClause = ['sst.sensor_id' => Sensor::ID_SECURITY];
 
@@ -56,6 +62,7 @@ class StationController extends BaseController {
                 $data[$area['id']]['lost_connect'] = 0;
                 $data[$area['id']]['last_warning_time'] = 0;
 
+                // security and connect stations
                 if (!empty($stations)) {
                     foreach ($stations as $station) {
                         if ($station['area_id'] == $area['id']) {
