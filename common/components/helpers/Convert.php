@@ -30,7 +30,7 @@ class Convert {
 
     public static function currentWeekTimePoints() {
         $now = time();
-        $beginning = strtotime('this Monday', $now);
+        $beginning = strtotime('last Monday', $now);
         $end = strtotime('next Sunday', $now) + 86399;
         return [
             'start' => $beginning,

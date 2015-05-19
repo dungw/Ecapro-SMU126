@@ -35,7 +35,7 @@ class Role extends Model {
                 'statistic' => self::ALL_FUNCTION,
             ],
             self::POSITION_OBSERVER => [
-                'station' => ['index', 'view', 'status'],
+                'station' => ['index', 'view', 'status', 'update-status'],
                 'warning' => self::ALL_FUNCTION,
                 'statistic' => self::ALL_FUNCTION,
             ],

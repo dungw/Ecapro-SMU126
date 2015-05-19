@@ -116,18 +116,7 @@ class DefaultController extends FrontendController
 
     public function actionDelete($id)
     {
-        // check belong ids
-        $role = new Role();
-        if ($role->isAdministrator || $role->isAdmin) {
-            $position = $role->getPosition();
-            $ids = User::getByRole($position, Yii::$app->user->id);
-
-            if (!in_array($id, $ids)) {
-                $this->permissionDeny();
-            }
-        }
-
-
+        $this->checkPermission($id);
 
         Yii::$app->db->createCommand()
             ->delete('user', ['id' => $id])
@@ -136,11 +125,9 @@ class DefaultController extends FrontendController
         return $this->redirect(['index']);
     }
 
-    protected function findModel($id)
-    {
-        // check belong ids
+    private function checkPermission($id) {
         $role = new Role();
-        if ($role->isAdministrator || $role->isAdmin) {
+        if ($role->isAdmin) {
             $position = $role->getPosition();
             $ids = User::getByRole($position, Yii::$app->user->id);
 
@@ -148,6 +135,11 @@ class DefaultController extends FrontendController
                 $this->permissionDeny();
             }
         }
+    }
+
+    protected function findModel($id)
+    {
+        $this->checkPermission($id);
 
         if (($user = User::findOne($id)) !== null) {
             $model = new UpdateInfo();

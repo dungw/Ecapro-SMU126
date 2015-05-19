@@ -215,7 +215,7 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 continue;
             } else if ($status['type'] == Sensor::TYPE_CONFIGURE) {
                 $message = Message::getMessageBySensor($status['sensor_id'], $value);
-                $label = ($value == 1) ? Show::decorateString($message, 'bad') : Show::decorateString($message, 'good');
+                $label = ($value == 0) ? Show::decorateString($message, 'bad') : Show::decorateString($message, 'good');
 
             }
             ?>
