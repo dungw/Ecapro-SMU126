@@ -17,7 +17,6 @@ class CronjobStationModel extends ActiveRecord {
                 ->where(['es.station_id' => $idStation])
                 ->andWhere(['e.active' => Equipment::STATUS_ACTIVE])
                 ->all();
-
         }
 
         return $equips;
@@ -27,10 +26,11 @@ class CronjobStationModel extends ActiveRecord {
         $dcEquips = [];
         if ($idStation > 0) {
             $query = new Query();
-            $dcEquips = $query->select('ds.*')
-                ->from('dc_equipment_status')
-                ->where
-
+            $dcEquips = $query->select('es.*')
+                ->from('dc_equipment_status es')
+                ->leftJoin('dc_equipment e', 'e.id = es.equipment_id')
+                ->where(['es.station_id' => $idStation])
+                ->all();
         }
 
         return $dcEquips;

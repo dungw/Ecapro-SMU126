@@ -2,7 +2,6 @@
 
 namespace app\modules\station\controllers;
 
-use common\models\StationStatusController;
 use Yii;
 use common\models\Client;
 use common\models\Station;
@@ -116,7 +115,9 @@ class DefaultController extends FrontendController
                 $query->andWhere(['sensor_status.value' => Sensor::SECURITY_OFF]);
             }
         }
-//print $query->createCommand()->rawSql;die;
+
+//        print $query->createCommand()->rawSql;die;
+
         $dataProvider = new ActiveDataProvider([
             'query' => $query->groupBy('station.id'),
         ]);
@@ -423,7 +424,7 @@ class DefaultController extends FrontendController
             StationStatus::deleteAll(['station_id' => $id]);
 
             // delete station status controller
-            StationStatusController::deleteAll(['station_id' => $id]);
+            StationStatusHandler::deleteAll(['station_id' => $id]);
 
             // delete warning
             $warnings = Warning::findAll(['station_id' => $id]);

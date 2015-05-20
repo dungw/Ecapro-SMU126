@@ -17,6 +17,8 @@ class CronjobStationController extends Controller {
         // get dc equipment status
         $data['dc_equips'] = $model->findDcEquipmentStatus($idStation);
 
+        //
+
         return json_encode($data);
     }
 
