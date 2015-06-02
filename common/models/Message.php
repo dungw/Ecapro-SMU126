@@ -23,7 +23,7 @@ class Message extends Base
     public function rules()
     {
         return [
-            [['name'], 'required'],
+            [['sensor_id'], 'required'],
             [['active', 'sensor_id'], 'integer'],
             [['name', 'message_0', 'message_1'], 'string', 'max' => 255]
         ];
@@ -33,7 +33,6 @@ class Message extends Base
     {
         return [
             'id' => 'ID',
-            'name' => 'Thông báo',
             'message_0' => 'Nội dung - 0',
             'message_1' => 'Nội dung - 1',
             'sensor_id' => 'Cảm biến',

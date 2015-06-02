@@ -21,7 +21,6 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
 
-            'name',
             [
                 'attribute' => 'sensor_id',
                 'value' => function($model) {

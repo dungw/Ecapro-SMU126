@@ -14,36 +14,19 @@ return [
     'timeZone' => 'Asia/Ho_Chi_Minh',
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
-        'station' => [
-            'class' => 'frontend\modules\station\Station',
-        ],
-        'area' => [
-            'class' => 'frontend\modules\area\Area',
-        ],
-        'center' => [
-            'class' => 'frontend\modules\center\Center',
-        ],
-        'staff' => [
-            'class' => 'frontend\modules\staff\Staff',
-        ],
-        'equipment' => [
-            'class' => 'frontend\modules\equipment\Equipment',
-        ],
-        'message' => [
-            'class' => 'frontend\modules\message\Message',
-        ],
-        'user' => [
-            'class' => 'frontend\modules\user\User',
-        ],
-        'power' => [
-            'class' => 'frontend\modules\power\Power',
-        ],
-        'warning' => [
-            'class' => 'frontend\modules\warning\Warning',
-        ],
-        'statistic' => [
-            'class' => 'frontend\modules\statistic\Statistic',
-        ],
+        'station' => ['class' => 'frontend\modules\station\Station'],
+        'area' => ['class' => 'frontend\modules\area\Area'],
+        'center' => ['class' => 'frontend\modules\center\Center'],
+        'staff' => ['class' => 'frontend\modules\staff\Staff'],
+        'equipment' => ['class' => 'frontend\modules\equipment\Equipment'],
+        'message' => ['class' => 'frontend\modules\message\Message'],
+        'user' => ['class' => 'frontend\modules\user\User'],
+        'power' => ['class' => 'frontend\modules\power\Power'],
+        'warning' => ['class' => 'frontend\modules\warning\Warning'],
+        'statistic' => ['class' => 'frontend\modules\statistic\Statistic'],
+        'sensor' => ['class' => 'frontend\modules\sensor\Sensor'],
+        'cronjob' => ['class' => 'frontend\modules\cronjob\Cronjob'],
+        'station_type' => ['class' => 'frontend\modules\station_type\StationType'],
     ],
     'components' => [
         'user' => [

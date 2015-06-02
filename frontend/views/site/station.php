@@ -19,7 +19,7 @@ $statusData = $station->_statusData;
 
 <div class="row">
 
-    <div class="col-sm-12 block-station">
+    <div class="col-sm-12 block-station div-station scrolling">
         <div class="panel panel-primary" id="panel-station">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -33,15 +33,18 @@ $statusData = $station->_statusData;
             'filterModel' => $searchModel,
             'summary' => false,
             'columns' => [
-                [
+                /*[
                     'attribute' => 'code',
                     'filter' => true,
                     'options' => [
                         'width' => '10%',
                     ],
-                ],
+                ],*/
                 [
                     'attribute' => 'name',
+                    'options' => [
+                        'width' => '15%',
+                    ],
                 ],
                 [
                     'attribute' => 'center_id',
@@ -53,7 +56,7 @@ $statusData = $station->_statusData;
                             return $center->name;
                         },
                     'options' => [
-                        'width' => '15%',
+                        'width' => '10%',
                     ],
                 ],
                 [
@@ -65,8 +68,11 @@ $statusData = $station->_statusData;
                             return $area->name;
                         },
                     'options' => [
-                        'width' => '15%',
+                        'width' => '10%',
                     ],
+                ],
+                [
+                    'attribute' => 'address',
                 ],
                 [
                     'attribute' => 'status',
@@ -92,10 +98,11 @@ $statusData = $station->_statusData;
                     'format' => 'raw',
                     'value' => function($model) {
                             $stationHref = Yii::$app->homeUrl . 'station/default/view?id=' . $model->id;
-                            return '<a target="_blank" href="'. $stationHref .'" class="btn btn-primary btn-xs">Chi tiết trạm</a>';
+                            return '<a target="_blank" href="'. $stationHref .'" class="btn btn-success btn-xs">Chi tiết trạm</a>';
                         },
                     'options' => [
-                        'width' => '12%',
+                        'width' => '14%',
+                        'align' => 'center',
                     ],
                 ],
             ],

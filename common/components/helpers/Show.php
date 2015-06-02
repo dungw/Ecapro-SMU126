@@ -3,11 +3,19 @@ namespace common\components\helpers;
 
 use \Yii;
 use yii\helpers\BaseHtml;
+use yii\helpers\Html;
 use yii\jui\DatePicker;
 use common\models\Warning;
 
 class Show extends BaseHtml
 {
+
+    public static function submitButton($model) {
+        $html = '<div class="form-group">';
+        $html .= Html::submitButton($model->isNewRecord ? 'Thêm mới' : 'Cập nhật', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']);
+        $html .= '</div>';
+        return $html;
+    }
 
     public static function jsWarningAction() {
         $html = '<script stype="text/javascript">';
@@ -73,7 +81,7 @@ class Show extends BaseHtml
                         }
                         $style = ($hide) ? 'display: none;' : '';
                         $path = Yii::$app->params['baseUrl'] . 'uploads/' . $pic['picture'];
-                        $gallery .= '<button style="' . $style . '" class="btn btn-primary btn-xs '. $buttonClass .'" href="' . $path . '">Xem ảnh</button>';
+                        $gallery .= '<button style="' . $style . '" class="btn btn-warning btn-xs '. $buttonClass .'" href="' . $path . '">Xem ảnh</button>';
                         $no++;
                     }
                 } else {
@@ -84,7 +92,7 @@ class Show extends BaseHtml
                 $stationHref = Yii::$app->homeUrl . 'station/default/view?id=' . $warning['station_id'];
 
                 // view station button
-                $gallery .= '<a href="'. $stationHref .'" target="_blank" style="float: right" class="btn btn-primary btn-xs '. $buttonClass .' view-picture">Chi tiết trạm</a>';
+                $gallery .= '<a href="'. $stationHref .'" target="_blank" style="float: right" class="btn btn-success btn-xs '. $buttonClass .' view-picture">Chi tiết trạm</a>';
                 $gallery .= '</div>';
 
                 $html .= '<tr class="warning '. $class .'" id="'. $warning['id'] .'" station-href="'. $stationHref .'">';

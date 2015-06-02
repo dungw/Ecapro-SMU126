@@ -30,7 +30,7 @@ class Area extends Base
     public function rules()
     {
         return [
-            [['code', 'name'], 'string', 'max' => 100]
+            [['name'], 'string', 'max' => 100]
         ];
     }
 
@@ -41,7 +41,6 @@ class Area extends Base
     {
         return [
             'id' => 'ID',
-            'code' => 'Mã khu vực',
             'name' => 'Tên khu vực',
         ];
     }

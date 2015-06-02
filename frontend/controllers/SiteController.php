@@ -75,9 +75,9 @@ class SiteController extends FrontendController
         if ($position != Role::POSITION_ADMINISTRATOR) {
             $stationIds = Station::getByRole($position, Yii::$app->user->id);
             $condition = ['in', 'station_id', $stationIds];
-            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 5, [$condition]);
+            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 100, [$condition]);
         } else {
-            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 5, []);
+            $parseData['warnings'] = Warning::getWarning('warning_time DESC', 100, []);
         }
 
         // get stations
@@ -94,6 +94,10 @@ class SiteController extends FrontendController
         // write station locator for map
         $this->writeStationLocator($data['query']);
         return $this->render('index', $parseData);
+    }
+
+    public function actionMap() {
+        return $this->render('map', []);
     }
 
     public function actionLogin()

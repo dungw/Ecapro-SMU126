@@ -29,15 +29,17 @@ class Role extends Model {
         return [
             self::POSITION_ADMINISTRATOR => [self::ALL_MODULE],
             self::POSITION_ADMIN => [
-                'station' => self::ALL_FUNCTION,
-                'user' => self::ALL_FUNCTION,
-                'warning' => self::ALL_FUNCTION,
+                'station'   => self::ALL_FUNCTION,
+                'user'      => self::ALL_FUNCTION,
+                'warning'   => self::ALL_FUNCTION,
                 'statistic' => self::ALL_FUNCTION,
+                'cronjob'   => self::ALL_FUNCTION,
             ],
             self::POSITION_OBSERVER => [
-                'station' => ['index', 'view', 'status', 'update-status'],
+                'station' => ['index', 'view', 'status', 'update-status', 'cron-equipment-status'],
                 'warning' => self::ALL_FUNCTION,
                 'statistic' => self::ALL_FUNCTION,
+                'cronjob'   => self::ALL_FUNCTION,
             ],
             self::POSITION_GUEST => [],
         ];

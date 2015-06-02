@@ -11,9 +11,9 @@ $attributeLabels = $model->attributeLabels();
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'code')->textInput(['maxlength' => 100]) ?>
+    <?= $form->field($model, 'code')->textInput(['maxlength' => 50]) ?>
 
-    <?= $form->field($model, 'name')->textInput(['maxlength' => 255]) ?>
+    <?= $form->field($model, 'name')->textInput(['maxlength' => 20]) ?>
 
     <?= Show::activeDropDownList($model, 'center_id', $attributeLabels, $centers, ['class' => 'form-select'], $errors) ?>
 
@@ -51,9 +51,7 @@ $attributeLabels = $model->attributeLabels();
 
     <?= $form->field($model, 'addition')->textarea(['rows' => 6]) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Thêm mới' : 'Cập nhật', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+    <?= Show::submitButton($model) ?>
 
     <?php ActiveForm::end(); ?>
 

@@ -9,7 +9,7 @@ use common\components\helpers\Show;
 
 <div class="row">
 
-    <div class="col-sm-12">
+    <div class="col-sm-12 scrolling div-warning">
         <div class="panel panel-primary" id="panel-warning">
             <div class="panel-heading">
                 <h4 class="panel-title">
@@ -25,7 +25,7 @@ use common\components\helpers\Show;
                 <th width="10%">Trung tâm</th>
                 <th>Nội dung</th>
                 <th width="10%">Thời gian</th>
-                <th width="13%"></th>
+                <th width="14%"></th>
             </tr>
 
             <?php

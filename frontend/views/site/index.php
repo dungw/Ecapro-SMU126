@@ -13,7 +13,9 @@ $this->title = Yii::$app->params['brandName'] . ' ' . Yii::$app->params['project
         <?= $this->render('station', ['dataProvider' => $stationProvider, 'searchModel' => $searchModel]) ?>
 
         <!-- station locator -->
-        <?= $this->render('map', []) ?>
+        <div class="row" align="center">
+            <a type="button" target="_blank" href="<?= Yii::$app->params['baseUrl'] . 'site/map' ?>" class="btn btn-primary">Xem bản đồ</a>
+        </div>
 
     </div>
 

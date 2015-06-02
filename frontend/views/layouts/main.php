@@ -44,8 +44,8 @@ AppAsset::register($this);
 
 <footer class="footer">
     <div class="container">
-        <p class="pull-left">&copy; <?= Yii::$app->params['brandName'] . date('Y') ?></p>
-        <p class="pull-right"><?= Yii::powered() ?></p>
+        <b>&copy; <?= date('Y') . '. ' . Yii::$app->params['brandName'] ?></b>
+<!--        <p class="pull-right">--><?//= Yii::powered() ?><!--</p>-->
     </div>
 </footer>
 

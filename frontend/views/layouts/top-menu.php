@@ -13,7 +13,7 @@ $controller = $this->context->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
-        'brandLabel' => Yii::$app->params['brandName'],
+        'brandLabel' => "Hệ thống cảnh báo tập trung",
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',
@@ -44,6 +44,8 @@ if (!Yii::$app->user->isGuest) {
                 ['label' => 'Thiết bị', 'url' => ['/equipment/default/index'], 'active' => ($module == 'equipment')],
                 ['label' => 'Thiết bị nguồn điện', 'url' => ['/power/default/index'], 'active' => ($module == 'power')],
                 ['label' => 'Thông báo', 'url' => ['/message/default/index'], 'active' => ($module == 'message')],
+                ['label' => 'Cảm biến', 'url' => ['/sensor/default/index'], 'active' => ($module == 'sensor')],
+                ['label' => 'Loại trạm', 'url' => ['/station_type/default/index'], 'active' => ($module == 'station_type')],
                 ['label' => 'Người dùng', 'url' => ['/user/default/index'], 'active' => ($module == 'user')],
             ]
         ];

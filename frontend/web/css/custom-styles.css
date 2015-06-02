@@ -100,7 +100,12 @@ h1, .h1, h2, .h2, h3, .h3 {
 
 .gi-small { padding-top: 3px !important; padding-bottom: 3px !important; width: 100% }
 .delete-station { cursor: pointer; max-width: 12px; vertical-align: top !important; }
-.unread td { background-color: #FF796F !important; }
+.unread td { background-color: #FFD3D0 !important; }
 .read td { background-color: white !important; }
 .loading { max-width: 15px; }
-.row { margin-bottom: 20px !important; }
+.row { margin-bottom: 20px !important; margin-right: 0px !important; margin-left: 0px !important; }
+.scrolling { overflow-y: auto; }
+.div-warning { max-height: 309px; }
+.div-station { max-height: 314px; }
+.footer .container { text-align: center; }
+.footer { padding-top: 10px !important; height: 35px !important; }

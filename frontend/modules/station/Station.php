@@ -10,7 +10,6 @@ class Station extends Base
 
     public $menus = [
         ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'],
-
     ];
 
     public function init()

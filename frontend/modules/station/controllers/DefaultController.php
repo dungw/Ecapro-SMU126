@@ -20,6 +20,7 @@ use common\models\PowerStatus;
 use common\controllers\FrontendController;
 use common\models\StationStatusHandler;
 use common\models\Warning;
+use common\models\StationType;
 use common\components\helpers\Convert;
 use yii\db\Query;
 use yii\data\ActiveDataProvider;
@@ -243,7 +244,8 @@ class DefaultController extends FrontendController
     public function actionCreate()
     {
         $model = new Station();
-// parse data
+
+        // parse data
         $parseData = ['model' => $model];
 
         // get all equipment
@@ -271,7 +273,8 @@ class DefaultController extends FrontendController
         $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
 
         // get station types
-        $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
+        $typeCollection = StationType::find()->where(['active' => StationType::STATUS_ACTIVE])->all();
+        $parseData['types'] = Station::_prepareDataSelect($typeCollection, 'id', 'name');
 
         $post = Yii::$app->request->post();
         if ($post) {
@@ -300,7 +303,6 @@ class DefaultController extends FrontendController
 
                 return $this->redirect(['index']);
             }
-
 
         }
 
@@ -375,7 +377,8 @@ class DefaultController extends FrontendController
         $parseData['centers'] = Center::_prepareDataSelect($centerCollections, 'id', 'name');
 
         // get station types
-        $parseData['types'] = Station::_prepareDataSelect(Station::$types, 'type', 'name');
+        $typeCollection = StationType::findAll(['active' => StationType::STATUS_ACTIVE]);
+        $parseData['types'] = Station::_prepareDataSelect($typeCollection, 'type', 'name');
 
         // change left menu
         $this->setDetailLeftMenu($id);

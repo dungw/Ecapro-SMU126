@@ -30,6 +30,27 @@ class Sensor extends Base
         return 'sensor';
     }
 
+    public function isActive() {
+        return ($this->active == self::STATUS_ACTIVE) ? true : false;
+    }
+
+    public static function optionsActive() {
+        return [
+            self::STATUS_ACTIVE => 'Sử dụng',
+            self::STATUS_NOT_ACTIVE => 'Không sử dụng',
+        ];
+    }
+
+    public function getActive() {
+        $options = self::optionsActive();
+        foreach ($options as $optKey => $optValue) {
+            if ($this->active == $optKey) {
+                return $optValue;
+            }
+        }
+        return null;
+    }
+
     public function rules()
     {
         return [
@@ -42,8 +63,9 @@ class Sensor extends Base
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Name',
+            'name' => 'Tên cảm biến',
+            'binary_pos' => 'Binary',
+            'active' => 'Sử dụng',
         ];
     }
 
