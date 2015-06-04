@@ -21,8 +21,19 @@ class Sensor extends Base
     const STATUS_NOT_ACTIVE = 0;
 
     public static function getSecurityStatus($status) {
-        if ($status == self::SECURITY_ON) return 'Đang bật';
-        if ($status == self::SECURITY_OFF) return 'Đang tắt';
+        if ($status == 'all') {
+            return [
+                self::SECURITY_ON   => 'Đang bật',
+                self::SECURITY_OFF  => 'Đang tắt',
+            ];
+        }
+        if ($status == self::SECURITY_ON) {
+            return 'Đang bật';
+        }
+        if ($status == self::SECURITY_OFF) {
+            return 'Đang tắt';
+        }
+
     }
 
     public static function tableName()

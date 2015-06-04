@@ -26,4 +26,5 @@ return [
     'page_size' => 20,
     'json_station_file' => 'locations.json',
     'baseUrl' => '/',
+    'dir_locations'  => '/locations/',
 ];

@@ -25,7 +25,9 @@ return array(
     'webvimark\\extensions\\BootstrapSwitch\\' => array($vendorDir . '/webvimark/bootstrap-switch'),
     'webvimark\\components\\' => array($vendorDir . '/webvimark/components'),
     'kartik\\helpers\\' => array($vendorDir . '/kartik-v/yii2-helpers'),
+    'kartik\\grid\\' => array($vendorDir . '/kartik-v/yii2-grid'),
     'kartik\\detail\\' => array($vendorDir . '/kartik-v/yii2-detail-view'),
     'kartik\\base\\' => array($vendorDir . '/kartik-v/yii2-krajee-base'),
     'cebe\\markdown\\' => array($vendorDir . '/cebe/markdown'),
+    'arturoliveira\\' => array($vendorDir . '/arturoliveira/yii2-excelview'),
 );

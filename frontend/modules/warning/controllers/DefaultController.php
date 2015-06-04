@@ -8,13 +8,12 @@ use common\models\Station;
 use common\controllers\FrontendController;
 use common\components\helpers\Convert;
 use common\components\helpers\Show;
-use common\models\Observer;
 use common\models\Role;
-
+use arturoliveira\ExcelView;
 use yii\data\ActiveDataProvider;
-use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\db\Query;
 
 class DefaultController extends FrontendController
 {
@@ -34,9 +33,63 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
-        $query = Warning::find()
-            ->leftJoin('station', 'station.id = warning.station_id')
-            ->where([]);
+        $this->enableCsrfValidation = false;
+        $builder = $this->buildQuery();
+        $query = $builder['query'];
+        $parseData = $builder['parseData'];
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+
+        $parseData['dataProvider'] = $dataProvider;
+
+        return $this->render('index', $parseData);
+    }
+
+    public function actionExport() {
+        $builder = $this->buildQuery(true);
+        $query = $builder['query'];
+
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+        ]);
+        ExcelView::widget([
+            'dataProvider'  => $dataProvider,
+            'fullExportType'=> 'xlsx',
+
+            'grid_mode'     => 'export',
+            'columns'       => [
+                ['class' => 'yii\grid\SerialColumn'],
+                [
+                    'attribute' => 'station_name',
+                    'header'    => 'Tên trạm',
+                ],
+                [
+                    'attribute' => 'message',
+                    'header'    => 'Nội dung',
+                ],
+                [
+                    'attribute' => 'warning_date',
+                    'header'    => 'Thời gian',
+                ],
+            ],
+        ]);
+    }
+
+    private function buildQuery($export = false) {
+        $parseData = [];
+        if ($export) {
+            $query = new Query();
+            $query->select(['warning.message AS message', 'station.name AS station_name', 'DATE_FORMAT(FROM_UNIXTIME(warning.warning_time), "%d/%m/%Y") AS warning_date'])
+                ->from('warning')
+                ->leftJoin('station', 'station.id = warning.station_id')
+                ->where([]);
+        } else {
+            $query = Warning::find()
+                ->leftJoin('station', 'station.id = warning.station_id')
+                ->where([]);
+        }
 
         // permission
         $role = new Role();
@@ -47,11 +100,13 @@ class DefaultController extends FrontendController
             $query->where($condition);
         }
 
+        // filter by area
         $areaId = Yii::$app->request->get('area_id');
         if ($areaId > 0) {
             $query->andWhere(['station.area_id' => $areaId]);
         }
 
+        // filter by time points
         $getBy = Yii::$app->request->get('get_by');
         if ($getBy) {
             if ($getBy == 'today') {
@@ -66,32 +121,26 @@ class DefaultController extends FrontendController
 
         }
 
-        $post = Yii::$app->request->post();
-        if (!empty($post)) {
-            $id = $post['station_id'];
-            if (isset($post['station_id']) && $post['station_id'] > 0) {
-                $query->andWhere(['station_id' => $post['station_id']]);
-                $parseData['station'] = Station::findOne($post['station_id']);
-            }
-            if (isset($post['from_date']) && trim($post['from_date']) != '') {
-                $from = Convert::date2Time($post['from_date'], 'd/m/Y');
-                $query->andWhere(['>=', 'warning_time', $from]);
-                $parseData['fromDate'] = $post['from_date'];
-            }
-            if (isset($post['to_date']) && trim($post['to_date']) != '') {
-                $to = Convert::date2Time($post['to_date'], 'd/m/Y', 'end');
-                $query->andWhere(['<=', 'warning_time', $to]);
-                $parseData['toDate'] = $post['to_date'];
-            }
+        // filter by time duration
+        $fromDate = Yii::$app->request->get('from_date');
+        if ($fromDate) {
+            $fromTime = Convert::date2Time($fromDate, 'd/m/Y');
+            $query->andWhere(['>=', 'warning_time', $fromTime]);
+            $parseData['fromDate'] = Convert::date2date($fromDate, 'd/m/Y', 'm/d/Y');
+        }
+        $toDate = Yii::$app->request->get('to_date');
+        if ($toDate) {
+            $toTime = Convert::date2Time($toDate, 'd/m/Y', 'end');
+            $query->andWhere(['<=', 'warning_time', $toTime]);
+            $parseData['toDate'] = Convert::date2date($toDate, 'd/m/Y', 'm/d/Y');
         }
 
-        $dataProvider = new ActiveDataProvider([
-            'query' => $query->orderBy('warning_time DESC'),
-        ]);
+        $query->orderBy('warning_time DESC');
 
-        $parseData['dataProvider'] = $dataProvider;
-
-        return $this->render('index', $parseData);
+        return [
+            'query'     => $query,
+            'parseData' => $parseData,
+        ];
     }
 
     public function actionView($id)

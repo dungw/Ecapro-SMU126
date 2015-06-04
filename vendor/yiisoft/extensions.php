@@ -102,4 +102,22 @@ return array (
       '@yii/jui' => $vendorDir . '/yiisoft/yii2-jui',
     ),
   ),
+  'kartik-v/yii2-grid' => 
+  array (
+    'name' => 'kartik-v/yii2-grid',
+    'version' => '3.0.2.0',
+    'alias' => 
+    array (
+      '@kartik/grid' => $vendorDir . '/kartik-v/yii2-grid',
+    ),
+  ),
+  'arturoliveira/yii2-excelview' => 
+  array (
+    'name' => 'arturoliveira/yii2-excelview',
+    'version' => '1.0.0.0',
+    'alias' => 
+    array (
+      '@arturoliveira' => $vendorDir . '/arturoliveira/yii2-excelview',
+    ),
+  ),
 );

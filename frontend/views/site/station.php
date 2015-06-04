@@ -2,6 +2,8 @@
 use common\models\Area;
 use common\models\Center;
 use common\models\Station;
+use common\models\SensorStatus;
+use common\models\Sensor;
 use common\components\helpers\Show;
 
 use yii\helpers\Html;
@@ -9,7 +11,6 @@ use yii\grid\GridView;
 
 $station = new Station();
 $statusData = $station->_statusData;
-
 ?>
 <script src="<?=Yii::$app->homeUrl . 'js/jquery-crontab-station.js'?>"></script>
 
@@ -33,13 +34,6 @@ $statusData = $station->_statusData;
             'filterModel' => $searchModel,
             'summary' => false,
             'columns' => [
-                /*[
-                    'attribute' => 'code',
-                    'filter' => true,
-                    'options' => [
-                        'width' => '10%',
-                    ],
-                ],*/
                 [
                     'attribute' => 'name',
                     'options' => [
@@ -49,7 +43,6 @@ $statusData = $station->_statusData;
                 [
                     'attribute' => 'center_id',
                     'format' => 'text',
-
                     'filter' => Center::_prepareDataSelect(Center::find()->all(), 'id', 'name', false),
                     'value' => function($model) {
                             $center = Center::findOne($model->center_id);
@@ -73,6 +66,22 @@ $statusData = $station->_statusData;
                 ],
                 [
                     'attribute' => 'address',
+                ],
+                [
+                    'label'     => 'Báo động',
+                    'format'    => 'html',
+                    'value'     => function($model) {
+                            $securitySensor = SensorStatus::findOne(['station_id' => $model->id, 'sensor_id' => Sensor::ID_SECURITY]);
+                            $label = Sensor::getSecurityStatus($securitySensor['value']);
+                            if ($securitySensor['value'] == Sensor::SECURITY_ON) {
+                                return Show::decorateString($label, 'good');
+                            } else if ($securitySensor['value'] == Sensor::SECURITY_OFF) {
+                                return Show::decorateString($label, 'bad');
+                            }
+                        },
+                    'options'   => [
+                        'width' => '10%',
+                    ],
                 ],
                 [
                     'attribute' => 'status',
@@ -101,7 +110,7 @@ $statusData = $station->_statusData;
                             return '<a target="_blank" href="'. $stationHref .'" class="btn btn-success btn-xs">Chi tiết trạm</a>';
                         },
                     'options' => [
-                        'width' => '14%',
+                        'width' => '10%',
                         'align' => 'center',
                     ],
                 ],

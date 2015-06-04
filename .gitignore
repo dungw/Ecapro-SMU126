@@ -23,4 +23,4 @@ composer.phar
 phpunit.phar
 # local phpunit config
 /phpunit.xml
-/frontend/web/locations.json
+/frontend/web/locations_1.json

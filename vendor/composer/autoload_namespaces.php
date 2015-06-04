@@ -6,6 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'PHPExcel' => array($vendorDir . '/phpoffice/phpexcel/Classes'),
     'Imagine' => array($vendorDir . '/imagine/imagine/lib'),
     'Ikimea\\Browser\\' => array($vendorDir . '/ikimea/browser/lib'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),

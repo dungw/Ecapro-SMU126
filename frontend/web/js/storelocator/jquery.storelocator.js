@@ -107,6 +107,8 @@
                 }
             }
 
+            setInterval(locator, 20 * 1000);
+
             //The main script
             function locator() {
 
@@ -678,7 +680,7 @@
                                     for (var y = 0; y <= storenum; y++) {
                                         var letter = String.fromCharCode("A".charCodeAt(0) + y);
                                         var point = new google.maps.LatLng(locationset[y]['lat'], locationset[y]['lng']);
-                                        marker = createMarker(point, locationset[y]['name'], locationset[y]['address'], letter);
+                                        marker = createMarker(point, locationset[y]['name'], locationset[y]['address'], letter, locationset[y]['color']);
                                         marker.set("id", y);
                                         markers[y] = marker;
                                         if ((settings.fullMapStart === true && firstRun === true) || settings.zoomLevel === 0) {
@@ -740,15 +742,24 @@
                                     $("#" + settings.listDiv + " ul li:odd").css('background', "#" + settings.listColor2);
 
                                     //Custom marker function - alphabetical
-                                    function createMarker(point, name, address, letter) {
+                                    function createMarker(point, name, address, letter, color) {
                                         //Set up pin icon with the Google Charts API for all of our markers
-                                        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + letter + "|" + settings.pinColor + "|" + settings.pinTextColor,
+                                        var pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=O|" + color + "|" + settings.pinTextColor,
                                             new google.maps.Size(21, 34),
                                             new google.maps.Point(0, 0),
                                             new google.maps.Point(10, 34));
 
+                                        console.log("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + letter + "|" + color + "|" + settings.pinTextColor);
+
                                         //Create the markers
-                                        if (settings.storeLimit === -1 || settings.storeLimit > 26) {
+                                        var marker = new google.maps.Marker({
+                                            position: point,
+                                            map: map,
+                                            icon: pinImage,
+                                            draggable: false
+                                        });
+
+                                        /*if (settings.storeLimit === -1 || settings.storeLimit > 26) {
                                             var marker = new google.maps.Marker({
                                                 position: point,
                                                 map: map,
@@ -762,7 +773,7 @@
                                                 icon: pinImage,
                                                 draggable: false
                                             });
-                                        }
+                                        }*/
 
                                         return marker;
                                     }

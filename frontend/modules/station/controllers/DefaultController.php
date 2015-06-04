@@ -21,6 +21,7 @@ use common\controllers\FrontendController;
 use common\models\StationStatusHandler;
 use common\models\Warning;
 use common\models\StationType;
+use common\models\Observer;
 use common\components\helpers\Convert;
 use yii\db\Query;
 use yii\data\ActiveDataProvider;
@@ -200,6 +201,16 @@ class DefaultController extends FrontendController
                     ->where(['station_id' => $get['station_id'], 'updated' => StationStatusHandler::STATUS_NOT_UPDATE, 'type' => StationStatusHandler::TYPE_SENSOR_SECURITY])
                     ->orderBy('created_at DESC')
                     ->one();
+
+                // create an alarm when user turn on or turn off security mode
+                $station = Station::findOne($get['station_id']);
+                $command[] = $station['code'];
+                $command[] = $station['name'];
+                $command[] = 'alarm';
+                $command[] = ($get['status'] == Sensor::SECURITY_OFF) ? 'Tat bao dong' : 'Bat bao dong';
+                $strCommand = implode('&', $command);
+                $observer = new Observer();
+                $observer->handleRequest($strCommand);
             }
 
             // model
@@ -261,6 +272,14 @@ class DefaultController extends FrontendController
         if (!empty($parseData['powerEquipments'])) {
             foreach ($parseData['powerEquipments'] as $equipment) {
                 $parseData['powerEquipmentIds'][] = $equipment->id;
+            }
+        }
+
+        // get all dc equipment
+        $parseData['dcEquipments'] = DcEquipment::find()->where(['active' => DcEquipment::STATUS_ACTIVE])->all();
+        if (!empty($parseData['dcEquipments'])) {
+            foreach ($parseData['dcEquipments'] as $equip) {
+                $parseData['dcEquipmentIds'][] = $equip->id;
             }
         }
 
@@ -353,7 +372,7 @@ class DefaultController extends FrontendController
         $parseData = ['model' => $model];
 
         // check if not has dc status and sensor status, then create them
-        if (!$model->dc_equip_status) $this->initDc($id);
+//        if (!$model->dc_equip_status) $this->initDc($id);
         if (!$model->sensor_status) $this->initSensor($id);
 
         // get all equipment
@@ -367,6 +386,12 @@ class DefaultController extends FrontendController
 
         // get equipment of station
         $parseData['powerEquipmentIds'] = $model->power_equipment;
+
+        // get dc equipment of this station
+        $parseData['dcEquipmentIds'] = $model->dc_equip_ids;
+
+        // get all dc equipment
+        $parseData['dcEquipments'] = DcEquipment::find()->where(['active' => DcEquipment::STATUS_ACTIVE])->all();
 
         // get area
         $areaCollections = Area::find()->all();
@@ -392,11 +417,17 @@ class DefaultController extends FrontendController
             if ($model->validate()) {
                 $model->save();
 
+                // get new model
+                $newModel = $this->findModel($id);
+
                 // update equipment
-                $this->setEquipment($post['equipments'], $id, $model->code);
+                $this->setEquipment($post['equipments'], $newModel);
 
                 // update power equipment
-                $this->setPowerEquipment($post['power_equipments'], $id);
+                $this->setPowerEquipment($post['power_equipments'], $newModel);
+
+                // update dc equipment
+                $this->setDcEquipment($post['dc_equipments'], $newModel);
 
                 return $this->redirect(['view', 'id' => $model->id]);
             }
@@ -466,6 +497,9 @@ class DefaultController extends FrontendController
         // get power equipment
         $parseData['powerEquipments'] = $model->getPowerEquipment($model->id, $model->power_equipment);
 
+        // get power equipment
+        $parseData['dcEquipments'] = DcEquipmentStatus::findByStation($model->id);
+
         return $this->render('view', $parseData);
     }
 
@@ -505,18 +539,20 @@ class DefaultController extends FrontendController
             }
 
             // get dc
-            $dcEquips = DcEquipmentStatus::findAll(['station_id' => $id]);
+            $dcEquips = DcEquipmentStatus::findByStation($id);
             if (!empty($dcEquips)) {
                 foreach ($dcEquips as $dcEquip) {
-                    $equip = DcEquipment::findOne(['id' => $dcEquip->equipment_id]);
+                    $model->dc_equip_ids[] = $dcEquip['equipment_id'];
 
                     $model->dc_equip_status[] = [
-                        'equipment_id' => $dcEquip->equipment_id,
-                        'name' => $equip->name,
-                        'amperage' => $dcEquip->amperage,
-                        'voltage' => $dcEquip->voltage,
-                        'temperature' => $dcEquip->temperature,
-                        'status' => $dcEquip->status,
+                        'equipment_id'  => $dcEquip['equipment_id'],
+                        'name'          => $dcEquip['name'],
+                        'amperage'      => $dcEquip['amperage'],
+                        'voltage'       => $dcEquip['voltage'],
+                        'unit_voltage'  => $dcEquip['unit_voltage'],
+                        'temperature'   => $dcEquip['temperature'],
+                        'unit_amperage' => $dcEquip['unit_amperage'],
+                        'status'        => $dcEquip['status'],
                     ];
                 }
             }
@@ -567,16 +603,15 @@ class DefaultController extends FrontendController
     }
 
     // add equipment to station
-    private function setEquipment($equipmentIds, $stationId, $stationCode) {
+    private function setEquipment($equipmentIds, $model) {
 
-        if (!empty($equipmentIds) && $stationId > 0 && $stationCode != '') {
-            $model = $this->findModel($stationId);
+        if (!empty($equipmentIds) && $model->id > 0 && $model->code != '') {
 
             // delete excess equipment
             $excessIds = array_diff($model->equipment, $equipmentIds);
             if (!empty($excessIds)) {
                 foreach ($excessIds as $excessId) {
-                    EquipmentStatus::deleteAll(['equipment_id' => $excessId, 'station_id' => $stationId]);
+                    EquipmentStatus::deleteAll(['equipment_id' => $excessId, 'station_id' => $model->id]);
                 }
             }
 
@@ -584,7 +619,7 @@ class DefaultController extends FrontendController
             $newIds = array_diff($equipmentIds, $model->equipment);
             if (!empty($newIds)) {
                 foreach ($newIds as $newId) {
-                    $data[] = [$newId, $stationId, $stationCode];
+                    $data[] = [$newId, $model->id, $model->code];
                 }
 
                 Yii::$app->db->createCommand()
@@ -595,15 +630,14 @@ class DefaultController extends FrontendController
     }
 
     // set power equipment
-    private function setPowerEquipment($ids, $stationId) {
-        if (!empty($ids) && $stationId > 0) {
-            $model = $this->findModel($stationId);
+    private function setPowerEquipment($ids, $model) {
+        if (!empty($ids) && $model->id > 0) {
 
             // delete excess equipment
             $excessIds = array_diff($model->power_equipment, $ids);
             if (!empty($excessIds)) {
                 foreach ($excessIds as $excessId) {
-                    PowerEquipment::deleteAll(['item_id' => $excessId, 'station_id' => $stationId]);
+                    PowerStatus::deleteAll(['item_id' => $excessId, 'station_id' => $model->id]);
                 }
             }
 
@@ -611,11 +645,36 @@ class DefaultController extends FrontendController
             $newIds = array_diff($ids, $model->power_equipment);
             if (!empty($newIds)) {
                 foreach ($newIds as $newId) {
-                    $data[] = [$newId, $stationId];
+                    $data[] = [$newId, $model->id];
                 }
 
                 Yii::$app->db->createCommand()
                     ->batchInsert('power_status', ['item_id', 'station_id'], $data)
+                    ->execute();
+            }
+        }
+    }
+
+    private function setDcEquipment($ids, $model) {
+        if (!empty($ids) && $model->id > 0) {
+
+            // delete excess equipment
+            $excessIds = array_diff($model->dc_equip_ids, $ids);
+            if (!empty($excessIds)) {
+                foreach ($excessIds as $excessId) {
+                    DcEquipmentStatus::deleteAll(['equipment_id' => $excessId, 'station_id' => $model->id]);
+                }
+            }
+
+            // add new equipment
+            $newIds = array_diff($ids, $model->dc_equip_ids);
+            if (!empty($newIds)) {
+                foreach ($newIds as $newId) {
+                    $data[] = [$newId, $model->id];
+                }
+
+                Yii::$app->db->createCommand()
+                    ->batchInsert('dc_equipment_status', ['equipment_id', 'station_id'], $data)
                     ->execute();
             }
         }

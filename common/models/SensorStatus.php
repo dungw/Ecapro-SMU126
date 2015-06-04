@@ -50,6 +50,12 @@ class SensorStatus extends Base
         return null;
     }
 
+    public function optionSecurityMode() {
+        return [
+            Sensor::SECURITY_ON => 'Đang bật',
+        ];
+    }
+
     public static function getUnit($type) {
         if ($type == 'temperature') return Yii::$app->params['unit_temperature'];
         if ($type == 'humidity') return Yii::$app->params['unit_humidity'];

@@ -19,9 +19,7 @@ $attributeLabels = $model->attributeLabels();
 
     <?= Show::activeDropDownList($model, 'active', $attributeLabels, $model->_statusData) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Thêm mới' : 'Cập nhật', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+    <?= Show::submitButton($model) ?>
 
     <?php ActiveForm::end(); ?>
 

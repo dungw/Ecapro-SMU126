@@ -109,3 +109,7 @@ h1, .h1, h2, .h2, h3, .h3 {
 .div-station { max-height: 314px; }
 .footer .container { text-align: center; }
 .footer { padding-top: 10px !important; height: 35px !important; }
+.loc-address { font-size: 11px; }
+.loc-message { color: red; }
+.loc-name { color: #5C5C5C !important; text-align: center; }
+.loc-diff { margin: 3px 0px !important; }

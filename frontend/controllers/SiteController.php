@@ -5,7 +5,6 @@ use Yii;
 use common\models\LoginForm;
 use common\models\Station;
 use common\models\Role;
-use common\models\User;
 use common\models\Warning;
 use common\models\StationSearch;
 use common\controllers\FrontendController;
@@ -93,6 +92,7 @@ class SiteController extends FrontendController
 
         // write station locator for map
         $this->writeStationLocator($data['query']);
+
         return $this->render('index', $parseData);
     }
 
@@ -143,29 +143,38 @@ class SiteController extends FrontendController
         if (!empty($stations)) {
             foreach ($stations as $station) {
                 $color = '';
+                $message = '';
                 $status = $station->getStatus($station->status);
-                if ($station->status == Station::STATUS_CONNECTED) {
-                    $color = Yii::$app->params['color_of_good'];
+                $unreadWarning = $station->hasUnreadWarning($station->id);
+
+                if ($unreadWarning) {
+                    $color = 'FFFFAE';
+                    $message = $unreadWarning->message;
                 } else if ($station->status == Station::STATUS_LOST) {
-                    $color = Yii::$app->params['color_of_bad'];
+                    $color = 'FFBFBF';
+                } else {
+                    $color = 'A6F9A8';
                 }
 
                 $data[] = [
-                    'id' => $station->id,
-                    'name' => $station->name,
-                    'lat' => $station->latitude,
-                    'lng' => $station->longtitude,
-                    'status' => $status,
-                    'color' => $color,
-                    'address' => $station->address,
+                    'id'        => $station->id,
+                    'name'      => $station->name,
+                    'lat'       => $station->latitude,
+                    'lng'       => $station->longtitude,
+                    'status'    => $status,
+                    'color'     => $color,
+                    'address'   => $station->address,
+                    'message'   => $message,
                 ];
             }
         }
+
+        $jsonFile = Yii::$app->basePath . '/web' . Yii::$app->params['dir_locations'] . Yii::$app->user->id . '.json';
         $json = json_encode($data);
-        $handle = fopen('locations.json', 'r+');
+        $handle = fopen($jsonFile, 'r+');
         fwrite($handle, $json);
         fclose($handle);
-        file_put_contents('locations.json', $json);
+        file_put_contents($jsonFile, $json);
     }
 
 }

@@ -25,6 +25,8 @@ $attributeLabels = $model->attributeLabels();
 
     <?= Show::multiSelect('power_equipments', $powerEquipmentIds, $powerEquipments, 'id', 'name', $attributeLabels) ?>
 
+    <?= Show::multiSelect('dc_equipments', $dcEquipmentIds, $dcEquipments, 'id', 'name', $attributeLabels) ?>
+
     <?= $form->field($model, 'staff')->textInput() ?>
 
     <?= $form->field($model, 'firmware')->textInput(['maxlength' => 255]) ?>

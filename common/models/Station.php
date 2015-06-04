@@ -31,8 +31,8 @@ class Station extends Base
     // array power equipment id
     public $power_equipment = [];
 
-    // object dc status
-    public $dc_status;
+    // array dc equipment id
+    public $dc_equip_ids;
 
     // array dc equipment status
     public $dc_equip_status;
@@ -64,30 +64,31 @@ class Station extends Base
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'code' => 'Mã trạm',
-            'name' => 'Tên trạm',
-            'center_id' => 'Trung tâm',
-            'area_id' => 'Khu vực',
-            'type' => 'Loại trạm',
-            'firmware' => 'Firmware',
-            'staff' => 'Nhân viên trực',
-            'equipments' => 'Thiết bị',
-            'addition' => 'Thông tin thêm',
-            'picture_url' => 'Url chụp ảnh',
-            'video_url' => 'Url Video',
-            'latitude' => 'Vĩ độ',
-            'longtitude' => 'Kinh độ',
-            'phone' => 'Số điện thoại',
-            'email' => 'Email',
-            'status' => 'Trạng thái',
+            'id'                => 'ID',
+            'code'              => 'Mã trạm',
+            'name'              => 'Tên trạm',
+            'center_id'         => 'Trung tâm',
+            'area_id'           => 'Khu vực',
+            'type'              => 'Loại trạm',
+            'firmware'          => 'Firmware',
+            'staff'             => 'Nhân viên trực',
+            'equipments'        => 'Thiết bị',
+            'addition'          => 'Thông tin thêm',
+            'picture_url'       => 'Url chụp ảnh',
+            'video_url'         => 'Url Video',
+            'latitude'          => 'Vĩ độ',
+            'longtitude'        => 'Kinh độ',
+            'phone'             => 'Số điện thoại',
+            'email'             => 'Email',
+            'status'            => 'Trạng thái',
             'picture_warning_numb' => 'Số ảnh cảnh báo',
-            'ip' => 'IP của trạm',
-            'port' => 'Port của trạm',
-            'updated_at' => 'Cập nhật lúc',
+            'ip'                => 'IP của trạm',
+            'port'              => 'Port của trạm',
+            'updated_at'        => 'Cập nhật lúc',
             'change_equipment_status' => 'Thay đổi trạng thái thiết bị',
-            'address' => 'Địa chỉ',
-            'power_equipments' => 'Thiết bị nguồn điện',
+            'address'           => 'Địa chỉ',
+            'power_equipments'  => 'Thiết bị nguồn điện',
+            'dc_equipments'     => 'Thiết bị tủ DC',
         ];
     }
 
@@ -184,6 +185,17 @@ class Station extends Base
         }
 
         return $ids;
+    }
+
+    public function hasUnreadWarning($id) {
+        if ($id > 0) {
+            $newest = Warning::find()
+                ->where(['station_id' => $id, 'read' => Warning::STATUS_UNREAD])
+                ->one();
+
+            if ($newest) return $newest;
+        }
+        return false;
     }
 
 }

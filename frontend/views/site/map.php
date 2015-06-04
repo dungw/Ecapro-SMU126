@@ -30,7 +30,8 @@
 
 <script type="text/javascript">
     jQuery(function ($) {
-        // station maps
-        $('#map-container').storeLocator();
+        $('#map-container').storeLocator({
+            'dataLocation': '<?= Yii::$app->params['dir_location'] . Yii::$app->user->id . '.json' ?>'
+        });
     });
 </script>

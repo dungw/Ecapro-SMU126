@@ -22,7 +22,8 @@
         "yiisoft/yii2-imagine": "~2.0",
         "kartik-v/yii2-detail-view": "*",
         "webvimark/module-user-management": "*",
-        "yiisoft/yii2-jui": "~2.0@dev"
+        "yiisoft/yii2-jui": "~2.0@dev",
+        "arturoliveira/yii2-excelview": "*"
     },
     "require-dev": {
         "yiisoft/yii2-codeception": "*",

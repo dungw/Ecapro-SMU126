@@ -11,7 +11,6 @@ class UpdateController extends Controller {
     const LIMIT_DURATION = 90;
 
     public function actionIndex() {
-
         $stations = Station::find()->all();
         if (!empty($stations)) {
             foreach ($stations as $station) {
@@ -40,6 +39,9 @@ class UpdateController extends Controller {
                     ->execute();
             }
         }
+    }
+
+    public function actionMap() {
 
     }
 

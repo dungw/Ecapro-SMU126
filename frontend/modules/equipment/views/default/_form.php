@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use common\components\helpers\Show;
 ?>
 
 <div class="equipment-form">
@@ -12,9 +13,7 @@ use yii\widgets\ActiveForm;
 
     <?= ($model->isNewRecord) ? '' : $form->field($model, 'binary_pos')->textInput(['maxlength' => 255]) ?>
 
-    <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Thêm mới' : 'Cập nhật', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
-    </div>
+    <?= Show::submitButton($model) ?>
 
     <?php ActiveForm::end(); ?>
 

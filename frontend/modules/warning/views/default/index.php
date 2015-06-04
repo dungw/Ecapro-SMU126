@@ -17,10 +17,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <h4><?= Html::encode($this->title) ?></h4>
 
     <!-- Filter -->
-    <form role="form" style="display: block; margin-bottom: 10px;" action="" method="post">
-        <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
-        <input type="hidden" id="station_id" name="station_id" value="<?=isset($station) ? $station['id'] : ''?>">
-
+    <form role="form" style="display: block; margin-bottom: 10px;" action="" method="get">
+        <!--<input type="hidden" id="station_id" name="station_id" value="<?/*=isset($station) ? $station['id'] : ''*/?>">
         <div class="col-sm-3" style="padding-left: 0px !important;">
             <div class="form-group" style="margin-bottom: 5px !important;">
                 <input class="form-control" id="searchinput" type="search" placeholder="Tìm tên trạm..." />
@@ -28,16 +26,17 @@ $this->params['breadcrumbs'][] = $this->title;
             <div id="searchlist" style="position: absolute; width: 100%; padding-right: 15px;" class="list-group"></div>
             <div id="station">
                 <?php
-                if (isset($station)) {
-                    ?>
+/*                if (isset($station)) {
+                    */?>
                     <div>
-                        <button class="btn btn-success btn-xs"><?=$station['name']?></button><img class="delete-station" src="<?=Yii::getAlias('@web/images/delete.png')?>">
+                        <button class="btn btn-success btn-xs"><?/*=$station['name']*/?></button><img class="delete-station" src="<?/*=Yii::getAlias('@web/images/delete.png')*/?>">
                     </div>
                     <?php
-                }
-                ?>
+/*                }
+                */?>
             </div>
-        </div>
+        </div>-->
+
         <div class="col-sm-2" style="padding: 0px !important; padding-right: 2px !important;">
             <span>Từ: </span>
             <?=Show::datePicker('from_date', (isset($fromDate) ? $fromDate : ''))?>
@@ -46,8 +45,9 @@ $this->params['breadcrumbs'][] = $this->title;
             <span>Đến: </span>
             <?=Show::datePicker('to_date', (isset($toDate) ? $toDate : ''))?>
         </div>
-        <div class="col-sm-4" align="left" style="padding: 0px !important;">
+        <div class="col-sm-2" align="left" style="padding: 0px !important;">
             <button type="submit" class="btn btn-primary btn-xs">Tìm kiếm</button>
+            <a target="_blank" href="<?= Yii::$app->urlManager->baseUrl . 'export?' . $_SERVER['QUERY_STRING'] ?>" type="button" class="btn btn-primary btn-xs">Export Excel</a>
         </div>
     </form>
 
@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'station_id',
-                    'value' => function($model) {
+                    'value'     => function($model) {
                             $station = Station::findOne($model->station_id);
                             return $station['name'];
                         },
@@ -100,7 +100,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     }
                                     $hideIt = ($hide) ? 'style="display: none;"' : '';
                                     $path = Yii::$app->urlManager->baseUrl . '/uploads/' . $pic['picture'];
-                                    $html .= '<button '. $hideIt .' class="btn btn-primary btn-xs" href="'. $path .'">Xem ảnh</button>';
+                                    $html .= '<button '. $hideIt .' class="btn btn-warning btn-xs" href="'. $path .'">Xem ảnh</button>';
                                     $no++;
                                 }
                             } else {
@@ -120,8 +120,6 @@ $this->params['breadcrumbs'][] = $this->title;
         ?>
     </div>
 </div>
-
-
 
 <script type="text/javascript">
 

@@ -86,7 +86,9 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 if ($no == 1) {
                     ?>
                     <td rowspan="<?=$equipNum?>">
-                        <?=Show::cameraIp($model->video_url)?>
+                        <?php
+                        print Show::cameraIp($model->video_url);
+                        ?>
                     </td>
                     <?php
                 }
@@ -118,10 +120,10 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                     <div class="kv-attribute"><?=$equipStatus['name']?></div>
                 </td>
                 <td>
-                    <div class="kv-attribute"><?= $equipStatus['amperage'] . '&nbsp;' . Yii::$app->params['unit_amperage'] ?></div>
+                    <div class="kv-attribute"><?= $equipStatus['amperage'] . '&nbsp;' . $equipStatus['unit_amperage'] ?></div>
                 </td>
                 <td>
-                    <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . Yii::$app->params['unit_voltage'] ?></div>
+                    <div class="kv-attribute"><?= $equipStatus['voltage'] . '&nbsp;' . $equipStatus['unit_voltage'] ?></div>
                 </td>
                 </tr>
                 <?php
@@ -156,11 +158,33 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                     }
                 }
             } else continue;
+
+            if ($no == 1) {
+                $connectStatus = $model->getStatus($model->status);
+                if ($model->status == Station::STATUS_CONNECTED) {
+                    $connectStatus = Show::decorateString($connectStatus, 'good');
+                } else if ($model->status == Station::STATUS_LOST) {
+                    $connectStatus = Show::decorateString($connectStatus, 'bad');
+                }
+                ?>
+                <tr>
+                    <th width="5%" style="text-align: center"><?=$no?></th>
+                    <td width="45%">
+                        <div class="kv-attribute">Tình trạng kết nối</div>
+                    </td>
+                    <td>
+                        <div class="kv-attribute"><?=$connectStatus?></div>
+                    </td>
+                    <td></td>
+                </tr>
+                <?php
+                $no++;
+            }
             ?>
             <tr>
                 <th width="5%" style="text-align: center"><?=$no?></th>
                 <td width="45%">
-                    <div class="kv-attribute"><?= $status['name'] . (($status['unit']) ? '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' : '') ?></div>
+                    <div class="kv-attribute"><?=$status['name']?></div>
                 </td>
                 <td>
                     <div class="kv-attribute"><?=$label?></div>
@@ -170,27 +194,14 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 </td>
             </tr>
             <?php
+
             $no++;
         }
     }
 
-    $connectStatus = $model->getStatus($model->status);
-    if ($model->status == Station::STATUS_CONNECTED) {
-        $connectStatus = Show::decorateString($connectStatus, 'good');
-    } else if ($model->status == Station::STATUS_LOST) {
-        $connectStatus = Show::decorateString($connectStatus, 'bad');
-    }
+
     ?>
-    <tr>
-        <th width="5%" style="text-align: center"><?=$no?></th>
-        <td width="45%">
-            <div class="kv-attribute">Tình trạng kết nối</div>
-        </td>
-        <td>
-            <div class="kv-attribute"><?=$connectStatus?></div>
-        </td>
-        <td></td>
-    </tr>
+
 </table>
 
 
@@ -216,13 +227,12 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
             } else if ($status['type'] == Sensor::TYPE_CONFIGURE) {
                 $message = Message::getMessageBySensor($status['sensor_id'], $value);
                 $label = ($value == 0) ? Show::decorateString($message, 'bad') : Show::decorateString($message, 'good');
-
             }
             ?>
             <tr>
                 <th style="text-align: center"><?=$no?></th>
                 <td>
-                    <div class="kv-attribute"><?= $status['name'] . (($status['unit']) ? '&nbsp;(' . SensorStatus::getUnit($status['unit']) . ')' : '') ?></div>
+                    <div class="kv-attribute"><?= $status['name']?></div>
                 </td>
                 <td>
                     <div class="kv-attribute"><?=$label?></div>
@@ -252,7 +262,7 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
             <tr>
                 <th style="text-align: center"><?=$no?></th>
                 <td>
-                    <div class="kv-attribute"><?=$e['name'] . '&nbsp;(' . SensorStatus::getUnit($e['unit_type']) . ')'?></div>
+                    <div class="kv-attribute"><?=$e['name']?></div>
                 </td>
                 <td>
                     <div class="kv-attribute"><?=$e['status']?></div>

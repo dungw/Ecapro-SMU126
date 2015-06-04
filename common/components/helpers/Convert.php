@@ -1,6 +1,8 @@
 <?php
 namespace common\components\helpers;
 
+use Faker\Provider\DateTime;
+
 class Convert {
 
     public static function currentTimePoints() {
@@ -63,6 +65,11 @@ class Convert {
         $time = strtotime($date->format('m/d/Y'));
         if ($fromTime == 'end') $time += 86399;
         return $time;
+    }
+
+    public static function date2date($dateString, $from, $to) {
+        $dateObj = date_create_from_format($from, $dateString);
+        return $dateObj->format($to);
     }
 
     public static function dec2Bin($decimal, $length) {

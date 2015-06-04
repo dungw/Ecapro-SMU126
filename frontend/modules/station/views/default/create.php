@@ -11,15 +11,17 @@ $this->params['breadcrumbs'][] = $this->title;
     <h4><?= Html::encode($this->title) ?></h4>
 
     <?= $this->render('_form', [
-        'model' => $model,
-        'areas' => $areas,
-        'centers' => $centers,
-        'types' => $types,
-        'equipments' => $equipments,
-        'equipmentIds' => $equipmentIds,
-        'powerEquipments' => $powerEquipments,
+        'model'             => $model,
+        'areas'             => $areas,
+        'centers'           => $centers,
+        'types'             => $types,
+        'equipments'        => $equipments,
+        'equipmentIds'      => $equipmentIds,
+        'powerEquipments'   => $powerEquipments,
         'powerEquipmentIds' => $powerEquipmentIds,
-        'errors' => isset($errors) ? $errors : [],
+        'dcEquipments'      => $dcEquipments,
+        'dcEquipmentIds'    => $dcEquipmentIds,
+        'errors'            => isset($errors) ? $errors : [],
     ]) ?>
 
 </div>
