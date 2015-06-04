@@ -169,9 +169,9 @@ class SiteController extends FrontendController
             }
         }
 
-        $jsonFile = Yii::$app->basePath . '/web' . Yii::$app->params['dir_locations'] . Yii::$app->user->id . '.json';
+        $jsonFile = Yii::$app->basePath . '/web/locations/' . Yii::$app->user->id . '.json';
         $json = json_encode($data);
-        $handle = fopen($jsonFile, 'r+');
+        $handle = fopen($jsonFile, 'w+');
         fwrite($handle, $json);
         fclose($handle);
         file_put_contents($jsonFile, $json);
