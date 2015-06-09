@@ -16,6 +16,8 @@ use common\models\Base;
  */
 class DcEquipment extends Base
 {
+    const ID_DC1 = 1;
+    const ID_DC2 = 2;
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 0;
 
