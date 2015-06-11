@@ -21,7 +21,11 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
     <?php $this->registerCssFile(Yii::$app->homeUrl . 'css/custom-styles.css') ?>
+    <?php $this->registerCssFile(Yii::$app->homeUrl . 'js/dialog/css/jquery.dialogbox.css') ?>
+
     <script src="<?php echo Yii::$app->homeUrl . 'js/jquery-1.10.1.min.js' ?>"></script>
+    <script src="<?php echo Yii::$app->homeUrl . 'js/dialog/js/jquery.dialogBox.js' ?>"></script>
+    <script src="<?php echo Yii::$app->homeUrl . 'js/global-crontab-warning.js' ?>"></script>
 
 </head>
 <body>
@@ -45,7 +49,6 @@ AppAsset::register($this);
 <footer class="footer">
     <div class="container">
         <b>&copy; <?= date('Y') . '. ' . Yii::$app->params['brandName'] ?></b>
-<!--        <p class="pull-right">--><?//= Yii::powered() ?><!--</p>-->
     </div>
 </footer>
 

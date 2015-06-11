@@ -18,6 +18,7 @@ use yii\db\Query;
 class DefaultController extends FrontendController
 {
     public $layout = '//main';
+    public $enableCsrfValidation = true;
 
     public function behaviors()
     {
@@ -29,6 +30,17 @@ class DefaultController extends FrontendController
                 ],
             ],
         ];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        if ($action->actionMethod  == 'actionCronLatest' || $action->actionMethod == 'actionCronUnread') {
+            Yii::$app->controller->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
     }
 
     public function actionIndex()
@@ -192,10 +204,9 @@ class DefaultController extends FrontendController
         }
     }
 
-    public function actionLatest() {
+    public function actionCronLatest() {
         $html = '';
         $count = 0;
-        $this->enableCsrfValidation = false;
         $post = Yii::$app->request->post();
         if (!empty($post)) {
             $timeLoop = $post['time_loop'];
@@ -222,7 +233,32 @@ class DefaultController extends FrontendController
 
         $data['html'] = $html;
         $data['count'] = $count;
+        print json_encode($data);
+    }
 
+    public function actionCronUnread() {
+        $html = '';
+        $count = 0;
+        $post = Yii::$app->request->post();
+
+        // permission
+        $role = new Role();
+        $condition = [];
+        if (!$role->isAdministrator) {
+            $position = $role->getPosition();
+            $stationIds = Station::getByRole($position, Yii::$app->user->id);
+            $condition[] = ['in', 'station_id', $stationIds];
+        };
+        $condition[] = ['=', 'read', Warning::STATUS_UNREAD];
+
+        $warnings = Warning::getWarning('warning_time DESC', 0, $condition);
+        if (!empty($warnings)) {
+            $count = count($warnings);
+            $html = Show::warnings($warnings);
+        }
+
+        $data['html'] = $html;
+        $data['count'] = $count;
         print json_encode($data);
     }
 

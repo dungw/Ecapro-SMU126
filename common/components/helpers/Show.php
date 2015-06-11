@@ -62,6 +62,17 @@ class Show extends BaseHtml
     public static function warnings($warnings, $loadJs = true) {
         $html = '';
         if (isset($warnings) && !empty($warnings)) {
+
+            $html .= '<table id="warning-table" class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">';
+            $html .= '<tr class="warning-heading">';
+            $html .= '<th width="15%">Trạm</th>';
+            $html .= '<th width="13%">Khu vực</th>';
+            $html .= '<th width="13%">Trung tâm</th>';
+            $html .= '<th>Nội dung</th>';
+            $html .= '<th width="15%">Thời gian</th>';
+            $html .= '<th width="18%"></th>';
+            $html .= '</tr>';
+
             foreach ($warnings as $warning) {
 
                 // read or unread
@@ -96,7 +107,6 @@ class Show extends BaseHtml
                 // view station button
                 $gallery .= '<a href="'. $stationHref .'" target="_blank" style="float: right" class="btn btn-success btn-xs '. $buttonClass .' view-picture">Chi tiết trạm</a>';
                 $gallery .= '</div>';
-
                 $html .= '<tr class="warning '. $class .'" id="'. $warning['id'] .'" station-href="'. $stationHref .'">';
                 $html .= '<td><div class="kv-attribute">'. $warning['station_name'] .'</div></td>';
                 $html .= '<td><div class="kv-attribute">'. $warning['area_name'] .'</div></td>';
@@ -105,7 +115,9 @@ class Show extends BaseHtml
                 $html .= '<td><div class="kv-attribute">'. date('d/m/Y H:i', $warning['warning_time']) .'</div></td>';
                 $html .= '<td><div class="kv-attribute">'. $gallery .'</div></td>';
                 $html .= '</tr>';
+
             }
+            $html .= '</table>';
         }
 
         return $html;

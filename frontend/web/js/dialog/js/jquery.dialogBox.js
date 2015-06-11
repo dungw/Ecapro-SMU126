@@ -220,7 +220,7 @@
  						});
 
  					}else{
- 						$(this).width(that.settings.width - 40);
+ 						$(this).width(that.settings.width);
  						$(this).height(that.settings.height - 130);
  					}
  				});
@@ -347,7 +347,7 @@
  			$content.css({
  				width: function(){
  					if(that.settings.width){
- 						return that.settings.width - 40 + 'px';
+ 						return that.settings.width + 'px';
  					}else{
  						return;
  					}

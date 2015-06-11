@@ -1,6 +1,7 @@
 
 .dialog-box{
-	font: normal 14px '\5FAE\8F6F\96C5\9ED1';
+    font-family: Arial;
+    font-size: 12px !important;
 	height: auto;
 	position: fixed;
 	top: 50%;
@@ -55,10 +56,13 @@
 	color: #f5694b;
 }
 .dialog-box-content{
-	font-family: '\5FAE\8F6F\96C5\9ED1';
+    font-family: Arial;
+    font-size: 12px !important;
 	padding: 20px;
 	line-height: 24px;
 	margin: 0;
+    max-height: 309px;
+    overflow-y: auto;
 }
 .dialog-btn{
 	height:34px;

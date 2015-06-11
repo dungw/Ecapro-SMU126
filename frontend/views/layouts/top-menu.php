@@ -76,3 +76,5 @@ if (!Yii::$app->user->isGuest) {
     ]);
     NavBar::end();
 }
+?>
+<div id="latest-warning-block"></div>

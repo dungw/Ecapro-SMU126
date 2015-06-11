@@ -363,7 +363,6 @@ class Observer {
         $temp = explode('&', $requestString);
         if (!empty($temp)) {
             $this->request['data'] = $requestString;
-
             $this->request['id'] = $this->findStationId(trim($temp[0]));
             $this->request['name'] = $temp[1];
             $this->request['function'] = $temp[2];
@@ -381,7 +380,6 @@ class Observer {
             $this->request['dc2_voltage'] = isset($temp[14]) ? $temp[14] : '';
             $this->request['dc1_ampe'] = isset($temp[15]) ? $temp[15] : '';
             $this->request['dc2_ampe'] = isset($temp[16]) ? $temp[16] : '';
-
             return true;
         } else {
             return false;

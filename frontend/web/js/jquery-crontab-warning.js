@@ -21,7 +21,7 @@ function updateWarning() {
     var time = new Date().getTime() / 1000;
     time = parseInt(time);
     $.ajax({
-        url: '/warning/default/latest',
+        url: '/warning/default/cron-latest',
         type: 'post',
         data: {
             time_loop: TIME_LOOP,
@@ -30,7 +30,6 @@ function updateWarning() {
         beforeSend: function() {
             $(WARNING_PANEL).find('.panel-title').append(LOADING_IMAGE);
         },
-
         success: function(json) {
             var data = $.parseJSON(json);
             var numbElement = $(WARNING_TABLE).find(WARNING_TABLE_ELEMENT).length;
@@ -59,7 +58,6 @@ function updateWarning() {
                 // check unread warnings
                 checkUnread();
             }
-
         }
     });
 }
