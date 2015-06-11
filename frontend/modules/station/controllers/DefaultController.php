@@ -312,10 +312,10 @@ class DefaultController extends FrontendController
                 $this->initDc($stationId);
 
                 // insert equipments for station
-                $this->setEquipment($post['equipments'], $stationId, $model->code);
+                $this->setEquipment($post['equipments'], $model);
 
                 // insert power equipments for station
-                $this->setPowerEquipment($post['power_equipments'], $stationId);
+                $this->setPowerEquipment($post['power_equipments'], $model);
 
                 // initial sensors
                 $this->initSensor($stationId);
