@@ -79,7 +79,11 @@ class SocketServer
 
             // send the command which change status
             SocketServer::socket_write_smart($client->socket, $sendBackCommand);
+        }
+        // send OK
+        else {
 
+            SocketServer::socket_write_smart($client->socket, 'OK');
         }
 
         $server->disconnect($client->server_clients_index);

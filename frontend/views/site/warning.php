@@ -2,10 +2,8 @@
 use common\models\Warning;
 use common\components\helpers\Show;
 ?>
-<script src="<?=Yii::$app->homeUrl . 'js/jquery.magnific-popup.min.js'?>"></script>
-<script src="<?=Yii::$app->homeUrl . 'js/jquery-crontab-warning.js'?>"></script>
 
-<link rel="stylesheet" href="<?=Yii::$app->homeUrl?>css/magnific-popup.css">
+<!--<script src="--><?//=Yii::$app->homeUrl . 'js/jquery-crontab-warning.js'?><!--"></script>-->
 
 <div class="row">
 
@@ -18,15 +16,15 @@ use common\components\helpers\Show;
             </div>
         </div>
 
-<!--        <table id="warning-table" class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">-->
-<!--            <tr class="warning-heading">-->
-<!--                <th width="15%">Trạm</th>-->
-<!--                <th width="10%">Khu vực</th>-->
-<!--                <th width="10%">Trung tâm</th>-->
-<!--                <th>Nội dung</th>-->
-<!--                <th width="10%">Thời gian</th>-->
-<!--                <th width="14%"></th>-->
-<!--            </tr>-->
+        <table id="warning-table" class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">
+            <tr class="warning-heading">
+                <th width="15%">Trạm</th>
+                <th width="10%">Khu vực</th>
+                <th width="10%">Trung tâm</th>
+                <th>Nội dung</th>
+                <th width="10%">Thời gian</th>
+                <th width="14%"></th>
+            </tr>
 
             <?php
             if (isset($warnings) && !empty($warnings)) {
@@ -34,7 +32,7 @@ use common\components\helpers\Show;
             }
             ?>
 
-<!--        </table>-->
+        </table>
     </div>
 
 </div>

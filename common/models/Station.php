@@ -68,7 +68,7 @@ class Station extends Base
             'code'              => 'Mã trạm',
             'name'              => 'Tên trạm',
             'center_id'         => 'Trung tâm',
-            'area_id'           => 'Khu vực',
+            'area_id'           => 'Tỉnh thành',
             'type'              => 'Loại trạm',
             'firmware'          => 'Firmware',
             'staff'             => 'Nhân viên trực',

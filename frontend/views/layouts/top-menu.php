@@ -1,3 +1,7 @@
+<div class="top-header">
+
+</div>
+
 <?php
 use yii\bootstrap\Nav;
 use yii\bootstrap\NavBar;
@@ -13,7 +17,7 @@ $controller = $this->context->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
-        'brandLabel' => "Hệ thống cảnh báo tập trung",
+        'brandLabel' => "<img src='/images/logo.png'>",
         'brandUrl' => Yii::$app->homeUrl,
         'options' => [
             'class' => 'navbar-inverse navbar-fixed-top',

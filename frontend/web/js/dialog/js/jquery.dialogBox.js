@@ -16,7 +16,7 @@
  			autoSize: true,  //boolean,是否自适应尺寸,默认自适应
  			autoHide: false,  //boolean,是否自自动消失，配合time参数共用
  			time: 3000,  //number,自动消失时间，单位毫秒
- 			zIndex: 99999,  //number,弹出层定位层级
+ 			zIndex: 99991,  //number,弹出层定位层级
  			hasMask: false,  //boolean,是否显示遮罩层
  			hasClose: false,  //boolean,是否显示关闭按钮
  			hasBtn: false,  //boolean,是否显示操作按钮，如取消，确定

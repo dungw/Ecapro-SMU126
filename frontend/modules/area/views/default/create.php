@@ -6,7 +6,7 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model common\models\Area */
 
-$this->title = 'Thêm mới khu vực';
+$this->title = 'Thêm mới tỉnh thành';
 $this->params['breadcrumbs'][] = ['label' => 'DS Khu vực', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>

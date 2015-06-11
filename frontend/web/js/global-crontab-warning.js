@@ -1,7 +1,8 @@
 /**
  * Created by JFog on 6/9/15.
  */
-var TIME_LOOP = 2;
+var TIME_LOOP = 30;
+var ALARM_SOUND = '/sound/alarm.mp3';
 
 jQuery(document).ready(function($) {
 
@@ -38,10 +39,54 @@ jQuery(document).ready(function($) {
                             title: 'Cảnh báo mới',
                             content: data['html']
                         });
+
+                        // turn on alarm sound
+                        playSound();
+
+                        // gallery
+                        $('.gallery').each(function() {
+                            $(this).magnificPopup({
+                                delegate: 'button',
+                                type: 'image',
+                                gallery: {
+                                    enabled:true
+                                }
+                            });
+                        });
+
                     }
 
                 }
             }
         });
     }
+
+    function playSound() {
+        var audioElement = document.createElement('audio');
+        audioElement.setAttribute('src', ALARM_SOUND);
+        audioElement.setAttribute('autoplay', 'autoplay');
+        audioElement.play();
+    }
+
+    $(document).on('click', '.do-read', function() {
+        var warning = $(this).parent().parent().parent().parent();
+        var id = warning.attr('id');
+        var stationHref = warning.attr('station-href');
+
+        $.ajax({
+            'method' : 'post',
+            'url' : '/warning/default/read',
+            'data' : {
+                'warning_id' : id
+            },
+            'beforeSend' : function() {
+                warning.find('td').css('background-color', 'white !important');
+            },
+            'success' : function(data) {
+                warning.removeClass('unread');
+                warning.addClass('read');
+            }
+        });
+    });
+
 });

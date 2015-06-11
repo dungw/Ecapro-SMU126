@@ -49,6 +49,7 @@ $getBy = isset($_GET['get_by']) ? $_GET['get_by'] : 'today';
     <?php
     if (isset($areas) && !empty($areas)) {
         foreach ($areas as $area) {
+            if (!isset($data[$area['id']])) continue;
             $lastWarningTime = ($data[$area['id']]['last_warning_time'] > 0) ? date('d/m/Y h:i A', $data[$area['id']]['last_warning_time']) : '';
             ?>
             <tr>

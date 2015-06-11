@@ -8,7 +8,7 @@ class Area extends Base
 {
     public $controllerNamespace = 'app\modules\area\controllers';
     public $menus = [
-        ['label' => 'Thêm mới khu vực', 'url' => '/area/default/create'],
+        ['label' => 'Thêm mới tỉnh thành', 'url' => '/area/default/create'],
     ];
 
     public function init()

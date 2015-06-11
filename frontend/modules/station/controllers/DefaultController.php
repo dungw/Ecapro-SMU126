@@ -42,6 +42,22 @@ class DefaultController extends FrontendController
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        $csrfFalseActions = [
+            'actionCronDetailStatus',
+            'actionUpdateStatus',
+        ];
+
+        if (in_array($action->actionMethod, $csrfFalseActions)) {
+            Yii::$app->controller->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
     // index action
     public function actionIndex()
     {
@@ -118,8 +134,6 @@ class DefaultController extends FrontendController
             }
         }
 
-//        print $query->createCommand()->rawSql;die;
-
         $dataProvider = new ActiveDataProvider([
             'query' => $query->groupBy('station.id'),
         ]);
@@ -130,7 +144,8 @@ class DefaultController extends FrontendController
     }
 
     // statistic status action
-    public function actionStatus($id) {
+    public function actionStatus($id)
+    {
         $model = $this->findModel($id);
         $parseData['model'] = $model;
 
@@ -146,21 +161,8 @@ class DefaultController extends FrontendController
         return $this->render('status', $parseData);
     }
 
-//    public function actionFind() {
-//        $pathFile = Yii::getAlias('@webroot') . '/' . Yii::$app->params['json_station_file'];
-//        $data = json_decode( file_get_contents($pathFile), true);
-//
-//        $fdata = array_filter($data, function($text) {
-//            $reg = "/^".$_GET['q']."/i";	//initial case insensitive searching
-//            return (bool)@preg_match($reg, $text['name']);
-//        });
-//        $fdata = array_values($fdata);	//reset $fdata indexs
-//        $JSON = json_encode($fdata,true);
-//        @header("Content-type: application/json; charset=utf-8");
-//        echo $JSON;	//AJAX request
-//    }
-
-    public function actionFind() {
+    public function actionFind()
+    {
         $station = Station::find()->select('id,name')->all();
         $data = [];
         if (!empty($station)) {
@@ -169,19 +171,20 @@ class DefaultController extends FrontendController
             }
         }
 
-        $result = array_filter($data, function($item) {
-            $reg = "/^".$_GET['q']."/i";
+        $result = array_filter($data, function ($item) {
+            $reg = "/^" . $_GET['q'] . "/i";
             return (bool)@preg_match($reg, $item['name']);
         });
         $result = array_values($result);
 
-        $JSON = json_encode($result,true);
+        $JSON = json_encode($result, true);
         @header("Content-type: application/json; charset=utf-8");
         echo $JSON;
     }
 
     // change status parts of station
-    public function actionChangeStationPart() {
+    public function actionChangeStationPart()
+    {
         $get = Yii::$app->request->get();
 
         if (isset($get['part']) && $get['station_id'] > 0) {
@@ -248,7 +251,7 @@ class DefaultController extends FrontendController
             }
         }
 
-        $this->redirect(Yii::$app->homeUrl . 'station/default/view?id='. $get['station_id']);
+        $this->redirect(Yii::$app->homeUrl . 'station/default/view?id=' . $get['station_id']);
     }
 
     // create action
@@ -329,21 +332,78 @@ class DefaultController extends FrontendController
         return $this->render('create', $parseData);
     }
 
-    public function actionCronEquipmentStatus() {
-        $this->enableCsrfValidation = false;
+    /**
+     * Cron job to get detail station status
+     */
+    public function actionCronDetailStatus()
+    {
         $data = [];
         $id = Yii::$app->request->post('station_id');
         if ($id) {
             $model = $this->findModel($id);
-            $data['content'] = $model->getEquipment($model->id, $model->equipment);
+
+            $data['equipment'] = $this->_getCronEquipmentStatus($model);
+            $data['sensor'] = $this->_getCronSensorStatus($model);
+            $data['power'] = $this->_getCronPowerStatus($model);
+            $data['connect'] = $this->_getConnectStatus($model);
+            $data['dc'] = $this->_getCronDcStatus($model);
         }
         print json_encode($data);
     }
 
-    // update status action
-    public function actionUpdateStatus() {
-        $this->enableCsrfValidation = false;
+    /**
+     * Get connect status function
+     * @param $model
+     * @return mixed
+     */
+    private function _getConnectStatus($model)
+    {
+        return $model->status;
+    }
 
+    /**
+     * Get equipments status function
+     * @param $model
+     * @return mixed
+     */
+    private function _getCronEquipmentStatus($model)
+    {
+        return $model->getEquipment($model->id, $model->equipment);
+    }
+
+    /**
+     * Get dc equipments status function
+     * @param $model
+     * @return mixed
+     */
+    private function _getCronDcStatus($model)
+    {
+        return $model->dc_equip_status;
+    }
+
+    /**
+     * Get sensors status function
+     * @param $model
+     * @return mixed
+     */
+    private function _getCronSensorStatus($model)
+    {
+        return $model->sensor_status;
+    }
+
+    /**
+     * Get power equipments status function
+     * @param $model
+     * @return mixed
+     */
+    private function _getCronPowerStatus($model)
+    {
+        return $model->getPowerEquipment($model->id, $model->power_equipment);
+    }
+
+    // update status action
+    public function actionUpdateStatus()
+    {
         $post = Yii::$app->request->post();
         if (!empty($post)) {
             $data = [];
@@ -373,7 +433,7 @@ class DefaultController extends FrontendController
         $parseData = ['model' => $model];
 
         // check if not has dc status and sensor status, then create them
-//        if (!$model->dc_equip_status) $this->initDc($id);
+        //if (!$model->dc_equip_status) $this->initDc($id);
         if (!$model->sensor_status) $this->initSensor($id);
 
         // get all equipment
@@ -487,7 +547,7 @@ class DefaultController extends FrontendController
         $model = $this->findModel($id);
 
         // parse data
-        $parseData = ['model'=>$model];
+        $parseData = ['model' => $model];
 
         // set left menu
         $this->setDetailLeftMenu($id);
@@ -546,14 +606,14 @@ class DefaultController extends FrontendController
                     $model->dc_equip_ids[] = $dcEquip['equipment_id'];
 
                     $model->dc_equip_status[] = [
-                        'equipment_id'  => $dcEquip['equipment_id'],
-                        'name'          => $dcEquip['name'],
-                        'amperage'      => $dcEquip['amperage'],
-                        'voltage'       => $dcEquip['voltage'],
-                        'unit_voltage'  => $dcEquip['unit_voltage'],
-                        'temperature'   => $dcEquip['temperature'],
+                        'equipment_id' => $dcEquip['equipment_id'],
+                        'name' => $dcEquip['name'],
+                        'amperage' => $dcEquip['amperage'],
+                        'voltage' => $dcEquip['voltage'],
+                        'unit_voltage' => $dcEquip['unit_voltage'],
+                        'temperature' => $dcEquip['temperature'],
                         'unit_amperage' => $dcEquip['unit_amperage'],
-                        'status'        => $dcEquip['status'],
+                        'status' => $dcEquip['status'],
                     ];
                 }
             }
@@ -587,7 +647,8 @@ class DefaultController extends FrontendController
     }
 
     // change left menu function
-    protected function setDetailLeftMenu($id) {
+    protected function setDetailLeftMenu($id)
+    {
 
         // session
         $role = new Role();
@@ -595,16 +656,17 @@ class DefaultController extends FrontendController
         $menu = [];
         if ($role->isAdministrator || $role->isAdmin) {
             $menu[] = ['label' => 'Thêm mới trạm', 'url' => '/station/default/create'];
-            $menu[] = ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id='. $id];
+            $menu[] = ['label' => 'Cập nhật thông tin', 'url' => '/station/default/update?id=' . $id];
         }
-        $menu[] = ['label' => 'Thông tin chi tiết', 'url' => '/station/default/view?id='. $id];
-        $menu[] = ['label' => 'Thống kê trạng thái', 'url' => '/station/default/status?id='. $id];
+        $menu[] = ['label' => 'Thông tin chi tiết', 'url' => '/station/default/view?id=' . $id];
+        $menu[] = ['label' => 'Thống kê trạng thái', 'url' => '/station/default/status?id=' . $id];
 
         $this->module->menus = $menu;
     }
 
     // add equipment to station
-    private function setEquipment($equipmentIds, $model) {
+    private function setEquipment($equipmentIds, $model)
+    {
 
         if (!empty($equipmentIds) && $model->id > 0 && $model->code != '') {
 
@@ -631,7 +693,8 @@ class DefaultController extends FrontendController
     }
 
     // set power equipment
-    private function setPowerEquipment($ids, $model) {
+    private function setPowerEquipment($ids, $model)
+    {
         if (!empty($ids) && $model->id > 0) {
 
             // delete excess equipment
@@ -656,7 +719,8 @@ class DefaultController extends FrontendController
         }
     }
 
-    private function setDcEquipment($ids, $model) {
+    private function setDcEquipment($ids, $model)
+    {
         if (!empty($ids) && $model->id > 0) {
 
             // delete excess equipment
@@ -682,7 +746,8 @@ class DefaultController extends FrontendController
     }
 
     // initial dc
-    public function initDc($stationId) {
+    public function initDc($stationId)
+    {
         if ($stationId > 0) {
 
             // insert dc equipment status
@@ -701,7 +766,8 @@ class DefaultController extends FrontendController
     }
 
     // initial sensor status
-    public function initSensor($stationId) {
+    public function initSensor($stationId)
+    {
         if ($stationId > 0) {
             $sensors = Sensor::find()->all();
             if (!empty($sensors)) {
@@ -717,7 +783,8 @@ class DefaultController extends FrontendController
     }
 
     // send message to station
-    public function sendMessage() {
+    public function sendMessage()
+    {
         if (Yii::$app->request->isAjax) {
             $post = Yii::$app->request->post();
             if (isset($post['id']) && $post['id'] > 0) {

@@ -25,6 +25,28 @@ class DefaultController extends FrontendController
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function beforeAction($action)
+    {
+        $csrfFalseActions = [
+            'actionGetMessage'
+        ];
+
+        if (in_array($action->actionMethod, $csrfFalseActions)) {
+            Yii::$app->controller->enableCsrfValidation = false;
+        }
+        return parent::beforeAction($action);
+    }
+
+    public function actionGetMessage()
+    {
+        $sensorID = Yii::$app->request->post('sensor_id');
+        $sensorValue = Yii::$app->request->post('sensor_value');
+        print Message::getMessageBySensor($sensorID, $sensorValue);
+    }
+
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
@@ -76,7 +98,8 @@ class DefaultController extends FrontendController
         return $this->render('update', $parseData);
     }
 
-    private function getSensor() {
+    private function getSensor()
+    {
         $sensorCollections = Sensor::findAll(['type' => Sensor::TYPE_CONFIGURE]);
         return Sensor::_prepareDataSelect($sensorCollections, 'id', 'name');
     }

@@ -6,7 +6,7 @@ use yii\grid\GridView;
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Danh sách khu vực';
+$this->title = 'Danh sách tỉnh thành';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="area-index">

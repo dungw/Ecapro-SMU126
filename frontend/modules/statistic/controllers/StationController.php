@@ -53,7 +53,10 @@ class StationController extends BaseController {
         $areas = Area::find()->all();
         $parseData['areas'] = $areas;
         if (!empty($areas)) {
+            $notHave = [];
             foreach ($areas as $area) {
+                $have = 0;
+
                 $data[$area['id']]['has_warning'] = 0;
                 $data[$area['id']]['no_warning'] = 0;
                 $data[$area['id']]['security_on'] = 0;
@@ -66,6 +69,7 @@ class StationController extends BaseController {
                 if (!empty($stations)) {
                     foreach ($stations as $station) {
                         if ($station['area_id'] == $area['id']) {
+                            $have = 1;
 
                             // warnings
                             if ($station['total_warning'] > 0 && $station['last_warning_time'] >= $timePoints['start'] && $station['last_warning_time'] <= $timePoints['end']) {
@@ -90,10 +94,19 @@ class StationController extends BaseController {
                             }
 
                         }
+
                     }
                 }
 
+                if ($have == 0) $notHave[] = $area['id'];
             }
+
+            if (!empty($notHave)) {
+                foreach ($notHave as $not) {
+                    unset($data[$not]);
+                }
+            }
+
         }
 
         $parseData['data'] = $data;

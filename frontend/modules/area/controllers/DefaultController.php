@@ -81,6 +81,11 @@ class DefaultController extends FrontendController
         return $this->redirect(['index']);
     }
 
+    public function actionSetting()
+    {
+
+    }
+
     protected function findModel($id)
     {
         if (($model = Area::findOne($id)) !== null) {

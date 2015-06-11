@@ -113,3 +113,10 @@ h1, .h1, h2, .h2, h3, .h3 {
 .loc-message { color: red; }
 .loc-name { color: #5C5C5C !important; text-align: center; }
 .loc-diff { margin: 3px 0px !important; }
+#w1-collapse, #w0-collapse { background: white; height: 70px !important; padding-top: 10px !important; }
+.navbar-inverse { background-color: white !important; border-color: #CCCCCC !important; }
+.navbar-inverse .navbar-nav > .active > a, .navbar-inverse .navbar-nav > .active > a:hover, .navbar-inverse .navbar-nav > .active > a:focus { background-color: #A8A8A8 !important; color: white !important; }
+.nav li a:hover { color: #666666 !important; }
+.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus { background-color: #D0D0D0 !important; }
+.wrap { background-color: #F8F9F9 !important; }
+.wrap > .container { background-color: #F8F9F9 !important; }

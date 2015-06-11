@@ -18,7 +18,6 @@ use yii\db\Query;
 class DefaultController extends FrontendController
 {
     public $layout = '//main';
-    public $enableCsrfValidation = true;
 
     public function behaviors()
     {
@@ -37,7 +36,13 @@ class DefaultController extends FrontendController
      */
     public function beforeAction($action)
     {
-        if ($action->actionMethod  == 'actionCronLatest' || $action->actionMethod == 'actionCronUnread') {
+        $csrfFalseActions = [
+            'actionCronLatest',
+            'actionCronUnread',
+            'actionRead',
+        ];
+
+        if (in_array($action->actionMethod, $csrfFalseActions)) {
             Yii::$app->controller->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
@@ -254,7 +259,7 @@ class DefaultController extends FrontendController
         $warnings = Warning::getWarning('warning_time DESC', 0, $condition);
         if (!empty($warnings)) {
             $count = count($warnings);
-            $html = Show::warnings($warnings);
+            $html = Show::warningsTable($warnings);
         }
 
         $data['html'] = $html;

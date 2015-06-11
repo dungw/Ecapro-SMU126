@@ -41,7 +41,7 @@ class Area extends Base
     {
         return [
             'id' => 'ID',
-            'name' => 'Tên khu vực',
+            'name' => 'Tên tỉnh thành',
         ];
     }
 

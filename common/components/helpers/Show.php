@@ -63,6 +63,59 @@ class Show extends BaseHtml
         $html = '';
         if (isset($warnings) && !empty($warnings)) {
 
+            foreach ($warnings as $warning) {
+
+                // read or unread
+                $class = 'read';
+                $buttonClass = '';
+                if ($warning['read'] == Warning::STATUS_UNREAD) {
+                    $class = 'unread';
+                    $buttonClass = 'do-read';
+                }
+
+                // gallery
+                $gallery = '<div class="gallery">';
+                if (!empty($warning['pics'])) {
+                    $no = 1;
+                    foreach ($warning['pics'] as $pic) {
+                        $hide = 1;
+                        if ($no == 1) {
+                            $hide = 0;
+                        }
+                        $style = ($hide) ? 'display: none;' : '';
+                        $path = Yii::$app->params['baseUrl'] . 'uploads/' . $pic['picture'];
+                        $gallery .= '<button style="' . $style . '" class="btn btn-warning btn-xs '. $buttonClass .'" href="' . $path . '">Xem ảnh</button>';
+                        $no++;
+                    }
+                } else {
+                    $gallery .= self::decorateString('<span>Lỗi camera</span>', 'bad');
+                }
+
+                // station href
+                $stationHref = Yii::$app->homeUrl . 'station/default/view?id=' . $warning['station_id'];
+
+                // view station button
+                $gallery .= '<a href="'. $stationHref .'" target="_blank" style="float: right" class="btn btn-success btn-xs '. $buttonClass .' view-picture">Chi tiết trạm</a>';
+                $gallery .= '</div>';
+                $html .= '<tr class="warning '. $class .'" id="'. $warning['id'] .'" station-href="'. $stationHref .'">';
+                $html .= '<td><div class="kv-attribute">'. $warning['station_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['area_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['center_name'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $warning['message'] .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. date('d/m/Y H:i', $warning['warning_time']) .'</div></td>';
+                $html .= '<td><div class="kv-attribute">'. $gallery .'</div></td>';
+                $html .= '</tr>';
+
+            }
+        }
+
+        return $html;
+    }
+
+    public static function warningsTable($warnings, $loadJs = true) {
+        $html = '';
+        if (isset($warnings) && !empty($warnings)) {
+
             $html .= '<table id="warning-table" class="detail-view table table-hover table-bordered" style="margin-bottom: 0px;">';
             $html .= '<tr class="warning-heading">';
             $html .= '<th width="15%">Trạm</th>';
