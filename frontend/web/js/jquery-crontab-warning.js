@@ -30,6 +30,7 @@ function updateWarning() {
         beforeSend: function() {
             $(WARNING_PANEL).find('.panel-title').append(LOADING_IMAGE);
         },
+
         success: function(json) {
             var data = $.parseJSON(json);
             var numbElement = $(WARNING_TABLE).find(WARNING_TABLE_ELEMENT).length;
