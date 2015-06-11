@@ -276,6 +276,7 @@ class DefaultController extends FrontendController
         }
 
         // get all dc equipment
+        $parseData['dcEquipmentIds'] = [];
         $parseData['dcEquipments'] = DcEquipment::find()->where(['active' => DcEquipment::STATUS_ACTIVE])->all();
         if (!empty($parseData['dcEquipments'])) {
             foreach ($parseData['dcEquipments'] as $equip) {
