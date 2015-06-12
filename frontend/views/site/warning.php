@@ -3,8 +3,6 @@ use common\models\Warning;
 use common\components\helpers\Show;
 ?>
 
-<!--<script src="--><?//=Yii::$app->homeUrl . 'js/jquery-crontab-warning.js'?><!--"></script>-->
-
 <div class="row">
 
     <div class="col-sm-12 scrolling div-warning">
