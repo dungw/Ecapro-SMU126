@@ -45,7 +45,7 @@ if (!Yii::$app->user->isGuest) {
             'label' => 'Cài đặt',
             'items' => [
                 ['label' => 'Trung tâm', 'url' => ['/center/default/index'], 'active' => ($module == 'center')],
-                ['label' => 'Khu vực', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
+                ['label' => 'Tỉnh thành', 'url' => ['/area/default/index'], 'active' => ($module == 'area')],
                 ['label' => 'Thiết bị', 'url' => ['/equipment/default/index'], 'active' => ($module == 'equipment')],
                 ['label' => 'Thiết bị nguồn điện', 'url' => ['/power/default/index'], 'active' => ($module == 'power')],
                 ['label' => 'Thiết bị tủ DC', 'url' => ['/dc_equipment/default/index'], 'active' => ($module == 'dc_equipment')],
