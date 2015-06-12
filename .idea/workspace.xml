@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ab290274-17d4-4f30-9554-9f1f1d498814" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/common/config/main-local.php" afterPath="$PROJECT_DIR$/common/config/main-local.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/views/layouts/top-menu.php" afterPath="$PROJECT_DIR$/frontend/views/layouts/top-menu.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Ecapro-SMU126.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -55,10 +53,19 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="WarningController.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="WarningController.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/frontend/modules/statistic/controllers/WarningController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="105" column="0" selection-start="3333" selection-end="3333" vertical-scroll-proportion="0.9279732" vertical-offset="1112" max-vertical-offset="1802">
+            <state line="105" column="0" selection-start="3333" selection-end="3333" vertical-scroll-proportion="-21.307692" vertical-offset="1112" max-vertical-offset="1802">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="main-local.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/common/config/main-local.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="5" column="58" selection-start="157" selection-end="157" vertical-scroll-proportion="0.14237855" vertical-offset="0" max-vertical-offset="597">
               <folding />
             </state>
           </provider>
@@ -115,10 +122,10 @@
         <option value="$PROJECT_DIR$/frontend/web/css/custom-styles.css" />
         <option value="$PROJECT_DIR$/console/models/SocketServer.php" />
         <option value="$PROJECT_DIR$/frontend/modules/area/controllers/DefaultController.php" />
-        <option value="$PROJECT_DIR$/common/config/main-local.php" />
         <option value="$PROJECT_DIR$/frontend/views/layouts/top-menu.php" />
         <option value="$PROJECT_DIR$/frontend/modules/warning/views/default/index.php" />
         <option value="$PROJECT_DIR$/frontend/modules/warning/controllers/DefaultController.php" />
+        <option value="$PROJECT_DIR$/common/config/main-local.php" />
       </list>
     </option>
   </component>
@@ -582,13 +589,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/common/config/main-local.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="54" selection-start="153" selection-end="153" vertical-scroll-proportion="-3.2692308" vertical-offset="0" max-vertical-offset="442">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/frontend/views/layouts/login.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="20" column="0" selection-start="558" selection-end="558" vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="816">
@@ -646,7 +646,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/modules/statistic/controllers/WarningController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="105" column="0" selection-start="3333" selection-end="3333" vertical-scroll-proportion="0.9279732" vertical-offset="1112" max-vertical-offset="1802">
+        <state line="105" column="0" selection-start="3333" selection-end="3333" vertical-scroll-proportion="-21.307692" vertical-offset="1112" max-vertical-offset="1802">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/common/config/main-local.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="58" selection-start="157" selection-end="157" vertical-scroll-proportion="0.14237855" vertical-offset="0" max-vertical-offset="597">
           <folding />
         </state>
       </provider>
