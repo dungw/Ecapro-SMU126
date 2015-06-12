@@ -68,10 +68,12 @@ jQuery(document).ready(function() {
                 }
 
                 // execute dc status
-                for (var i=0; i<status_dc.length; i++) {
-                    var prefix = '#dc-' + status_dc[i]['equipment_id'];
-                    $(prefix + '-amperage').html(status_dc[i]['amperage'] + '&nbsp;' + status_dc[i]['unit_amperage']);
-                    $(prefix + '-voltage').html(status_dc[i]['voltage'] + '&nbsp;' + status_dc[i]['unit_voltage']);
+                if ($.isArray(status_dc)) {
+                    for (var i=0; i<status_dc.length; i++) {
+                        var prefix = '#dc-' + status_dc[i]['equipment_id'];
+                        $(prefix + '-amperage').html(status_dc[i]['amperage'] + '&nbsp;' + status_dc[i]['unit_amperage']);
+                        $(prefix + '-voltage').html(status_dc[i]['voltage'] + '&nbsp;' + status_dc[i]['unit_voltage']);
+                    }
                 }
 
                 // execute sensor status
