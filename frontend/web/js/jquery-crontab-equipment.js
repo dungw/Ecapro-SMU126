@@ -10,7 +10,7 @@ var CONNECTED_LABEL = 'Đang kết nối';
 var DISCONNECT = 0;
 var DISCONNECT_LABEL = 'Mất kết nối';
 var PANEL = '.panel-equipment';
-var TIME_LOOP_STATION = 20;
+var TIME_LOOP_STATION = 60;
 var LOADING_IMAGE = '<img class="loading" src="/images/loading.gif" />';
 var CONFIGURE_AUTO = 0;
 var CONFIGURE_MANUAL = 1;
