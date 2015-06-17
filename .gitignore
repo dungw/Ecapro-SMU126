@@ -4,3 +4,5 @@
 #phpstorm workspace
 /.idea
 
+#recycle directory
+/recycle
