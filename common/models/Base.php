@@ -7,7 +7,8 @@ use yii\web\UploadedFile;
 use common\models\UploadForm;
 use yii\imagine\Image;
 
-class Base extends ActiveRecord {
+class Base extends ActiveRecord
+{
 
     const STATUS_ACTIVE = 1;
     const STATUS_DEACTIVE = 0;
@@ -20,7 +21,8 @@ class Base extends ActiveRecord {
     public $thumbHeight = 120;
 
     // Upload file function
-    public function uploadFile($attribute, $subfolder = '') {
+    public function uploadFile($attribute, $subfolder = '')
+    {
         $returnPath = '';
 
         $model = new UploadForm('image');
@@ -43,7 +45,8 @@ class Base extends ActiveRecord {
     }
 
     // get thumbnail
-    public static function getThumbnail($path) {
+    public static function getThumbnail($path)
+    {
         if ($path) {
             $ar = explode('/', $path);
             if (!empty($ar)) {
@@ -58,7 +61,8 @@ class Base extends ActiveRecord {
     }
 
     // Upload multiple file function
-    public function uploadFiles($attribute, $subfolder = '') {
+    public function uploadFiles($attribute, $subfolder = '')
+    {
         $savePath = array();
         $model = new UploadForm('image', true);
         $model->file = UploadedFile::getInstancesByName($attribute);
@@ -88,7 +92,8 @@ class Base extends ActiveRecord {
     }
 
     // Delete file function
-    public static function deleteImage($path) {
+    public static function deleteImage($path)
+    {
 
         // check if file exists on server
         if (empty($path) || !file_exists($path)) {
@@ -104,9 +109,10 @@ class Base extends ActiveRecord {
     }
 
     // show status data
-    public function showStatus() {
+    public function showStatus()
+    {
         if (!empty($this->_statusData)) {
-            foreach ($this->_statusData as $key=>$value) {
+            foreach ($this->_statusData as $key => $value) {
                 if ($key == $this->status) return $value;
             }
         }
@@ -114,7 +120,8 @@ class Base extends ActiveRecord {
     }
 
     // prepare data for select box
-    public static function _prepareDataSelect($models, $key, $value, $data) {
+    public static function _prepareDataSelect($models, $key, $value, $data)
+    {
         if (!empty($models)) {
             foreach ($models as $model) {
                 if (is_array($model)) {
@@ -130,7 +137,8 @@ class Base extends ActiveRecord {
     }
 
     // get active records
-    public static function getActiveRecords() {
+    public static function getActiveRecords()
+    {
         $collations = self::find()
             ->where(['status' => self::STATUS_ACTIVE])
             ->all();
@@ -138,7 +146,8 @@ class Base extends ActiveRecord {
     }
 
     // get attribute labels
-    public function attributeLabels() {
+    public function attributeLabels()
+    {
         return null;
     }
 

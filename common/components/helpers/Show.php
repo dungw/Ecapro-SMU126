@@ -196,6 +196,11 @@ class Show extends BaseHtml
         return '<span style="color: ' . $color . '">' . $string . '</span>';
     }
 
+    public static function successMessage($msg)
+    {
+        return '<span style="color: #00BB00">' . $msg . '</span>';
+    }
+
     public static function errorBlock($errors)
     {
         $html = [];
