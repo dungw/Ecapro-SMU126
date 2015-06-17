@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab290274-17d4-4f30-9554-9f1f1d498814" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/views/site/station.php" afterPath="$PROJECT_DIR$/frontend/views/site/station.php" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" afterPath="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Ecapro-SMU126.iws" />
@@ -26,10 +26,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="station.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="station.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/frontend/views/site/station.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="51" column="40" selection-start="1759" selection-end="1759" vertical-scroll-proportion="0.6338983" vertical-offset="357" max-vertical-offset="2108">
+            <state line="59" column="17" selection-start="2012" selection-end="2012" vertical-scroll-proportion="-12.423077" vertical-offset="544" max-vertical-offset="2142">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DefaultController.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="0.59152544" vertical-offset="8015" max-vertical-offset="14008">
+              <folding>
+                <element signature="e#51#59#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_form.php" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/frontend/modules/station/views/default/_form.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="27" column="27" selection-start="1001" selection-end="1001" vertical-scroll-proportion="-8.846154" vertical-offset="195" max-vertical-offset="1088">
               <folding />
             </state>
           </provider>
@@ -53,7 +73,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/frontend/modules/area/views/default/view.php" />
         <option value="$PROJECT_DIR$/common/models/Area.php" />
         <option value="$PROJECT_DIR$/frontend/modules/area/Area.php" />
         <option value="$PROJECT_DIR$/frontend/modules/statistic/views/station/station.php" />
@@ -69,6 +88,7 @@
         <option value="$PROJECT_DIR$/frontend/web/js/jquery-crontab-equipment.js" />
         <option value="$PROJECT_DIR$/frontend/web/css/custom-styles.css" />
         <option value="$PROJECT_DIR$/frontend/views/site/station.php" />
+        <option value="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" />
       </list>
     </option>
   </component>
@@ -271,6 +291,84 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="modules" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="station" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="modules" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="station" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="views" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="default" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="frontend" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="modules" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="station" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="controllers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="gpis88ce" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="common" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -346,16 +444,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/common/models/Observer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="73" column="39" selection-start="1862" selection-end="1881" vertical-scroll-proportion="0.0" vertical-offset="1241" max-vertical-offset="6885" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/console/models/SocketServer.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="92" column="0" selection-start="2742" selection-end="2742" vertical-scroll-proportion="0.0" vertical-offset="1564" max-vertical-offset="6154" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/frontend/modules/area/controllers/DefaultController.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="81" column="0" selection-start="1831" selection-end="1831" vertical-scroll-proportion="-8.576923" vertical-offset="1035" max-vertical-offset="1632" />
@@ -443,8 +531,24 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/views/site/station.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="51" column="40" selection-start="1759" selection-end="1759" vertical-scroll-proportion="0.6338983" vertical-offset="357" max-vertical-offset="2108">
+        <state line="59" column="17" selection-start="2012" selection-end="2012" vertical-scroll-proportion="-12.423077" vertical-offset="544" max-vertical-offset="2142">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/modules/station/views/default/_form.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="27" selection-start="1001" selection-end="1001" vertical-scroll-proportion="-8.846154" vertical-offset="195" max-vertical-offset="1088">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="0.59152544" vertical-offset="8015" max-vertical-offset="14008">
+          <folding>
+            <element signature="e#51#59#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

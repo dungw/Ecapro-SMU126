@@ -482,13 +482,19 @@ class DefaultController extends FrontendController
                 $newModel = $this->findModel($id);
 
                 // update equipment
-                $this->setEquipment($post['equipments'], $newModel);
+                if (isset($post['equipments'])) {
+                    $this->setEquipment($post['equipments'], $newModel);
+                }
 
                 // update power equipment
-                $this->setPowerEquipment($post['power_equipments'], $newModel);
+                if (isset($post['dc_equipments'])) {
+                    $this->setPowerEquipment($post['power_equipments'], $newModel);
+                }
 
                 // update dc equipment
-                $this->setDcEquipment($post['dc_equipments'], $newModel);
+                if (isset($post['dc_equipments'])) {
+                    $this->setDcEquipment($post['dc_equipments'], $newModel);
+                }
 
                 return $this->redirect(['view', 'id' => $model->id]);
             }
