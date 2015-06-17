@@ -14,6 +14,7 @@ $role = new Role();
 // get current controller
 $module = $this->context->module->id;
 $controller = $this->context->id;
+$action = $this->context->action->id;
 
 if (!Yii::$app->user->isGuest) {
     NavBar::begin([
@@ -53,6 +54,7 @@ if (!Yii::$app->user->isGuest) {
                 ['label' => 'Cảm biến', 'url' => ['/sensor/default/index'], 'active' => ($module == 'sensor')],
                 ['label' => 'Loại trạm', 'url' => ['/station_type/default/index'], 'active' => ($module == 'station_type')],
                 ['label' => 'Người dùng', 'url' => ['/user/default/index'], 'active' => ($module == 'user')],
+                ['label' => 'Cài đặt chung', 'url' => ['/site/setting'], 'active' => ($controller === 'site' && $action == 'setting')],
             ]
         ];
     }

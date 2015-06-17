@@ -7,7 +7,9 @@ use common\models\Station;
 use common\models\Role;
 use common\models\Warning;
 use common\models\StationSearch;
+use common\models\Setting;
 use common\controllers\FrontendController;
+use frontend\models\UpdateInfo;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
@@ -91,12 +93,13 @@ class SiteController extends FrontendController
         $parseData['stationProvider'] = $data['provider'];
 
         // write station locator for map
-        $this->writeStationLocator($data['query']);
+        $this->_writeStationLocator($data['query']);
 
         return $this->render('index', $parseData);
     }
 
-    public function actionMap() {
+    public function actionMap()
+    {
         return $this->render('map', []);
     }
 
@@ -119,8 +122,8 @@ class SiteController extends FrontendController
         }
     }
 
-
-    public function getIds($collections) {
+    public function getIds($collections)
+    {
         $ids = [];
         if (!empty($collections)) {
             foreach ($collections as $co) {
@@ -136,8 +139,46 @@ class SiteController extends FrontendController
         return $this->goHome();
     }
 
+    public function actionSetting()
+    {
+        $model = Setting::findOne(['active' => Setting::STATUS_ACTIVE]);
+        $parse['model'] = $model;
+
+        //post action
+        $posts = Yii::$app->request->post();
+        if (!empty($posts)) {
+            $model->setServerIP($posts['server_ip']);
+            $model->setServerPort($posts['server_port']);
+            $model->save();
+            Yii::$app->session->setFlash('update_success', 'Cập nhật thành công');
+
+            //update root password
+            if (isset($posts['password_root']) && $posts['password_root'] != '******') {
+                $root = $model->_getRoot();
+                $uiModel = new UpdateInfo();
+                $uiModel->username  = $root->username;
+                $uiModel->password  = $posts['password_root'];
+                $uiModel->fullname  = $root->fullname;
+                $uiModel->mobile    = $root->mobile;
+                $uiModel->email     = $root->email;
+                $uiModel->type      = $root->type;
+                if ($uiModel->validate()) {
+                    $uiModel->updateInfo($root->id);
+                    $this->actionLogout();
+                } else {
+                    $parse['errors'] = $uiModel->getErrors();
+                }
+            }
+        }
+
+        return $this->render('setting', $parse);
+    }
+
+    /* private functions */
+
     // put station locator to locator file in json type
-    public function writeStationLocator($query) {
+    private function _writeStationLocator($query)
+    {
         $stations = $query->all();
         $data = [];
         if (!empty($stations)) {
@@ -157,14 +198,14 @@ class SiteController extends FrontendController
                 }
 
                 $data[] = [
-                    'id'        => $station->id,
-                    'name'      => $station->name,
-                    'lat'       => $station->latitude,
-                    'lng'       => $station->longtitude,
-                    'status'    => $status,
-                    'color'     => $color,
-                    'address'   => $station->address,
-                    'message'   => $message,
+                    'id' => $station->id,
+                    'name' => $station->name,
+                    'lat' => $station->latitude,
+                    'lng' => $station->longtitude,
+                    'status' => $status,
+                    'color' => $color,
+                    'address' => $station->address,
+                    'message' => $message,
                 ];
             }
         }
