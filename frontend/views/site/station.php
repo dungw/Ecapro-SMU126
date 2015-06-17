@@ -45,9 +45,11 @@ $statusData = $station->_statusData;
                     'format' => 'text',
                     'filter' => Center::_prepareDataSelect(Center::find()->all(), 'id', 'name', false),
                     'value' => function($model) {
-                            if ($model->center_id) {
+                            if ($model->center_id > 0) {
                                 $center = Center::findOne($model->center_id);
-                                return $center->name;
+                                if ($center) {
+                                    return $center->name;
+                                }
                             }
                             return null;
                         },
