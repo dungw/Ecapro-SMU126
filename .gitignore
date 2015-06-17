@@ -1,8 +1,6 @@
 #testing directory
-tests/
+/tests
 
 #phpstorm workspace
-.idea/
+/.idea
 
-#locations directory
-frontend/web/locations/
