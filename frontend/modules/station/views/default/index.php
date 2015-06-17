@@ -30,8 +30,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
                 'value' => function($model) {
                         $center = Center::findOne($model->center_id);
-
-                        return $center->name;
+                        if ($center) {
+                            return $center->name;
+                        }
+                        return null;
                     },
             ],
             [
@@ -39,7 +41,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'text',
                 'value' => function($model) {
                         $area = Area::findOne($model->area_id);
-                        return $area->name;
+                        if ($area) {
+                            return $area->name;
+                        }
+                        return null;
                     },
             ],
             [

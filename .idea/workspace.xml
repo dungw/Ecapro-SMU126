@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ab290274-17d4-4f30-9554-9f1f1d498814" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" afterPath="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/frontend/modules/station/views/default/index.php" afterPath="$PROJECT_DIR$/frontend/modules/station/views/default/index.php" />
     </list>
     <ignored path="Ecapro-SMU126.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -35,13 +34,31 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DefaultController.php" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DefaultController.php" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="0.59152544" vertical-offset="8015" max-vertical-offset="14008">
+            <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="-13.423077" vertical-offset="8015" max-vertical-offset="14008">
               <folding>
                 <element signature="e#51#59#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="codeception.yml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tests/codeception.yml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="289">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.php" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/frontend/modules/station/views/default/index.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="46" column="36" selection-start="1374" selection-end="1374" vertical-scroll-proportion="1.1152543" vertical-offset="22" max-vertical-offset="1173">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -73,7 +90,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/common/models/Area.php" />
         <option value="$PROJECT_DIR$/frontend/modules/area/Area.php" />
         <option value="$PROJECT_DIR$/frontend/modules/statistic/views/station/station.php" />
         <option value="$PROJECT_DIR$/frontend/modules/statistic/controllers/StationController.php" />
@@ -89,6 +105,7 @@
         <option value="$PROJECT_DIR$/frontend/web/css/custom-styles.css" />
         <option value="$PROJECT_DIR$/frontend/views/site/station.php" />
         <option value="$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php" />
+        <option value="$PROJECT_DIR$/frontend/modules/station/views/default/index.php" />
       </list>
     </option>
   </component>
@@ -444,21 +461,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/frontend/modules/area/controllers/DefaultController.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="0" selection-start="1831" selection-end="1831" vertical-scroll-proportion="-8.576923" vertical-offset="1035" max-vertical-offset="1632" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/common/config/main.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="623" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/frontend/views/layouts/login.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="20" column="0" selection-start="558" selection-end="558" vertical-scroll-proportion="-9.807693" vertical-offset="0" max-vertical-offset="816" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/frontend/modules/statistic/views/warning/warning.php">
       <provider selected="true" editor-type-id="text-editor">
         <state line="73" column="9" selection-start="0" selection-end="2867" vertical-scroll-proportion="0.89718074" vertical-offset="700" max-vertical-offset="1377">
@@ -545,10 +547,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/frontend/modules/station/controllers/DefaultController.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="0.59152544" vertical-offset="8015" max-vertical-offset="14008">
+        <state line="492" column="0" selection-start="15741" selection-end="15741" vertical-scroll-proportion="-13.423077" vertical-offset="8015" max-vertical-offset="14008">
           <folding>
             <element signature="e#51#59#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/codeception/config/backend/config.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/codeception.yml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="629">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/frontend/modules/station/views/default/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="46" column="36" selection-start="1374" selection-end="1374" vertical-scroll-proportion="1.1152543" vertical-offset="22" max-vertical-offset="1173">
+          <folding />
         </state>
       </provider>
     </entry>
