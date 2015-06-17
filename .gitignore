@@ -1,0 +1,8 @@
+#testing directory
+/tests
+
+#phpstorm workspace
+/.idea
+
+#recycle directory
+/recycle
