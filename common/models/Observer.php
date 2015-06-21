@@ -52,6 +52,7 @@ class Observer {
 
     // Main function: handle all request from station
     public function handleRequest($requestString, $peer = []) {
+
         if (!trim($requestString)) return 'Invalid request string';
 
         if (!$this->analyzeRequestString($requestString)) return 'Cannot handle request string';

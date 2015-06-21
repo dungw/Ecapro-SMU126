@@ -72,21 +72,25 @@ class SocketServer
         $peer['port'] = $client->peerPort;
 
         // handle request
-        $observer->handleRequest($input, $peer);
+        $handleResult = $observer->handleRequest($input, $peer);
 
-        // if there are some change, so send back to device new status
-        if ($observer->sendBack) {
+        if ($handleResult) {
 
-            // create command change status
-            $sendBackCommand = $observer->bindCommandSendBack();
+            // if there are some change, so send back to device new status
+            if ($observer->sendBack) {
 
-            // send the command which change status
-            SocketServer::socket_write_smart($client->socket, $sendBackCommand);
-        }
-        // send OK
-        else {
+                // create command change status
+                $sendBackCommand = $observer->bindCommandSendBack();
 
-            SocketServer::socket_write_smart($client->socket, 'OK');
+                // send the command which change status
+                SocketServer::socket_write_smart($client->socket, $sendBackCommand);
+            }
+            // send OK
+            else {
+                SocketServer::socket_write_smart($client->socket, 'OK');
+            }
+        } else {
+            print 'Wrong station code';
         }
 
         $server->disconnect($client->server_clients_index);
