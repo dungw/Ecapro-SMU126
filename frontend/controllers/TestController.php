@@ -10,11 +10,18 @@ use common\components\helpers\Convert;
 class TestController extends Controller {
 
     public function actionIndex() {
-        var_dump(Convert::powOf2(34));
+        $id = 1;
+        $value = call_user_func('before', $id);
+        var_dump($value);
+    }
+
+    public function before($id)
+    {
+        return $id+1;
     }
 
     public function actionAlarm() {
-        $requestString = 'e26c70&Tram_so_1&alarm&mat dien luoi';
+        $requestString = 'e26c71&Tram_so_1&alarm&mat dien luoi';
         $observer = new Observer();
         $observer->handleRequest($requestString);
     }

@@ -3,6 +3,9 @@ namespace console\models;
 
 use common\models\Observer;
 
+//turn off all error reporting
+error_reporting(0);
+
 /*!	@class		SocketServer
     @author		Navarr Barnier
     @abstract 	A Framework for creating a multi-client server using the PHP language.

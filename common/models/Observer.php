@@ -17,6 +17,7 @@ use common\models\Warning;
 use common\models\Client;
 use common\models\StationStatusHandler;
 
+//turn off all error reporting
 error_reporting(0);
 
 class Observer {
@@ -364,6 +365,11 @@ class Observer {
         if (!empty($temp)) {
             $this->request['data'] = $requestString;
             $this->request['id'] = $this->findStationId(trim($temp[0]));
+
+            if ($this->request['id'] <= 0) {
+                return false;
+            }
+
             $this->request['name'] = $temp[1];
             $this->request['function'] = $temp[2];
             $this->request['message'] = $temp[3];

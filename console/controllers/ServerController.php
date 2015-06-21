@@ -5,6 +5,7 @@ use yii\console\Controller;
 use console\models\SocketServer;
 use common\models\Setting;
 
+//turn off all error reporting
 error_reporting(0);
 
 class ServerController extends Controller {
