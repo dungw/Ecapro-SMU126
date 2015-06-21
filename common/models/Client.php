@@ -11,6 +11,9 @@ use common\models\Equipment;
 use common\models\EquipmentStatus;
 use common\models\StationStatusController;
 
+//turn off all error reporting
+error_reporting(0);
+
 class Client {
 
     const TIMEOUT = 10;
