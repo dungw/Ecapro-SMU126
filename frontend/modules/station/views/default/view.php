@@ -282,12 +282,12 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
     <tr>
         <td width="50%">
             <div class="kv-attribute">
-                <b>Trung tâm: </b><span><?php echo $model->center->name ?></span>
+                <b>Trung tâm: </b><span><?= ($model->center) ? $model->center->name : '' ?></span>
             </div>
         </td>
         <td width="50%">
             <div class="kv-attribute">
-                <b>Khu vực: </b><span><?php echo $model->area->name ?></span>
+                <b>Khu vực: </b><span><?= ($model->area) ? $model->area->name : '' ?></span>
             </div>
         </td>
     </tr>
