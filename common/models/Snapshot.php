@@ -3,31 +3,47 @@ namespace common\models;
 
 use \Yii;
 
-class Snapshot {
-
+class Snapshot
+{
+    //url to get content
     public $url;
 
-    public function init($url) {
+    //time out duration(s)
+    public $timeout = 2;
+
+    public function init($url)
+    {
         $this->url = $url;
     }
 
-    public function takes($numb) {
+    public function getType()
+    {
+        return ['image/jpeg', 'image/jpg', 'image/png', 'image/bmp', 'image/gif'];
+    }
+
+    public function takes($numb)
+    {
         $data = [];
         if ($numb > 0) {
-            for ($i=1; $i<=$numb; $i++) {
+            for ($i = 1; $i <= $numb; $i++) {
                 $pic = $this->takeOne();
                 if ($pic) {
-                    $data[] = $this->takeOne();
+                    $data[] = $pic;
                 } else {
                     break;
                 }
+
             }
         }
 
         return $data;
     }
 
-    public function takeOne() {
+    /**
+     * @return bool|string
+     */
+    public function takeOne()
+    {
         $path = Yii::getAlias('@frontend') . '/web/uploads/';
 
         // create directories by time
@@ -44,21 +60,46 @@ class Snapshot {
         }
         $path .= date('d') . '/';
 
-        // create file name
-        $file = 'alarm_' . date('s') . rand(1000, 9999) . '.jpg';
+        //new file name
+        $file = 'alarm_' . date('s') . rand(1000, 9999999) . '.jpeg';
 
-        // open new file
-        $fh = fopen($path . $file, 'w') or die('Cannot create directories');
-        $content = @file_get_contents($this->url);
-        if ($content) {
+        //get picture from url
+        $content = $this->_pull();
+
+        //check is picture or not
+        if ($this->isPicture($content['type'])) {
+            //write content
+            $fh = fopen($path . $file, 'w') or die('Cannot create directories');
             file_put_contents($path . $file, $content);
+            $inDB = date('Y/m/d/') . $file;
+
+            return $inDB;
         } else {
             return false;
         }
+    }
 
-        $infoSave = date('Y/m/d/') . $file;
+    private function isPicture($type)
+    {
+        $listType = $this->getType();
+        if (in_array($type, $listType)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-        return $infoSave;
+    private function _pull()
+    {
+        $curl_handle = curl_init();
+        curl_setopt($curl_handle, CURLOPT_URL, $this->url);
+        curl_setopt($curl_handle, CURLOPT_CONNECTTIMEOUT, $this->timeout);
+        curl_setopt($curl_handle, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl_handle, CURLOPT_USERAGENT, 'GPIS88CE');
+        $content['data'] = curl_exec($curl_handle);
+        $content['type'] = curl_getinfo($curl_handle, CURLINFO_CONTENT_TYPE);
+        curl_close($curl_handle);
+        return $content;
     }
 }
 
