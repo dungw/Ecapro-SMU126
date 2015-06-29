@@ -410,16 +410,19 @@ class DefaultController extends FrontendController
             $ids = $post['ids'];
             $idArr = explode(',', $ids);
             if (!empty($idArr)) {
-                foreach ($idArr as $id) {
-                    $station = Station::find()
-                        ->select('status')
-                        ->where(['id' => $id])
-                        ->one();
+                $stations = Station::find()
+                    ->select('id, status', 'updated_at')
+                    ->where(['in', 'id', $idArr])
+                    ->all();
 
-                    $data['content'][$id] = $station['status'];
+                $now = time();
+                if (!empty($stations)) {
+                    foreach ($stations as $station) {
+                        $data[$station['id']]['status'] = $station['status'];
+                        $data[$station['id']]['since'] = $now - $station['updated_at'];
+                    }
                 }
             }
-
             print json_encode($data);
         }
     }

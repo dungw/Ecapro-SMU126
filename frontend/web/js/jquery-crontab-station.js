@@ -1,4 +1,5 @@
 var TIME_LOOP_STATION = 20;
+var SOUND_CONDITION_TIME = 900;
 var WARNING_PANEL_STATION = '#panel-station';
 var LOADING_IMAGE_STATION = '<img class="loading" src="/images/loading.gif" />';
 var STATUS_CONNECTED = 1;
@@ -10,7 +11,7 @@ var BLOCK_CLASS = '.block-station';
 var DISCONNECT_CLASS = 'disconnect';
 var CONNECTED_CLASS = 'connected';
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
     setInterval(updateStatus, TIME_LOOP_STATION * 1000);
 
     // check disconnect station
@@ -25,19 +26,21 @@ function updateStatus() {
         data: {
             ids: ids
         },
-        beforeSend: function() {
+        beforeSend: function () {
             $(WARNING_PANEL_STATION).find('.panel-title').append(LOADING_IMAGE_STATION);
         },
-        success: function(json) {
+        success: function (json) {
             $(WARNING_PANEL_STATION).find('.loading').remove();
 
             var data = $.parseJSON(json);
-            var content = data['content'];
             var idArr = ids.split(',');
-            if (idArr.length > 0) {
-                for (var i=0; i<idArr.length; i++) {
+            var turnOn = 0;
 
-                    var status = content[idArr[i]];
+            if (idArr.length > 0) {
+                for (var i = 0; i < idArr.length; i++) {
+
+                    var status = data[idArr[i]]['status'];
+                    var since = data[idArr[i]]['since'];
                     if (status == STATUS_CONNECTED) {
                         $('#status-' + idArr[i]).find('span').html(STATUS_CONNECTED_LABEL);
                         $('#status-' + idArr[i]).attr('class', CONNECTED_CLASS);
@@ -45,19 +48,27 @@ function updateStatus() {
                     if (status == STATUS_DISCONNECT) {
                         $('#status-' + idArr[i]).find('span').html(STATUS_DISCONNECT_LABEL);
                         $('#status-' + idArr[i]).attr('class', DISCONNECT_CLASS);
+
+                        //check turn on sound or not
+                        if (since <= SOUND_CONDITION_TIME) {
+                            turnOn = 1;
+                        }
                     }
                 }
             }
 
-            // check disconnect after update status
-            checkDisconnect();
+            //turn on sound or not
+            if (turnOn == 1) {
+                playSoundStation();
+            }
+
         }
     });
 }
 
 // function that check if there are some station lost connect
 function checkDisconnect() {
-    var countUnread = $(BLOCK_CLASS).find('.'+DISCONNECT_CLASS).length;
+    var countUnread = $(BLOCK_CLASS).find('.' + DISCONNECT_CLASS).length;
     if (countUnread >= 1) {
         playSoundStation();
     }

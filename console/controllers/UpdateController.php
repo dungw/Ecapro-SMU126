@@ -35,7 +35,7 @@ class UpdateController extends Controller {
                     $status = Station::STATUS_LOST;
                 }
                 Yii::$app->db->createCommand()
-                    ->update('station', ['status' => $status], ['id' => $station['id']])
+                    ->update('station', ['status' => $status, 'updated_at' => time()], ['id' => $station['id']])
                     ->execute();
             }
         }
