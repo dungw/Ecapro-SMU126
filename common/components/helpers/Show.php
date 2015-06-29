@@ -263,4 +263,31 @@ class Show extends BaseHtml
         $html = '<img src="' . $url . '" ' . implode(' ', $final) . '>';
         return $html;
     }
+
+    public static function fakeCameraIp($url, $id = 'camera', $refresh = 1000, $options = [])
+    {
+        $default = ['style="width: 100%"'];
+        $final = empty($options) ? $default : array_merge($options, $default);
+        $html  = '<img id="'. $id .'" src="' . $url . '" ' . implode(' ', $final) . '>';
+        $html .= '<script type="text/javascript">
+                    function refresh(node) {
+                        var times = ' . $refresh . ';
+                        (function startRefresh() {
+                            var address;
+                            if(node.src.indexOf(\'?\')>-1)
+                                address = node.src.split(\'?\')[0];
+                            else
+                                address = node.src;
+                            node.src = address+"?time="+new Date().getTime();
+                            setTimeout(startRefresh,times);
+                        })();
+                    }
+                    window.onload = function() {
+                        var node = document.getElementById(\'' . $id . '\');
+                        refresh(node);
+                    }
+                </script>';
+
+        return $html;
+    }
 }
