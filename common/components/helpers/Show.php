@@ -264,8 +264,9 @@ class Show extends BaseHtml
         return $html;
     }
 
-    public static function fakeCameraIp($url, $id = 'camera', $refresh = 1000, $options = [])
+    public static function fakeCameraIp($url, $refresh = 1000, $options = [])
     {
+        $id = 'camera';
         $default = ['style="width: 100%"'];
         $final = empty($options) ? $default : array_merge($options, $default);
         $html  = '<img id="'. $id .'" src="' . $url . '" ' . implode(' ', $final) . '>';
@@ -282,10 +283,10 @@ class Show extends BaseHtml
                             setTimeout(startRefresh,times);
                         })();
                     }
-                    window.onload = function() {
+                    jQuery(document).ready(function() {
                         var node = document.getElementById(\'' . $id . '\');
                         refresh(node);
-                    }
+                    });
                 </script>';
 
         return $html;
