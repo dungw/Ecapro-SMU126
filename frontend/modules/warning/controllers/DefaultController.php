@@ -210,8 +210,12 @@ class DefaultController extends FrontendController
     }
 
     public function actionCronLatest() {
-        $html = '';
-        $count = 0;
+
+        $soundConditionTime = 900;
+        $data['html'] = '';
+        $data['count'] = 0;
+        $data['sound'] = 'off';
+
         $post = Yii::$app->request->post();
         if (!empty($post)) {
             $timeLoop = $post['time_loop'];
@@ -231,13 +235,19 @@ class DefaultController extends FrontendController
 
             $warnings = Warning::getWarning('warning_time DESC', 0, $condition);
             if (!empty($warnings)) {
-                $count = count($warnings);
-                $html = Show::warnings($warnings);
+                $data['count'] = count($warnings);
+                $data['html'] = Show::warnings($warnings);
+
+                //check if need turn on sound
+                foreach ($warnings as $warning) {
+                    $createdSince = time() - $warning['created_at'];
+                    if ($createdSince <= $soundConditionTime) {
+                        $data['sound'] = 'on';
+                    }
+                }
             }
         }
 
-        $data['html'] = $html;
-        $data['count'] = $count;
         print json_encode($data);
     }
 

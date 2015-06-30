@@ -50,24 +50,19 @@ jQuery(document).ready(function($) {
                     // append new elements
                     $(WARNING_TABLE_HEADING).after(data['html']);
 
-                    // play sound
-                    playSound();
-
                     // gallery
-                    $('.gallery').each(function() {
-                        $(this).magnificPopup({
-                            delegate: 'button',
-                            type: 'image',
-                            gallery: {
-                                enabled: true
-                            }
-                        });
-                    });
+                    recallPopup();
 
                 } else {
                     // check unread warnings
                     checkUnread();
                 }
+
+                // play sound
+                if (data['sound'] == 'on') {
+                    playSound();
+                }
+
             }
         });
     }
@@ -86,6 +81,19 @@ jQuery(document).ready(function($) {
         audioElement.setAttribute('src', ALARM_SOUND);
         audioElement.setAttribute('autoplay', 'autoplay');
         audioElement.play();
+    }
+
+    //recall popup
+    function recallPopup() {
+        $('.gallery').each(function() {
+            $(this).magnificPopup({
+                delegate: 'button',
+                type: 'image',
+                gallery: {
+                    enabled: true
+                }
+            });
+        });
     }
 });
 
