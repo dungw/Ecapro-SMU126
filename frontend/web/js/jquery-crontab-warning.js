@@ -53,16 +53,13 @@ jQuery(document).ready(function($) {
                     // gallery
                     recallPopup();
 
+                    // play sound
+                    playSound();
+
                 } else {
                     // check unread warnings
                     checkUnread();
                 }
-
-                // play sound
-                if (data['sound'] == 'on') {
-                    playSound();
-                }
-
             }
         });
     }
