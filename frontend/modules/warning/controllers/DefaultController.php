@@ -214,7 +214,6 @@ class DefaultController extends FrontendController
         $soundConditionTime = 900;
         $data['html'] = '';
         $data['count'] = 0;
-        $data['sound'] = 'off';
 
         $post = Yii::$app->request->post();
         if (!empty($post)) {
@@ -237,14 +236,6 @@ class DefaultController extends FrontendController
             if (!empty($warnings)) {
                 $data['count'] = count($warnings);
                 $data['html'] = Show::warnings($warnings);
-
-                //check if need turn on sound
-                foreach ($warnings as $warning) {
-                    $createdSince = time() - $warning['created_at'];
-                    if ($createdSince <= $soundConditionTime) {
-                        $data['sound'] = 'on';
-                    }
-                }
             }
         }
 

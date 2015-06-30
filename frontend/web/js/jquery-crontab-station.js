@@ -15,7 +15,7 @@ jQuery(document).ready(function () {
     setInterval(updateStatus, TIME_LOOP_STATION * 1000);
 
     // check disconnect station
-    checkDisconnect();
+    //checkDisconnect();
 });
 
 function updateStatus() {
