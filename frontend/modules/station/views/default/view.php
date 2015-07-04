@@ -62,8 +62,11 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 </td>
                 <?php
                 if ($no == 1) {
-                    $camera = ($model->video_url) ? Show::cameraIp($model->video_url) : '';
-                    $camera = (!$camera) ? Show::fakeCameraIp($model->picture_url, 1000) : '';
+                    if ($model->video_url != '') {
+                        $camera = Show::cameraIp($model->video_url);
+                    } else {
+                        $camera = Show::fakeCameraIp($model->picture_url, 1000);
+                    }
                     ?>
                     <td rowspan="<?=$countSensor?>">
                         <?=$camera?>
