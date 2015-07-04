@@ -62,8 +62,11 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
                 </td>
                 <?php
                 if ($no == 1) {
-                    $camera = ($model->video_url) ? Show::cameraIp($model->video_url) : '';
-                    $camera = (!$camera) ? Show::fakeCameraIp($model->picture_url, 1000) : '';
+                    if ($model->video_url != '') {
+                        $camera = Show::cameraIp($model->video_url);
+                    } else {
+                        $camera = Show::fakeCameraIp($model->picture_url, 1000);
+                    }
                     ?>
                     <td rowspan="<?=$countSensor?>">
                         <?=$camera?>
@@ -282,12 +285,12 @@ $changeUrl = Yii::$app->homeUrl . 'station/default/change-station-part';
     <tr>
         <td width="50%">
             <div class="kv-attribute">
-                <b>Trung tâm: </b><span><?php echo $model->center->name ?></span>
+                <b>Trung tâm: </b><span><?php echo isset($model->center->name) ? $model->center->name : '' ?></span>
             </div>
         </td>
         <td width="50%">
             <div class="kv-attribute">
-                <b>Khu vực: </b><span><?php echo $model->area->name ?></span>
+                <b>Khu vực: </b><span><?php echo isset($model->area->name) ? $model->area->name : '' ?></span>
             </div>
         </td>
     </tr>
