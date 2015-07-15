@@ -176,7 +176,7 @@ class Show extends BaseHtml
         return $html;
     }
 
-    public static function datePicker($name, $value)
+    public static function datePicker($name, $value, $placeholder = 'dd / mm / yyyy')
     {
         $html = DatePicker::widget([
             'name' => $name,
@@ -184,7 +184,7 @@ class Show extends BaseHtml
             'language' => 'vi',
             'dateFormat' => 'dd/MM/yyyy',
             'options' => [
-                'placeholder' => 'dd / mm / yyyy',
+                'placeholder' => $placeholder,
             ],
         ]);
         return $html;
@@ -230,8 +230,14 @@ class Show extends BaseHtml
         $sorted = array();
         if (!empty($haystack)) {
             foreach ($haystack as $object) {
-                if (isset($object->$key) && $object->$value) {
-                    $sorted[$object->$key] = $object->$value;
+                if (is_object($object)) {
+                    if (isset($object->$key) && $object->$value) {
+                        $sorted[$object->$key] = $object->$value;
+                    }
+                } elseif (is_array($object)) {
+                    if (isset($object[$key]) && $object[$value]) {
+                        $sorted[$object[$key]] = $object[$value];
+                    }
                 }
             }
         }

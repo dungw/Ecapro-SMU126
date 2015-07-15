@@ -50,6 +50,8 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
+
+        $this->layout = '//column2';
         $this->enableCsrfValidation = false;
         $builder = $this->buildQuery();
         $query = $builder['query'];
@@ -143,13 +145,12 @@ class DefaultController extends FrontendController
         if ($fromDate) {
             $fromTime = Convert::date2Time($fromDate, 'd/m/Y');
             $query->andWhere(['>=', 'warning_time', $fromTime]);
-            $parseData['fromDate'] = Convert::date2date($fromDate, 'd/m/Y', 'm/d/Y');
         }
+
         $toDate = Yii::$app->request->get('to_date');
         if ($toDate) {
             $toTime = Convert::date2Time($toDate, 'd/m/Y', 'end');
             $query->andWhere(['<=', 'warning_time', $toTime]);
-            $parseData['toDate'] = Convert::date2date($toDate, 'd/m/Y', 'm/d/Y');
         }
 
         $query->orderBy('warning_time DESC');
@@ -158,46 +159,6 @@ class DefaultController extends FrontendController
             'query'     => $query,
             'parseData' => $parseData,
         ];
-    }
-
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    public function actionCreate()
-    {
-        $model = new Warning();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     public function actionRead() {
