@@ -8,7 +8,6 @@ $this->title = 'Thống kê cảnh báo';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
-<script src="<?=Yii::$app->homeUrl?>js/jquery.magnific-popup.min.js"></script>
 <script src="<?=Yii::$app->homeUrl?>js/bootstrap-list-filter.src.js"></script>
 
 <link rel="stylesheet" href="<?=Yii::$app->homeUrl?>css/magnific-popup.css">

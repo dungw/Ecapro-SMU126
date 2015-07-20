@@ -40,12 +40,44 @@ class DefaultController extends FrontendController
             'actionCronLatest',
             'actionCronUnread',
             'actionRead',
+            'actionAjaxFilter'
         ];
 
         if (in_array($action->actionMethod, $csrfFalseActions)) {
             Yii::$app->controller->enableCsrfValidation = false;
         }
         return parent::beforeAction($action);
+    }
+
+    public function actionAjaxFilter()
+    {
+        if (Yii::$app->request->isAjax) {
+            $area = Yii::$app->request->post('area');
+            $center = Yii::$app->request->post('center');
+
+            $query = Station::find()
+                ->select('id, name')
+                ->where([]);
+
+            if ($area > 0) {
+                $query->andWhere(['area_id' => $area]);
+            }
+
+            if ($center > 0) {
+                $query->andWhere(['center_id' => $center]);
+            }
+
+            $stations = $query->all();
+
+            $html = ['<option value="0">Chọn trạm</option>'];
+            if (!empty($stations)) {
+                foreach ($stations as $s) {
+                    $html[] = '<option value="'. $s['id'] .'">'. $s['name'] .'</option>';
+                }
+            }
+            $data['html'] = implode('', $html);
+            print json_encode($data);
+        }
     }
 
     public function actionIndex()
@@ -111,18 +143,42 @@ class DefaultController extends FrontendController
         }
 
         // permission
+        $stationIds = [];
         $role = new Role();
         if (!$role->isAdministrator) {
             $position = $role->getPosition();
             $stationIds = Station::getByRole($position, Yii::$app->user->id);
+        }
+
+        //filter by stations
+        $stations = Yii::$app->request->get('station');
+        if (!empty($stations)) {
+            $stationIds = array_merge($stationIds, $stations);
+        }
+
+        if (!empty($stationIds)) {
+            foreach ($stationIds as $k=>$id) {
+                if (intval($id) <= 0) {
+                    unset($stationIds[$k]);
+                }
+            }
+        }
+
+        if (!empty($stationIds)) {
             $condition = ['in', 'station_id', $stationIds];
             $query->where($condition);
         }
 
         // filter by area
-        $areaId = Yii::$app->request->get('area_id');
+        $areaId = Yii::$app->request->get('area');
         if ($areaId > 0) {
             $query->andWhere(['station.area_id' => $areaId]);
+        }
+
+        // filter by center
+        $center = Yii::$app->request->get('center');
+        if ($center > 0) {
+            $query->andWhere(['station.center_id' => $center]);
         }
 
         // filter by time points
