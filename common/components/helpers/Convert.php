@@ -61,15 +61,21 @@ class Convert {
     }
 
     public static function date2Time($dateString, $format, $fromTime = 'begin') {
-        $date = date_create_from_format($format, $dateString);
-        $time = strtotime($date->format('m/d/Y'));
-        if ($fromTime == 'end') $time += 86399;
-        return $time;
+        if ($dateString != '') {
+            $date = date_create_from_format($format, $dateString);
+            $time = strtotime($date->format('m/d/Y'));
+            if ($fromTime == 'end') $time += 86399;
+            return $time;
+        }
+        return null;
     }
 
     public static function date2date($dateString, $from, $to) {
-        $dateObj = date_create_from_format($from, $dateString);
-        return $dateObj->format($to);
+        if ($dateString != '') {
+            $dateObj = date_create_from_format($from, $dateString);
+            return $dateObj->format($to);
+        }
+        return null;
     }
 
     public static function dec2Bin($decimal, $length) {

@@ -40,6 +40,7 @@ class DefaultController extends FrontendController
             'actionCronLatest',
             'actionCronUnread',
             'actionRead',
+            'actionAjaxFilter'
         ];
 
         if (in_array($action->actionMethod, $csrfFalseActions)) {
@@ -48,8 +49,41 @@ class DefaultController extends FrontendController
         return parent::beforeAction($action);
     }
 
+    public function actionAjaxFilter()
+    {
+        if (Yii::$app->request->isAjax) {
+            $area = Yii::$app->request->post('area');
+            $center = Yii::$app->request->post('center');
+
+            $query = Station::find()
+                ->select('id, name')
+                ->where([]);
+
+            if ($area > 0) {
+                $query->andWhere(['area_id' => $area]);
+            }
+
+            if ($center > 0) {
+                $query->andWhere(['center_id' => $center]);
+            }
+
+            $stations = $query->all();
+
+            $html = ['<option value="0">Chọn trạm</option>'];
+            if (!empty($stations)) {
+                foreach ($stations as $s) {
+                    $html[] = '<option value="'. $s['id'] .'">'. $s['name'] .'</option>';
+                }
+            }
+            $data['html'] = implode('', $html);
+            print json_encode($data);
+        }
+    }
+
     public function actionIndex()
     {
+
+        $this->layout = '//column2';
         $this->enableCsrfValidation = false;
         $builder = $this->buildQuery();
         $query = $builder['query'];
@@ -109,18 +143,42 @@ class DefaultController extends FrontendController
         }
 
         // permission
+        $stationIds = [];
         $role = new Role();
         if (!$role->isAdministrator) {
             $position = $role->getPosition();
             $stationIds = Station::getByRole($position, Yii::$app->user->id);
+        }
+
+        //filter by stations
+        $stations = Yii::$app->request->get('station');
+        if (!empty($stations)) {
+            $stationIds = array_merge($stationIds, $stations);
+        }
+
+        if (!empty($stationIds)) {
+            foreach ($stationIds as $k=>$id) {
+                if (intval($id) <= 0) {
+                    unset($stationIds[$k]);
+                }
+            }
+        }
+
+        if (!empty($stationIds)) {
             $condition = ['in', 'station_id', $stationIds];
             $query->where($condition);
         }
 
         // filter by area
-        $areaId = Yii::$app->request->get('area_id');
+        $areaId = Yii::$app->request->get('area');
         if ($areaId > 0) {
             $query->andWhere(['station.area_id' => $areaId]);
+        }
+
+        // filter by center
+        $center = Yii::$app->request->get('center');
+        if ($center > 0) {
+            $query->andWhere(['station.center_id' => $center]);
         }
 
         // filter by time points
@@ -143,13 +201,12 @@ class DefaultController extends FrontendController
         if ($fromDate) {
             $fromTime = Convert::date2Time($fromDate, 'd/m/Y');
             $query->andWhere(['>=', 'warning_time', $fromTime]);
-            $parseData['fromDate'] = Convert::date2date($fromDate, 'd/m/Y', 'm/d/Y');
         }
+
         $toDate = Yii::$app->request->get('to_date');
         if ($toDate) {
             $toTime = Convert::date2Time($toDate, 'd/m/Y', 'end');
             $query->andWhere(['<=', 'warning_time', $toTime]);
-            $parseData['toDate'] = Convert::date2date($toDate, 'd/m/Y', 'm/d/Y');
         }
 
         $query->orderBy('warning_time DESC');
@@ -158,46 +215,6 @@ class DefaultController extends FrontendController
             'query'     => $query,
             'parseData' => $parseData,
         ];
-    }
-
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
-    }
-
-    public function actionCreate()
-    {
-        $model = new Warning();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('update', [
-                'model' => $model,
-            ]);
-        }
-    }
-
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     public function actionRead() {
