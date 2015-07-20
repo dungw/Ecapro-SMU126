@@ -3,6 +3,7 @@
 use yii\widgets\ActiveForm;
 
 use common\components\helpers\Show;
+use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $model common\models\Sensor */
