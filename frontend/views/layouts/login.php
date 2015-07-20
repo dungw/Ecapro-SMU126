@@ -36,8 +36,7 @@ AppAsset::register($this);
 
     <footer class="footer">
         <div class="container">
-            <p class="pull-left">&copy; JogCom <?= date('Y') ?></p>
-            <p class="pull-right"><?= Yii::powered() ?></p>
+            <p>Copyright © <?php echo date('Y') ?> , <?php echo Yii::$app->params['brandName'] ?></p>
         </div>
     </footer>
 
