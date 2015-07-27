@@ -1,7 +1,7 @@
 /**
  * Created by JFog on 6/9/15.
  */
-var TIME_LOOP = 30;
+var TIME_LOOP = 15;
 var ALARM_SOUND = '/sound/alarm.mp3';
 
 jQuery(document).ready(function($) {
