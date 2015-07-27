@@ -86,10 +86,10 @@ class Observer {
         return true;
     }
 
-    public function alarm() {
+    public function alarm($message = null) {
 
         // insert warning
-        $id = $this->insertWarning();
+        $id = $this->insertWarning($message);
 
         // get station info
         $station = $this->findStation($this->request['id']);
@@ -218,11 +218,16 @@ class Observer {
         }
     }
 
-    public function insertWarning() {
+    public function insertWarning($message = null) {
         $warning = new Warning();
 
         $warning->station_id = $this->request['id'];
-        $warning->message = $this->request['message'];
+        if ($message) {
+            $warning->message = $message;
+        } else {
+            $warning->message = $this->request['message'];
+        }
+
         $warning->warning_time = time();
         if ($warning->validate()) {
             $warning->save();
@@ -312,7 +317,7 @@ class Observer {
 
         // get all sensor status of this station
         $query = new Query();
-        $query->select('s.binary_pos, s.type, st.id, st.sensor_id');
+        $query->select('s.binary_pos, s.type, st.id, st.sensor_id, st.value');
         $query->from('sensor_status st');
         $query->leftJoin('sensor s', 'st.sensor_id = s.id');
         $query->where('station_id = '. $this->request['id']);
@@ -340,6 +345,18 @@ class Observer {
                         if (isset($this->handler['security']['status']) && $value != $this->handler['security']['status']) {
                             $value = $this->handler['security']['status'];
                             $this->sendBack = true;
+                        }
+
+                        // if security has been turn off, create an alarm
+                        if ($sensor['value'] != $value) {
+                            if ($value == 0) {
+                                // create turn off security mode alarm
+                                $message = 'Tat bao dong';
+                            } elseif ($value == 1) {
+                                // create turn on security mode alarm
+                                $message = 'Bat bao dong';
+                            }
+                            $this->alarm($message);
                         }
                     }
 
