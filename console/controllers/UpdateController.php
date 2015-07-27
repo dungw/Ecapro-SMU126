@@ -34,9 +34,13 @@ class UpdateController extends Controller {
                 } else {
                     $status = Station::STATUS_LOST;
                 }
-                Yii::$app->db->createCommand()
-                    ->update('station', ['status' => $status, 'updated_at' => time()], ['id' => $station['id']])
-                    ->execute();
+
+                if ($status != $station['status']) {
+                    Yii::$app->db->createCommand()
+                        ->update('station', ['status' => $status, 'updated_at' => time()], ['id' => $station['id']])
+                        ->execute();
+                }
+
             }
         }
     }

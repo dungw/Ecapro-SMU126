@@ -1,7 +1,6 @@
 
 var TIME_LOOP_STATION = 10;
-var SOUND_CONDITION_TIME = 900;
-var SOUND_CONDITION_TIME = 900;
+var SOUND_CONDITION_TIME = 150;
 var WARNING_PANEL_STATION = '#panel-station';
 var LOADING_IMAGE_STATION = '<img class="loading" src="/images/loading.gif" />';
 var STATUS_CONNECTED = 1;

@@ -411,7 +411,6 @@ class DefaultController extends FrontendController
             $idArr = explode(',', $ids);
             if (!empty($idArr)) {
                 $stations = Station::find()
-                    ->select('id, status', 'updated_at')
                     ->where(['in', 'id', $idArr])
                     ->all();
 

@@ -132,7 +132,7 @@ class DefaultController extends FrontendController
         $parseData = [];
         if ($export) {
             $query = new Query();
-            $query->select(['warning.message AS message', 'station.name AS station_name', 'DATE_FORMAT(FROM_UNIXTIME(warning.warning_time), "%d/%m/%Y") AS warning_date'])
+            $query->select(['warning.message AS message', 'station.name AS station_name', 'DATE_FORMAT(FROM_UNIXTIME(warning.warning_time), "%d/%m/%Y %H:%i:%s") AS warning_date'])
                 ->from('warning')
                 ->leftJoin('station', 'station.id = warning.station_id')
                 ->where([]);
