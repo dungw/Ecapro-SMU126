@@ -72,7 +72,7 @@ class DefaultController extends FrontendController
             $html = ['<option value="0">Chọn trạm</option>'];
             if (!empty($stations)) {
                 foreach ($stations as $s) {
-                    $html[] = '<option value="'. $s['id'] .'">'. $s['name'] .'</option>';
+                    $html[] = '<option value="' . $s['id'] . '">' . $s['name'] . '</option>';
                 }
             }
             $data['html'] = implode('', $html);
@@ -98,7 +98,8 @@ class DefaultController extends FrontendController
         return $this->render('index', $parseData);
     }
 
-    public function actionExport() {
+    public function actionExport()
+    {
         $builder = $this->buildQuery(true);
         $query = $builder['query'];
 
@@ -106,29 +107,67 @@ class DefaultController extends FrontendController
             'query' => $query,
         ]);
         ExcelView::widget([
-            'dataProvider'  => $dataProvider,
-            'fullExportType'=> 'xlsx',
+            'dataProvider' => $dataProvider,
+            'fullExportType' => 'xlsx',
 
-            'grid_mode'     => 'export',
-            'columns'       => [
+            'grid_mode' => 'export',
+            'columns' => [
                 ['class' => 'yii\grid\SerialColumn'],
                 [
                     'attribute' => 'station_name',
-                    'header'    => 'Tên trạm',
+                    'header' => 'Tên trạm',
                 ],
                 [
                     'attribute' => 'message',
-                    'header'    => 'Nội dung',
+                    'header' => 'Nội dung',
                 ],
                 [
                     'attribute' => 'warning_date',
-                    'header'    => 'Thời gian',
+                    'header' => 'Thời gian',
                 ],
             ],
         ]);
     }
 
-    private function buildQuery($export = false) {
+    public function actionDeleteAll()
+    {
+        $params = Yii::$app->request->get();
+        $sql = "DELETE
+                FROM warning w
+                INNER JOIN station s ON(s.id = w.station_id)
+                WHERE 1";
+
+        $conditions = [];
+        if (isset($params['from_date']) && trim($params['from_date']) !== '') {
+            $fromTime = Convert::date2Time($params['from_date'], 'd/m/Y');
+            $conditions[] = "w.warning_time >= ". $fromTime;
+        }
+
+        if (isset($params['to_date']) && trim($params['to_date']) !== '') {
+            $toTime = Convert::date2Time($params['to_date'], 'd/m/Y');
+            $conditions[] = "w.warning_time <= ". $toTime;
+        }
+
+        if (isset($params['station']) && !empty($params['station'])) {
+            $conditions[] = "s.id IN(". implode(',', $params['station']) .")";
+        }
+
+        if (isset($params['area_id']) && $params['area_id'] > 0) {
+            $conditions[] = "s.area_id = ". $params['area_id'];
+        }
+
+        if (isset($params['center_id']) && $params['center_id'] > 0) {
+            $conditions[] = "s.center_id = ". $params['center_id'];
+        }
+
+        $sql .= implode(' AND ', $conditions);
+        Yii::$app->db->createCommand($sql)->execute();
+
+        return $this->redirect('index');
+    }
+
+    private function buildQuery($export = false)
+    {
         $parseData = [];
         if ($export) {
             $query = new Query();
@@ -157,7 +196,7 @@ class DefaultController extends FrontendController
         }
 
         if (!empty($stationIds)) {
-            foreach ($stationIds as $k=>$id) {
+            foreach ($stationIds as $k => $id) {
                 if (intval($id) <= 0) {
                     unset($stationIds[$k]);
                 }
@@ -212,12 +251,13 @@ class DefaultController extends FrontendController
         $query->orderBy('warning_time DESC');
 
         return [
-            'query'     => $query,
+            'query' => $query,
             'parseData' => $parseData,
         ];
     }
 
-    public function actionRead() {
+    public function actionRead()
+    {
         $id = Yii::$app->request->post('warning_id');
         if ($id > 0) {
             Yii::$app->db->createCommand()
@@ -226,7 +266,8 @@ class DefaultController extends FrontendController
         }
     }
 
-    public function actionCronLatest() {
+    public function actionCronLatest()
+    {
 
         $soundConditionTime = 900;
         $data['html'] = '';
@@ -259,7 +300,8 @@ class DefaultController extends FrontendController
         print json_encode($data);
     }
 
-    public function actionCronUnread() {
+    public function actionCronUnread()
+    {
         $html = '';
         $count = 0;
         $post = Yii::$app->request->post();
@@ -283,6 +325,15 @@ class DefaultController extends FrontendController
         $data['html'] = $html;
         $data['count'] = $count;
         print json_encode($data);
+    }
+
+    public function actionDelete()
+    {
+        $id = Yii::$app->request->get('id');
+        if ($id > 0) {
+            Warning::deleteAll(['id' => $id]);
+        }
+        return $this->redirect(['index']);
     }
 
     protected function findModel($id)

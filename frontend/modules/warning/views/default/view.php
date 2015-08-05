@@ -22,6 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'message',
             'picture',
             'warning_time:datetime',
+
         ],
     ]) ?>
 
