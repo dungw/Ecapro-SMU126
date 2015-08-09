@@ -210,6 +210,9 @@ class SiteController extends FrontendController
             }
         }
 
+        if (!is_dir(Yii::$app->basePath . '/web/locations/')) {
+            mkdir(Yii::$app->basePath . '/web/locations/');
+        }
         $jsonFile = Yii::$app->basePath . '/web/locations/' . Yii::$app->user->id . '.json';
         $json = json_encode($data);
         $handle = fopen($jsonFile, 'w+');
