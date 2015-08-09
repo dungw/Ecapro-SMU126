@@ -132,7 +132,7 @@ class DefaultController extends FrontendController
     public function actionDeleteAll()
     {
         $params = Yii::$app->request->get();
-        $sql = "DELETE
+        $sql = "DELETE w
                 FROM warning w
                 INNER JOIN station s ON(s.id = w.station_id)
                 WHERE 1";
@@ -160,7 +160,8 @@ class DefaultController extends FrontendController
             $conditions[] = "s.center_id = ". $params['center_id'];
         }
 
-        $sql .= implode(' AND ', $conditions);
+        $sql .= ' AND ' . implode(' AND ', $conditions);
+
         Yii::$app->db->createCommand($sql)->execute();
 
         return $this->redirect('index');
