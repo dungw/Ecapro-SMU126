@@ -11,6 +11,7 @@ use common\components\helpers\Show;
 use common\models\Role;
 use arturoliveira\ExcelView;
 use yii\data\ActiveDataProvider;
+use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\db\Query;
@@ -82,7 +83,6 @@ class DefaultController extends FrontendController
 
     public function actionIndex()
     {
-
         $this->layout = '//column2';
         $this->enableCsrfValidation = false;
         $builder = $this->buildQuery();
@@ -132,37 +132,7 @@ class DefaultController extends FrontendController
     public function actionDeleteAll()
     {
         $params = Yii::$app->request->get();
-        $sql = "DELETE w
-                FROM warning w
-                INNER JOIN station s ON(s.id = w.station_id)
-                WHERE 1";
-
-        $conditions = [];
-        if (isset($params['from_date']) && trim($params['from_date']) !== '') {
-            $fromTime = Convert::date2Time($params['from_date'], 'd/m/Y');
-            $conditions[] = "w.warning_time >= ". $fromTime;
-        }
-
-        if (isset($params['to_date']) && trim($params['to_date']) !== '') {
-            $toTime = Convert::date2Time($params['to_date'], 'd/m/Y');
-            $conditions[] = "w.warning_time <= ". $toTime;
-        }
-
-        if (isset($params['station']) && !empty($params['station'])) {
-            $conditions[] = "s.id IN(". implode(',', $params['station']) .")";
-        }
-
-        if (isset($params['area_id']) && $params['area_id'] > 0) {
-            $conditions[] = "s.area_id = ". $params['area_id'];
-        }
-
-        if (isset($params['center_id']) && $params['center_id'] > 0) {
-            $conditions[] = "s.center_id = ". $params['center_id'];
-        }
-
-        $sql .= ' AND ' . implode(' AND ', $conditions);
-
-        Yii::$app->db->createCommand($sql)->execute();
+        Warning::multipleDelete($params);
 
         return $this->redirect('index');
     }
@@ -332,7 +302,9 @@ class DefaultController extends FrontendController
     {
         $id = Yii::$app->request->get('id');
         if ($id > 0) {
-            Warning::deleteAll(['id' => $id]);
+            if (Warning::deletePicture($id)) {
+                Warning::deleteAll(['id' => $id]);
+            }
         }
         return $this->redirect(['index']);
     }
