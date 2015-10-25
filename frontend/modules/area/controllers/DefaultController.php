@@ -51,8 +51,8 @@ class DefaultController extends FrontendController
     public function actionCreate()
     {
         $model = new Area();
-
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
             return $this->redirect(['index']);
         } else {
             return $this->render('create', [

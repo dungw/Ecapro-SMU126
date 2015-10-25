@@ -28,6 +28,7 @@ return [
         'cronjob' => ['class' => 'frontend\modules\cronjob\Cronjob'],
         'station_type' => ['class' => 'frontend\modules\station_type\StationType'],
         'dc_equipment' => ['class' => 'frontend\modules\dc_equipment\DcEquipment'],
+        'log' => ['class' => 'frontend\modules\log\Log'],
         'gridview' => [
             'class' => '\kartik\grid\Module'
             // enter optional module parameters below - only if you need to

@@ -2,6 +2,7 @@
 
 namespace app\modules\station\controllers;
 
+use common\components\helpers\Log;
 use Yii;
 use common\models\Client;
 use common\models\Station;
@@ -199,11 +200,27 @@ class DefaultController extends FrontendController
                 // get equipment status
                 $es = EquipmentStatus::findOne($get['id']);
 
+                //write log action
+                if ($get['configure'] == EquipmentStatus::CONFIGURE_AUTO) {
+                    $action = Log::ACTION_AUTOMATIC_EQUIPMENT;
+                } else {
+                    if ($get['status'] == EquipmentStatus::STATUS_ON) {
+                        $action = Log::ACTION_TURNON_EQUIPMENT;
+                    } elseif ($get['status'] == EquipmentStatus::STATUS_OFF) {
+                        $action = Log::ACTION_TURNOFF_EQUIPMENT;
+                    }
+                }
+                if ($action) Log::logControl(Yii::$app->user->id, $action, $get['station_id'], $es['equipment_id']);
+
             } else if ($get['part'] == 'security') {
                 $handler = StationStatusHandler::find()
                     ->where(['station_id' => $get['station_id'], 'updated' => StationStatusHandler::STATUS_NOT_UPDATE, 'type' => StationStatusHandler::TYPE_SENSOR_SECURITY])
                     ->orderBy('created_at DESC')
                     ->one();
+
+                //write log action
+                $action = ($get['status'] == Sensor::SECURITY_ON) ? Log::ACTION_TURNON_SECURITY : (($get['status'] == Sensor::SECURITY_OFF) ? Log::ACTION_TURNOFF_SECURITY : '');
+                if ($action) Log::logControl(Yii::$app->user->id, $action, $get['station_id'], Sensor::ID_SECURITY);
 
                 // create an alarm when user turn on or turn off security mode
                 $station = Station::findOne($get['station_id']);
@@ -323,6 +340,9 @@ class DefaultController extends FrontendController
 
                 // initial sensors
                 $this->initSensor($stationId);
+
+                //write log action
+                Log::logControl(Yii::$app->user->id, Log::ACTION_CREATE_STATION, $stationId);
 
                 return $this->redirect(['index']);
             }
@@ -498,6 +518,9 @@ class DefaultController extends FrontendController
                     $this->setDcEquipment($post['dc_equipments'], $newModel);
                 }
 
+                //write log action
+                Log::logControl(Yii::$app->user->id, Log::ACTION_UPDATE_STATION, $id);
+
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         }
@@ -543,6 +566,9 @@ class DefaultController extends FrontendController
             // delete station
             Station::deleteAll(['id' => $id]);
 
+            //write log action
+            Log::logControl(Yii::$app->user->id, Log::ACTION_DELETE_STATION, $id);
+
         }
 
         return $this->redirect(['index']);
@@ -568,6 +594,9 @@ class DefaultController extends FrontendController
 
         // get power equipment
         $parseData['dcEquipments'] = DcEquipmentStatus::findByStation($model->id);
+
+        //write log action
+        Log::logControl(Yii::$app->user->id, Log::ACTION_VIEW_STATION, $id);
 
         return $this->render('view', $parseData);
     }

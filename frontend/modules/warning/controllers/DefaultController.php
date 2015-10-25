@@ -11,7 +11,6 @@ use common\components\helpers\Show;
 use common\models\Role;
 use arturoliveira\ExcelView;
 use yii\data\ActiveDataProvider;
-use yii\helpers\FileHelper;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\db\Query;
@@ -151,6 +150,7 @@ class DefaultController extends FrontendController
                 ->leftJoin('station', 'station.id = warning.station_id')
                 ->where([]);
         }
+
 
         // permission
         $stationIds = [];

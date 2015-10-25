@@ -6,7 +6,7 @@ $action = $this->context->action->id;
 $menus = $this->context->module->menus;
 $route = $this->context->route;
 
-//index warning
+//warning index
 if ($module == 'warning' && $action == 'index') {
     include 'left-menu-warning.php';
 } else {

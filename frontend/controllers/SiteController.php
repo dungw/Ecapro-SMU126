@@ -1,6 +1,7 @@
 <?php
 namespace frontend\controllers;
 
+use common\components\helpers\Log;
 use Yii;
 use common\models\LoginForm;
 use common\models\Station;
@@ -111,6 +112,9 @@ class SiteController extends FrontendController
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
+
+            //write log action
+            Log::logAction(Yii::$app->user->id, Log::ACTION_LOGIN);
 
             return $this->goBack();
         } else {

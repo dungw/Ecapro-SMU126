@@ -37,6 +37,7 @@ if (!Yii::$app->user->isGuest) {
         'items' => [
             ['label' => 'Thống kê trạm', 'url' => ['/statistic/station/index'], 'active' => ($module == 'statistic' && $controller == 'station')],
             ['label' => 'Thống kê cảnh báo', 'url' => ['/statistic/warning/index'], 'active' => ($module == 'statistic' && $controller == 'warning')],
+            ['label' => 'Thống kê hoạt động', 'url' => ['/log/default/index'], 'active' => ($module == 'log')],
         ]
     ];
 
