@@ -46,7 +46,7 @@ class Log
     {
         if ($action !== '' && $user > 0) {
             $parameters = [
-                'Log'   => [
+                'LogModel'   => [
                     'action'    => $action,
                     'user_id'   => $user,
                     'time'      => time(),
@@ -61,7 +61,7 @@ class Log
         $related = intval($related);
         if ($action !== '' && $user > 0 && $station > 0) {
             $parameters = [
-                'Log'   => [
+                'LogModel'   => [
                     'action'    => $action,
                     'user_id'   => $user,
                     'time'      => time(),
