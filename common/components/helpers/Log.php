@@ -78,7 +78,7 @@ class Log
     protected function beforeLog($action)
     {
         //check if has view action in time 1 hour ago, don't write log
-        if ($action === self::ACTION_VIEW_STATION) {
+        /*if ($action === self::ACTION_VIEW_STATION) {
 
             //check the last one
             $query = new Query();
@@ -87,7 +87,7 @@ class Log
                 ->where(['and', ['action' => self::ACTION_VIEW_STATION], ['>=', 'time', time()-3600]]);
 
             if ($query->one()) return false;
-        }
+        }*/
 
         return true;
     }
