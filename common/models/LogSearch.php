@@ -74,7 +74,11 @@ class LogSearch extends LogModel
         //filter by equipment name
         $query->andFilterWhere(['like', 'e.name', $this->related_id]);
 
+        //filter by action
         $query->andFilterWhere(['like', 'action', $this->action]);
+
+        //order by time
+        $query->orderBy('time DESC');
 
         return $dataProvider;
     }
