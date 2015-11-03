@@ -49,7 +49,7 @@ $actionList = Log::actions();
                 'attribute' => 'station_id',
                 'value'     => function($model) {
                     $station = Station::findOne($model->station_id);
-                    return $station->name;
+                    return $station ? $station->name : '';
                 }
             ],
             [

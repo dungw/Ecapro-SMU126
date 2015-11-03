@@ -48,7 +48,7 @@ class LogSearch extends LogModel
 
         //join
         $query->innerJoin('user u', 'u.id = log.user_id');
-        $query->innerJoin('station s', 's.id = log.station_id');
+        $query->leftJoin('station s', 's.id = log.station_id');
         $query->leftJoin('equipment e', 'e.id = log.related_id');
 
         $this->load($params);
