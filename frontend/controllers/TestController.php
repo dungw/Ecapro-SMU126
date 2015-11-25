@@ -40,7 +40,29 @@ class TestController extends Controller
 
     public function actionStatus()
     {
-        $requestString = '123&Tram_so_1&status&DISARM&1&6&32';
+	    $items = [
+		    0   => '123',
+		    1   => 'Tram_so_1',
+		    2   => 'status',
+		    3   => 'DISARM',
+		    4   => '1',
+		    5   => '6',
+		    6   => '32',
+		    7   => '15',
+		    8   => '12',
+		    9   => 'p1',
+		    10   => 'p2',
+		    11   => 'p3',
+		    12   => 'p4',
+		    13   => 'p5',
+		    14   => 'p6',
+
+		    15   => '1',
+		    16   => '2',
+		    17   => '3',
+		    18   => '4',
+	    ];
+        $requestString = implode('&', $items);
         $observer = new Observer();
         $observer->handleRequest($requestString);
     }
