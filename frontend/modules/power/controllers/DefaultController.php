@@ -2,6 +2,7 @@
 
 namespace app\modules\power\controllers;
 
+use common\models\Station;
 use Yii;
 use common\controllers\FrontendController;
 use common\models\PowerEquipment;
@@ -47,6 +48,25 @@ class DefaultController extends FrontendController
         $model = new PowerEquipment();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+	        //add new equipment to all exist stations
+	        $newID = Yii::$app->db->lastInsertID;
+
+	        $stations = Station::find()->all();
+	        if (!empty($stations))
+	        {
+		        foreach ($stations as $station)
+		        {
+			        var_dump($station['id']);
+			        Yii::$app->db->createCommand()
+				        ->insert('power_status', [
+					        'station_id'    => $station['id'],
+					        'item_id'       => $newID
+				        ])
+			            ->execute();
+		        }
+	        }
+
             return $this->redirect(['index']);
         } else {
             return $this->render('create', [

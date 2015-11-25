@@ -56,11 +56,13 @@ class TestController extends Controller
 		    12   => 'p4',
 		    13   => 'p5',
 		    14   => 'p6',
-
-		    15   => '1',
-		    16   => '2',
-		    17   => '3',
-		    18   => '4',
+		    15   => 'p7',
+		    16   => 'p8',
+		    17   => 'p9',
+		    18   => '1',
+		    19   => '2',
+		    20   => '3',
+		    21   => '4',
 	    ];
         $requestString = implode('&', $items);
         $observer = new Observer();
