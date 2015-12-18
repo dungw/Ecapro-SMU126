@@ -114,7 +114,7 @@ INSERT INTO `center` VALUES ('6', 'Trung tâm 06');
 INSERT INTO `center` VALUES ('7', 'Trung tâm 07');
 INSERT INTO `center` VALUES ('8', 'Trung tâm 08');
 INSERT INTO `center` VALUES ('9', 'Trung tâm 09');
-INSERT INTO `center` VALUES ('10', 'Trung tâm 10');
+INSERT INTO `center` VALUES ('10', 'Trung tâm 11');
 
 -- ----------------------------
 -- Table structure for `dc_equipment`
