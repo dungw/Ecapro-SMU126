@@ -50,8 +50,8 @@ class DcEquipment extends Base
         return [
             'id' => 'ID',
             'name' => 'Tên',
-            'unit_voltage' => 'Đơn vị điện áp',
-            'unit_amperage' => 'Đơn vị dòng điện',
+            'unit_voltage' => 'Đơn vị dòng điện',
+            'unit_amperage' => 'Đơn vị điện áp',
             'active' => 'Active',
         ];
     }
